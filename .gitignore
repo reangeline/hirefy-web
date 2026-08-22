@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — .env.local.example é o template (sem segredos) e deve ir pro git
 .env*
+!.env.local.example
 
 # vercel
 .vercel
