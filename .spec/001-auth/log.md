@@ -99,18 +99,28 @@ aplicado nas 8 rotas de auth — valida `Sec-Fetch-Site` (não forjável por JS)
 fallback pra `Origin` em browsers antigos. Testado ao vivo (cross-site → 403,
 same-origin → segue normal).
 
+## Addendum — teste ao vivo com conta real (2026-08-22, mesmo dia)
+
+Usuário autorizou explicitamente a criação de uma conta de teste real. Criada
+`reangeline+test@hotmail.com` pela UI de verdade (não curl): signup → sessão automática
+(nome "Ana Teste" retornado, tokens em snake_case puro) → dashboard com dados reais → logout
+→ login manual com as mesmas credenciais → dashboard de novo. Tudo funcionou de primeira,
+sem nenhum ajuste de código necessário. Email não foi confirmado (sem acesso à caixa de
+entrada pra pegar o código).
+
 ## Critérios de aceite (ver detalhamento em `spec.md`)
 
-- [ ] Usuário consegue criar conta, confirmar por email e fazer login — implementado, não
-  testado ponta a ponta
-- [ ] Sessão persiste entre reloads — implementado, não testado ao vivo com sessão real
-- [ ] Refresh automático em token expirado — implementado, não testável sem esperar TTL real
+- [x] Usuário consegue criar conta e fazer login — testado ao vivo com conta real
+- [x] Sessão persiste entre reloads — testado ao vivo
+- [ ] Refresh automático em token expirado — implementado, ainda não testável sem esperar
+  TTL real
 - [x] `/dashboard` sem sessão redireciona pra `/login` — testado ao vivo
-- [ ] Logout limpa sessão — implementado, não testado ao vivo com sessão real
-- [x] Parser dual-case de tokens — implementado; formato de erro confirmado ao vivo, formato
-  de sucesso (tokens) ainda não
-- [ ] Chamada com token expirado dispara refresh — implementado, não testável sem TTL real
+- [x] Logout limpa sessão — testado ao vivo
+- [x] Parser dual-case de tokens — confirmado ao vivo nos dois sentidos (erro e sucesso);
+  backend só emite snake_case hoje
+- [ ] Chamada com token expirado dispara refresh — implementado, ainda não testável sem TTL
+  real
 
-**Spec não fechada** — falta o teste ponta a ponta com conta real (bloqueado por decisão do
-usuário de não criar dados reais sem combinar antes) e os itens dependentes de expiração real
-de token.
+**Spec quase fechada** — falta só o teste de expiração real de token (precisa esperar o TTL
+do access token ou provocar isso de outra forma), confirmação de email por código, e reset
+de senha.

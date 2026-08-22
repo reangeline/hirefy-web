@@ -99,13 +99,18 @@ assinatura (não tenho uma conta de teste real — mesma limitação já registr
 
 ## Critérios de aceite
 - [x] `/dashboard` mostra "Bem-vindo(a), {nome}" com o nome vindo de `GET /users/me` —
-  implementado, não testado com dado real (só com erro 401 simulado)
-- [x] Banner de verificação de email aparece só quando `email_verified` é `false` —
-  implementado, não testado com dado real
+  **testado ao vivo com conta real** (2026-08-22, `reangeline+test@hotmail.com`, autorizado
+  pelo usuário): mostrou "Bem-vindo(a), Ana" corretamente
+- [x] Banner de verificação de email aparece só quando `email_verified` é `false` — testado
+  ao vivo: a conta de teste não está confirmada, o banner apareceu como esperado
 - [x] Card de assinatura mostra Free/Premium e créditos corretos, calculados a partir de só
   `GET /subscription` (decidido não chamar `/subscription/credits` separadamente — o campo
-  `credits` já vem embutido na resposta principal, ver achado no topo desta spec) —
-  implementado, não testado com dado real
+  `credits` já vem embutido na resposta principal, ver achado no topo desta spec) — testado
+  ao vivo: mostrou "Plano Free" + "3 créditos" reais. **Nota:** `NewSubscription()` no Go
+  (`internal/core/domain/subscription.go`) cria a subscription com `Credits: 1`, não 3 — o
+  valor real observado diverge do que a leitura do código sugeria. Não investiguei a causa
+  (pode ser outra lógica de bônus no signup, ou o código mudou depois da minha leitura); não
+  afeta a spec (o card só exibe o que `GET /subscription` retorna), mas fica registrado
 - [ ] Estado vazio do card de sugestões — **não implementado nesta rodada**, continua
   bloqueado pela spec 002
 - [x] Nenhum link/botão leva a uma rota inexistente — confirmado por inspeção (só existem

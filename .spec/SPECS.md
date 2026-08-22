@@ -5,10 +5,10 @@ Escopo: só `web-app`. Os outros 3 projetos do monorepo (`backend_hirefy`, `appl
 
 | # | Nome | Status | Log |
 |---|---|---|---|
-| 001 | Auth | 🚧 Implementado, não fechado (falta teste ponta a ponta com conta real) | [log.md](001-auth/log.md) |
+| 001 | Auth | 🚧 Quase fechado — testado ao vivo com conta real (signup/login/logout); falta expiração de token, confirmação de email e reset de senha | [log.md](001-auth/log.md) |
 | 002 | Currículos e otimização com IA | 📝 Em planejamento (spec escrita, nada implementado) | [log.md](002-resume-optimization/log.md) |
 | 003 | Identidade visual (paleta mobile + home landing + toggle de tema) | 🚧 Implementado (paleta não validada com o usuário/design) | [log.md](003-visual-identity/log.md) |
-| 004 | Home pós-login (`/dashboard`) | 🚧 Parcial (cabeçalho + assinatura prontos; sugestões bloqueadas pela spec 002) | [log.md](004-dashboard-home/log.md) |
+| 004 | Home pós-login (`/dashboard`) | 🚧 Parcial, testado ao vivo com conta real (cabeçalho + assinatura); sugestões bloqueadas pela spec 002 | [log.md](004-dashboard-home/log.md) |
 
 ## Legenda
 

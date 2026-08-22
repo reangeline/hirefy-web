@@ -64,6 +64,15 @@ sobrevive a navegações client-side via router, que eu não tinha como disparar
 já presente na página). Não insisti além disso — não é um bloqueio real, só não consegui
 um preview visual do estado "com dados".
 
+## Addendum — teste ao vivo com conta real (2026-08-22, mesmo dia)
+
+Usuário autorizou criar uma conta de teste real. Não precisei mais do mock de `window.fetch`
+— usei `reangeline+test@hotmail.com` de verdade pela UI. `WelcomeHeader` e `SubscriptionCard`
+renderizaram dado real corretamente: "Bem-vindo(a), Ana", banner de verificação (conta não
+confirmada, comportamento correto), "Plano Free" + "3 créditos". Achado à parte: o valor de
+créditos observado (3) diverge do que `NewSubscription()` no Go cria por padrão (`Credits: 1`)
+— não investiguei a causa, registrado no `spec.md`.
+
 ## Próximos passos
 
 Card de sugestões de otimização continua bloqueado pela spec 002. Ordem sugerida: fechar
