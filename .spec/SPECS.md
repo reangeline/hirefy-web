@@ -7,7 +7,8 @@ Escopo: só `web-app`. Os outros 3 projetos do monorepo (`backend_hirefy`, `appl
 |---|---|---|---|
 | 001 | Auth | 🚧 Implementado, não fechado (falta teste ponta a ponta com conta real) | [log.md](001-auth/log.md) |
 | 002 | Currículos e otimização com IA | 📝 Em planejamento (spec escrita, nada implementado) | [log.md](002-resume-optimization/log.md) |
-| 003 | Identidade visual (paleta mobile + home landing) | 🚧 Implementado (dark mode não validado visualmente) | [log.md](003-visual-identity/log.md) |
+| 003 | Identidade visual (paleta mobile + home landing + toggle de tema) | 🚧 Implementado (paleta não validada com o usuário/design) | [log.md](003-visual-identity/log.md) |
+| 004 | Home pós-login (`/dashboard`) | 📝 Em planejamento (spec escrita, nada implementado) | [log.md](004-dashboard-home/log.md) |
 
 ## Legenda
 
