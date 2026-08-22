@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -48,6 +49,8 @@ export default function SignupPage() {
           <CardDescription>Otimize seu currículo com IA</CardDescription>
         </CardHeader>
         <CardContent>
+          <SocialAuthButtons />
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="name">Nome</Label>

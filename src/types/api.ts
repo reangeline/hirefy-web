@@ -32,6 +32,16 @@ export interface ConfirmForgotPasswordRequest {
 }
 
 /**
+ * Mesmo contrato usado pelo mobile (auth_service.dart: signInWithSocial). O endpoint
+ * POST /auth/social não está registrado no backend hoje — ver .spec/001-auth/spec.md.
+ */
+export interface SocialSignInRequest {
+  provider: "google" | "apple";
+  id_token: string;
+  name?: string;
+}
+
+/**
  * O backend hoje só emite snake_case em AuthResponse, mas o mobile trata as duas formas
  * defensivamente (resquício de uma versão anterior do backend) — mantemos o mesmo cuidado
  * aqui até validar contra o ambiente de dev. Ver .spec/001-auth/spec.md.

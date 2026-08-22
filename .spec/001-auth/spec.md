@@ -25,11 +25,14 @@ o backend Go.
 - `POST /auth/confirm-forgot-password` — body: `{ email, code, new_password }` → confirma o
   código e efetiva a troca de senha (endpoint separado do forgot-password; sem ele o fluxo de
   "esqueci senha" não completa)
-- `POST /auth/social` — **fora de escopo do MVP web**. O mobile chama esse endpoint
-  (`auth_service.dart`), mas ele **não está registrado no router do backend hoje**
-  (`router.go` só expõe os 6 endpoints acima) — ou seja, não é só uma decisão de escopo do
-  web, o endpoint pode nem existir ainda em produção. Confirmar com o time de backend antes de
-  qualquer trabalho futuro nessa área.
+- `POST /auth/social` — body: `{ provider: "google"|"apple", id_token, name? }` (mesmo
+  contrato do mobile, `auth_service.dart: signInWithSocial`). **Trazido de volta ao escopo**
+  a pedido do usuário (login social é como o app mobile autentica hoje), mas com uma
+  ressalva importante: **essa rota não está registrada no router do backend**
+  (confirmado de novo em 2026-08-22, `router.go` só expõe os 8 endpoints de email). O
+  Route Handler (`/api/auth/social`) e a UI (botões Google/Apple) foram implementados do
+  lado do web-app, prontos pra funcionar assim que o backend expuser a rota — até lá,
+  qualquer tentativa de login social retorna erro (provavelmente 404) vindo do backend.
 
 ### Formato de resposta — atenção
 O backend retorna as chaves de token de forma inconsistente: às vezes PascalCase
@@ -77,6 +80,23 @@ igual o client mobile já faz defensivamente.
   diferenciar os erros (ex.: `UserNotConfirmedException` como `error type`, igual já faz em
   `/auth/confirm`), revisitar esse requisito
 
+### Login social (Google/Apple)
+- Botões "Continuar com Google" e "Continuar com Apple" nas telas `/login` e `/signup`
+  (mesmo componente `SocialAuthButtons`, já que Cognito social login cria a conta no
+  primeiro acesso e loga nas seguintes — não existe uma distinção "signup social" separada)
+- **Google:** via Google Identity Services (`google.accounts.id`), botão renderizado pelo
+  próprio SDK (exigência do Google pra garantir o fluxo de ID token real). Precisa de
+  `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (OAuth Client ID tipo "Web application" no Google Cloud
+  Console, com a origem do site em "Authorized JavaScript origins")
+- **Apple:** via Sign in with Apple JS (`AppleID.auth`), botão customizado (shadcn) que
+  dispara `AppleID.auth.signIn()`. Precisa de `NEXT_PUBLIC_APPLE_CLIENT_ID` (Services ID no
+  Apple Developer, com domínio e Return URL registrados) — **não funciona em localhost**,
+  precisa de domínio HTTPS verificado
+- Sem client ID configurado, o botão aparece desabilitado (não quebra a tela)
+- Ambos enviam `POST /api/auth/social` → `{ provider, id_token, name? }` → proxy pro backend
+  `POST /auth/social` (ver achado acima: **rota não existe no backend hoje**, então mesmo com
+  os client IDs configurados, o login social não completa de ponta a ponta ainda)
+
 ### Sessão
 - Cookies: `httpOnly`, `secure`, `sameSite=lax`, `path=/`
 - Guardam `access_token`, `id_token`, `refresh_token` como vieram do backend (já são JWTs
@@ -102,7 +122,6 @@ igual o client mobile já faz defensivamente.
 - Header: `Authorization: Bearer <access_token>` (nunca `id_token`)
 
 ## Fora de escopo
-- Login social (Google/Apple) — existe no mobile, não é prioridade pro MVP web
 - MFA
 - Widgets nativos / Share Extension (específicos do mobile, não se aplicam)
 
@@ -122,6 +141,11 @@ igual o client mobile já faz defensivamente.
   não criei uma conta de teste real no Cognito de dev pra não gerar efeito colateral (usuário
   real + email de verificação enviado) sem combinar antes. Parser dual-case mantido por
   segurança; confirmar contra um signin real assim que houver uma conta de teste disponível
+- [ ] Quando o backend vai expor `POST /auth/social`? Bloqueia o fechamento do login social —
+  UI e Route Handler estão prontos, mas não testáveis de ponta a ponta sem isso
+- [ ] Credenciais reais de `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (Google Cloud Console) e
+  `NEXT_PUBLIC_APPLE_CLIENT_ID` (Apple Developer, Services ID + domínio verificado) — nenhum
+  dos dois foi criado ainda, `.env.local` está com as variáveis vazias (botões desabilitados)
 
 ## Nota de segurança (informativa, não bloqueia esta spec)
 O backend valida o JWT hoje com `ParseUnverified` (sem checar assinatura) — é uma dívida de
@@ -158,3 +182,7 @@ fechada.
   implementado (`/api/me` repassa 401, `apiFetchJson` refaz com refresh), não testado com
   expiração real
 - [ ] Usuário consegue solicitar reset de senha, confirmar o código e logar com a nova senha
+- [ ] Usuário consegue entrar via Google/Apple — **bloqueado**: UI e Route Handler
+  implementados e testados (botões renderizam, chamada chega em `/api/auth/social`), mas o
+  fluxo completo depende de (1) `POST /auth/social` existir no backend e (2) client IDs reais
+  configurados no Google Cloud Console / Apple Developer — nenhum dos dois está pronto ainda

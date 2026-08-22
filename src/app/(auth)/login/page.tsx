@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 
 export default function LoginPage() {
   return (
@@ -61,6 +62,8 @@ function LoginForm() {
           <CardDescription>Acesse sua conta Hirefy</CardDescription>
         </CardHeader>
         <CardContent>
+          <SocialAuthButtons redirectTo={searchParams.get("redirect") ?? "/dashboard"} />
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>

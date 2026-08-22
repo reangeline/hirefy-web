@@ -62,6 +62,31 @@
   estão disponíveis neste ambiente. Rodei a skill `security-review` disponível localmente
   como substituto — ver resultado abaixo.
 
+## Addendum — login social (2026-08-22, mesmo dia, a pedido do usuário)
+
+Trazido de volta ao escopo depois do usuário apontar que faltavam as opções de Google/Apple
+que existem no app mobile. Implementado:
+
+- `src/types/global.d.ts` — tipos mínimos pros SDKs carregados via `<script>` (Google
+  Identity Services, Sign in with Apple JS); nenhum dos dois tem pacote de tipos oficial
+- `src/components/auth/GoogleSignInButton.tsx` — carrega o SDK via `next/script`, renderiza
+  o botão oficial do Google (exigência deles pra garantir ID token real, não dá pra usar um
+  botão totalmente customizado nesse fluxo)
+- `src/components/auth/AppleSignInButton.tsx` — botão customizado (shadcn) que dispara
+  `AppleID.auth.signIn()`
+- `src/components/auth/SocialAuthButtons.tsx` — compõe os dois, submit compartilhado pra
+  `POST /api/auth/social`, usado em `/login` e `/signup`
+- `src/app/api/auth/social/route.ts` — Route Handler com a mesma proteção CSRF das outras
+  rotas de auth
+- `.env.local(.example)` — `NEXT_PUBLIC_GOOGLE_CLIENT_ID` e `NEXT_PUBLIC_APPLE_CLIENT_ID`,
+  ambos vazios em dev (nenhum client ID real foi criado ainda)
+
+**Não funciona de ponta a ponta** — dois bloqueios externos, nenhum resolvível só com
+código: (1) `POST /auth/social` não existe no backend, (2) nenhum client ID real foi
+configurado no Google Cloud Console / Apple Developer. Os botões aparecem desabilitados em
+dev por falta de client ID; mesmo com client ID, o passo final (`/api/auth/social` →
+backend) vai falhar até o backend implementar a rota.
+
 ## Revisão de segurança (skill `security-review`)
 
 Encontrado 1 vuln real: nenhuma rota `POST /api/auth/*` checava a origem da requisição.
