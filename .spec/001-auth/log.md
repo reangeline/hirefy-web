@@ -62,6 +62,18 @@
   estão disponíveis neste ambiente. Rodei a skill `security-review` disponível localmente
   como substituto — ver resultado abaixo.
 
+## Revisão de segurança (skill `security-review`)
+
+Encontrado 1 vuln real: nenhuma rota `POST /api/auth/*` checava a origem da requisição.
+Um site malicioso podia disparar `POST /api/auth/login` com `Content-Type: text/plain`
+(evita CORS preflight) usando credenciais do próprio atacante — o browser da vítima
+aceitava o `Set-Cookie` normalmente (`SameSite=Lax` só restringe envio em requisições
+futuras, não impede o `Set-Cookie` de uma resposta cross-site), logando a vítima sem
+saber na conta do atacante. Corrigido: `src/lib/auth/csrf.ts` (`requireSameOrigin`),
+aplicado nas 8 rotas de auth — valida `Sec-Fetch-Site` (não forjável por JS) com
+fallback pra `Origin` em browsers antigos. Testado ao vivo (cross-site → 403,
+same-origin → segue normal).
+
 ## Critérios de aceite (ver detalhamento em `spec.md`)
 
 - [ ] Usuário consegue criar conta, confirmar por email e fazer login — implementado, não
