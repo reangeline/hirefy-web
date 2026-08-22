@@ -104,6 +104,34 @@ condicional.
   pra descobrir que faltou crédito". Gestão de assinatura/billing em si fica pra spec própria
   (fora de escopo aqui)
 
+## Status de implementação (2026-08-22 — passe de UI, a pedido do usuário)
+Construídas as telas com **dados mock**, sem ligação com o backend ainda — decisão explícita
+do usuário ("começar pelo UI"), já que o formato exato de `personal`/`experiences[]`/etc não
+está confirmado (pergunta em aberto abaixo) e não fazia sentido gastar esforço acertando o
+contrato antes de validar o layout:
+- `src/app/(dashboard)/resume/page.tsx` — listagem, com estado vazio
+- `src/app/(dashboard)/resume/new/page.tsx` + `[id]/edit/page.tsx` — `ResumeForm`
+  compartilhado, com seções repetíveis (experiências/formação/projetos/idiomas,
+  adicionar/remover funcional via estado local)
+- `src/app/(dashboard)/resume/[id]/optimize/page.tsx` — formulário + simulação do job
+  assíncrono (queued → processing → completed, com temporizadores fixos no lugar do
+  polling real em `GET /resumes/optimize/jobs/{jobID}`)
+- `src/app/(dashboard)/resume/optimized/[id]/page.tsx` — resultado (score, sugestões,
+  requisitos faltando, estimativa salarial)
+- `src/types/resume.ts` + `src/lib/mock/resumes.ts` — tipos e dados fake; os tipos são uma
+  **proposta**, não o contrato confirmado do backend
+
+Nada disso chama `POST /resumes/manual`, `POST /resumes/optimize`, ou qualquer outro
+endpoint real ainda — os botões "Criar currículo"/"Otimizar" resolvem com timeout local e
+navegam com dado mock. Ligar em API de verdade é o próximo passo, depois de validar o
+layout com o usuário.
+
+Testado ao vivo (Chrome, com sessão real da spec 001): listagem, criar, editar (com
+pré-preenchimento), simulação de otimização ponta a ponta até o resultado. Um bug real foi
+encontrado e corrigido durante o teste: o `Select` de nível de idioma (Base UI) mostrava o
+valor cru (`"intermediario"`) em vez do label (`"Intermediário"`) no estado fechado — corrigido
+passando `items={LANGUAGE_LEVELS}` pro `Select.Root`, que resolve o label automaticamente.
+
 ## Fora de escopo
 - Import de PDF com parsing por IA (`parse-pdf`) — endpoint não existe no backend hoje (ver
   achado acima). Reavaliar quando o backend expuser a rota
@@ -127,14 +155,23 @@ condicional.
   acontece em `runOptimization`, não o texto retornado)
 
 ## Critérios de aceite
-- [ ] Usuário cria um currículo manual e ele aparece na listagem
-- [ ] Usuário edita um currículo manual existente
-- [ ] Usuário dispara uma otimização e vê o job em estado de progresso (sem travar a UI)
-- [ ] Polling detecta `completed` e leva o usuário pro resultado automaticamente
-- [ ] Polling detecta `failed` e mostra o erro de forma amigável (com destaque pro caso de
-  falta de crédito, se identificável)
-- [ ] Resultado otimizado exibe score, sugestões, requisitos faltando e (quando houver)
-  estimativa salarial
-- [ ] Usuário consegue excluir um currículo
+- [x] Usuário cria um currículo manual e ele aparece na listagem — **UI only**: funciona com
+  dado mock, não persiste de verdade (sem `POST /resumes/manual`)
+- [x] Usuário edita um currículo manual existente — **UI only**, mesma ressalva
+- [x] Usuário dispara uma otimização e vê o job em estado de progresso (sem travar a UI) —
+  **UI only**: simulado com `setTimeout`, não é `POST /resumes/optimize` real
+- [ ] Polling detecta `completed` e leva o usuário pro resultado automaticamente — simulado
+  (timeout fixo leva ao resultado), **polling real em `GET /resumes/optimize/jobs/{jobID}`
+  ainda não implementado**
+- [ ] Polling detecta `failed` e mostra o erro de forma amigável — não implementado (não
+  simulei o caminho de falha ainda)
+- [x] Resultado otimizado exibe score, sugestões, requisitos faltando e (quando houver)
+  estimativa salarial — implementado e testado ao vivo, com dado mock
+- [x] Usuário consegue excluir um currículo — **UI only**, remove só do estado local (sem
+  `DELETE /resumes/{id}`)
 - [ ] (Condicional — depende da pergunta em aberto sobre `parse-pdf`) Se o backend expuser a
   rota antes da implementação, incluir também o fluxo de import de PDF
+
+**Nenhum critério está de fato fechado** — todos os `[x]` acima são sobre o comportamento da
+UI isolada, não sobre o fluxo real contra o backend. Ligar em API de verdade (endpoints já
+mapeados na seção acima) é o próximo passo.

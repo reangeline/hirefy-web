@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { SubscriptionCard } from "@/components/dashboard/SubscriptionCard";
 import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader";
@@ -12,6 +15,12 @@ export default function DashboardPage() {
       </div>
       <WelcomeHeader />
       <SubscriptionCard />
+      <Link href="/resume">
+        <Button type="button" variant="outline" className="w-full gap-2 sm:w-auto">
+          <FileText className="size-4" aria-hidden="true" />
+          Meus currículos
+        </Button>
+      </Link>
     </div>
   );
 }
