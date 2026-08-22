@@ -30,6 +30,20 @@
 4. **Footer sem links fictícios** — a landing tem colunas inteiras de links `href="#"`
    (Blog, Careers, Press Kit, API Docs) que não levam a lugar nenhum. Não replicados.
 
+## Addendum — toggle de tema (2026-08-22, mesmo dia, a pedido do usuário)
+
+- Instalado `next-themes` (única dependência nova)
+- `src/components/theme-provider.tsx` — wrapper client component do `ThemeProvider`
+- `src/components/theme-toggle.tsx` — botão sol/lua; usa `useSyncExternalStore` (não
+  `useEffect` + `setState`) pra evitar mismatch de hidratação sem violar a regra de lint
+  `react-hooks/set-state-in-effect` (nova no eslint-config-next instalado, tratada como erro)
+- `layout.tsx` — `suppressHydrationWarning` no `<html>` (esperado com `next-themes`, o script
+  deles seta a classe antes da hidratação) + `ThemeProvider attribute="class" defaultTheme="system"`
+- Adicionado no `MarketingNavbar` e no header do `/dashboard`
+
+Testado ao vivo: tema seguiu o SO por padrão (estava em dark), toggle mudou pra light, reload
+manteve light (persistido em localStorage pelo próprio `next-themes`).
+
 ## Validação
 
 - `tsc --noEmit`, `npm run lint`, `npm run build` — todos limpos

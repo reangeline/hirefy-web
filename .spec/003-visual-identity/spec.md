@@ -63,14 +63,22 @@ Reescrita completa de `src/app/page.tsx`, agora composta de seções em
   não existem como páginas — eram links `href="#"` mortos na landing). Mantive só o que é
   real: home, legal (linkando pra `hirefy.careers`), contato
 
+### Toggle de tema
+- `next-themes` (`ThemeProvider` em `src/components/theme-provider.tsx`, envolvendo `children`
+  em `layout.tsx` com `attribute="class"` — mesma convenção `.dark` que o `globals.css` já usa)
+- `src/components/theme-toggle.tsx` — botão sol/lua (shadcn `Button` variant ghost), alterna
+  entre light/dark explicitamente a partir do `resolvedTheme` atual
+- `defaultTheme="system"`: sem escolha salva, segue o SO do usuário
+- Escolha persiste em `localStorage` (comportamento padrão do `next-themes`)
+- Presente no `MarketingNavbar` (home) e no header do `/dashboard`; não adicionado nas telas
+  de auth (login/signup/etc) — telas transitórias, escolha pode ser feita a partir da home ou
+  do dashboard
+
 ## Fora de escopo
 - Testimonials, Pricing, FAQ (existem na `hirefy_lading` mas não fazem sentido na home do
   app — pricing/FAQ de produto pago é conversa pra quando o billing web existir)
-- Dark mode toggle — os tokens `.dark` existem e funcionam (testados no build), mas não há
-  nenhum switch de tema na UI ainda; depende de `prefers-color-scheme` ou de alguém adicionar
-  a classe `.dark` manualmente
-- Restyle do `/dashboard` (área logada) — só a home pública e as telas de auth (que já usavam
-  shadcn desde a spec 001) foram tocadas aqui
+- Restyle do `/dashboard` (área logada) além do toggle de tema — só a home pública e as telas
+  de auth (que já usavam shadcn desde a spec 001) foram tocadas aqui
 
 ## Critérios de aceite
 - [x] Cores do web-app (light) batem com `AppTheme.lightTheme` do mobile — validado
@@ -79,8 +87,10 @@ Reescrita completa de `src/app/page.tsx`, agora composta de seções em
 - [x] Home page (`/`) tem estrutura de landing (nav, hero, problema, recursos, como
   funciona, CTA, footer) em vez da home genérica anterior
 - [x] Build, lint e type-check passam limpos
-- [ ] Dark mode não foi testado visualmente (só validado que o build não quebra) — falta
-  screenshot real com `.dark` aplicado
+- [x] Dark mode testado visualmente ao vivo (Chrome) — cores corretas, toggle alterna e
+  persiste depois de recarregar a página
+- [x] Toggle de tema funcional no navbar da home e no dashboard, detecta preferência do SO
+  por padrão (`defaultTheme="system"`)
 - [ ] Paleta não foi validada com o usuário/design antes de implementar (implementação
   direta a partir do `theme.dart`, sem mockup prévio) — pode precisar de ajuste fino depois
   de review visual
