@@ -19,18 +19,22 @@ atalhos pras ações principais — já com a identidade visual da spec 003 (sha
 
 ## Endpoints consumidos (backend, base `/api/v1`)
 - `GET /users/me` — nome, `email_verified` (já usado pelo proxy `/api/me` da spec 001)
-- `GET /subscription` — `{ plan: "free"|"premium", is_active, features, ... }`
-- `GET /subscription/credits` — `{ credits: number }`
+- `GET /subscription` — confirmado no código (`internal/core/domain/subscription.go` +
+  `subscription_handler.go`): `{ id?, user_id?, plan, status, credits?, current_period_end?, ... }`.
+  **`credits` já vem embutido nessa resposta** — não é preciso chamar `GET /subscription/credits`
+  separadamente só pra mostrar o saldo no dashboard (essa rota existe e retorna praticamente o
+  mesmo dado + histórico de transações, útil pra uma tela de billing futura, não pra esta spec)
 - `GET /resumes` + `GET /resumes/optimized` — necessários só pro card de sugestões (ver
   dependência de escopo abaixo)
 
-### ⚠️ Achado — `isPro` no mobile não vem do backend
+### ⚠️ Achado — `isPro` no mobile não vem do backend, e o backend não expõe `is_active`
 O mobile decide `isPro` consultando o **RevenueCat** (`_revenueCatService.getSubscriptionStatus()`),
-não o campo `plan`/`is_active` que `GET /subscription` retorna diretamente. Isso é coerente com o
-billing do mobile (App Store), mas **não se aplica à web** — `web-app/CLAUDE.md` já proíbe usar
-RevenueCat aqui ("Billing web é 100% Stripe"). O web-app precisa derivar o status de assinatura
-direto da resposta do backend: `plan === "premium" && is_active` (é literalmente o getter
-`isPremium` que já existe no model Dart, só não é a fonte usada pelo provider mobile).
+não o campo `plan`/`status` que `GET /subscription` retorna. Isso é coerente com o billing do
+mobile (App Store), mas **não se aplica à web** — `web-app/CLAUDE.md` já proíbe usar RevenueCat
+aqui ("Billing web é 100% Stripe"). Além disso, `IsActive()` no Go (`internal/core/domain/subscription.go`)
+é um **método**, não um campo com `json:"is_active"` — não vem serializado na resposta.
+O web-app precisa calcular a premium-ness sozinho a partir do que a resposta realmente traz:
+`plan !== "free" && status === "active"`.
 
 ## Requisitos
 
@@ -76,14 +80,33 @@ direto da resposta do backend: `plan === "premium" && is_active` (é literalment
 ## Perguntas em aberto
 - [ ] Vale a pena adicionar uma rota de notificações no backend (`GET /notifications`) pra
   viabilizar esse recurso na web também, ou fica mobile-only por design?
-- [ ] O card de "Fazer upgrade" deve ficar desabilitado, escondido, ou levar a uma página
-  "em breve" até a spec de billing existir?
+- [x] O card de "Fazer upgrade" deve ficar desabilitado, escondido, ou levar a uma página
+  "em breve" até a spec de billing existir? — decidido: **desabilitado** com
+  `title="Em breve"`, mesmo padrão já usado pros botões de login social sem client ID
+  configurado (spec 001)
+
+## Status de implementação
+Implementado o que não depende de outras specs: `WelcomeHeader` (nome + banner de
+verificação condicional), `SubscriptionCard` (plano + créditos, `isPremium` calculado no
+client já que o backend não serializa isso). Route Handler novo: `GET /api/subscription`
+(proxy simples, mesmo padrão do `/api/me`). `MeCard` (spec 001, só prova de conceito) foi
+removido — substituído pelo `WelcomeHeader`, que cumpre o mesmo papel com UI de verdade.
+
+Build/lint/type-check limpos. Testado ao vivo: `/dashboard` sem sessão redireciona;
+com um cookie de sessão forjado (token inválido), os dois cards mostram o erro 401 de
+forma correta, sem quebrar a tela. **Não testado**: o caminho de sucesso com dados reais de
+assinatura (não tenho uma conta de teste real — mesma limitação já registrada na spec 001).
 
 ## Critérios de aceite
-- [ ] `/dashboard` mostra "Bem-vindo(a), {nome}" com o nome vindo de `GET /users/me`
-- [ ] Banner de verificação de email aparece só quando `email_verified` é `false`
-- [ ] Card de assinatura mostra Free/Premium e créditos corretos, calculados a partir de
-  `GET /subscription` + `GET /subscription/credits` (sem RevenueCat)
-- [ ] Estado vazio do card de sugestões aparece corretamente (sem dado real ainda)
-- [ ] Nenhum link/botão leva a uma rota inexistente (nada de dead links pros recursos fora
-  de escopo)
+- [x] `/dashboard` mostra "Bem-vindo(a), {nome}" com o nome vindo de `GET /users/me` —
+  implementado, não testado com dado real (só com erro 401 simulado)
+- [x] Banner de verificação de email aparece só quando `email_verified` é `false` —
+  implementado, não testado com dado real
+- [x] Card de assinatura mostra Free/Premium e créditos corretos, calculados a partir de só
+  `GET /subscription` (decidido não chamar `/subscription/credits` separadamente — o campo
+  `credits` já vem embutido na resposta principal, ver achado no topo desta spec) —
+  implementado, não testado com dado real
+- [ ] Estado vazio do card de sugestões — **não implementado nesta rodada**, continua
+  bloqueado pela spec 002
+- [x] Nenhum link/botão leva a uma rota inexistente — confirmado por inspeção (só existem
+  `WelcomeHeader` e `SubscriptionCard`, sem quick actions/sugestões ainda)

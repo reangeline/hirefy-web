@@ -69,3 +69,27 @@ export interface BackendErrorBody {
   error?: string;
   message?: string;
 }
+
+// Ver internal/adapters/inbound/http/handler/user_handler.go (GetMe)
+export interface MeResponse {
+  id: string;
+  email: string;
+  name: string;
+  email_verified: boolean;
+}
+
+/**
+ * Ver internal/core/domain/subscription.go e subscription_handler.go (GetSubscription).
+ * Quando o usuário não tem subscription no banco, o backend retorna só
+ * { plan: "free", status: "active" } (sem credits/id) — por isso os campos extras são opcionais.
+ * `is_active` NÃO existe no JSON (é um método Go, `IsActive()`, não serializado) — a
+ * premium-ness precisa ser calculada no client a partir de plan+status, nunca lida direto.
+ */
+export interface SubscriptionResponse {
+  id?: string;
+  user_id?: string;
+  plan: "free" | "basic" | "premium";
+  status: "active" | "canceled" | "expired" | "past_due";
+  credits?: number;
+  current_period_end?: string;
+}
