@@ -26,13 +26,16 @@ o backend Go.
   código e efetiva a troca de senha (endpoint separado do forgot-password; sem ele o fluxo de
   "esqueci senha" não completa)
 - `POST /auth/social` — body: `{ provider: "google"|"apple", id_token, name? }` (mesmo
-  contrato do mobile, `auth_service.dart: signInWithSocial`). **Trazido de volta ao escopo**
-  a pedido do usuário (login social é como o app mobile autentica hoje), mas com uma
-  ressalva importante: **essa rota não está registrada no router do backend**
-  (confirmado de novo em 2026-08-22, `router.go` só expõe os 8 endpoints de email). O
-  Route Handler (`/api/auth/social`) e a UI (botões Google/Apple) foram implementados do
-  lado do web-app, prontos pra funcionar assim que o backend expuser a rota — até lá,
-  qualquer tentativa de login social retorna erro (provavelmente 404) vindo do backend.
+  contrato do mobile, `auth_service.dart: signInWithSocial`).
+
+  **✅ Resolvido em 2026-08-23:** o usuário fez push de um branch antigo do
+  `backend_hirefy` que implementa essa rota de verdade (`authHandler.SocialSignIn`,
+  `internal/adapters/outbound/auth/cognito/social_auth.go` +
+  `internal/adapters/outbound/auth/social/token_validator.go`). Contrato confere
+  exatamente com o que o web-app já implementava (`{provider, id_token, name?}`) — nenhuma
+  mudança de código necessária do lado do web. O bloqueio que restava era só os client IDs
+  reais (Google Cloud Console / Apple Developer), que continuam pendentes — ver Perguntas em
+  aberto.
 
 ### Formato de resposta — atenção
 O backend retorna as chaves de token de forma inconsistente: às vezes PascalCase
@@ -94,8 +97,8 @@ igual o client mobile já faz defensivamente.
   precisa de domínio HTTPS verificado
 - Sem client ID configurado, o botão aparece desabilitado (não quebra a tela)
 - Ambos enviam `POST /api/auth/social` → `{ provider, id_token, name? }` → proxy pro backend
-  `POST /auth/social` (ver achado acima: **rota não existe no backend hoje**, então mesmo com
-  os client IDs configurados, o login social não completa de ponta a ponta ainda)
+  `POST /auth/social`, que **agora existe e está correto** (ver achado acima). Único bloqueio
+  restante: os client IDs reais do Google/Apple ainda não foram criados
 
 ### Sessão
 - Cookies: `httpOnly`, `secure`, `sameSite=lax`, `path=/`
@@ -140,8 +143,8 @@ igual o client mobile já faz defensivamente.
   vieram em **snake_case puro**, sem PascalCase em lugar nenhum — o parser dual-case
   continua no código por segurança (custo baixo), mas na prática o backend hoje só emite
   o formato moderno
-- [ ] Quando o backend vai expor `POST /auth/social`? Bloqueia o fechamento do login social —
-  UI e Route Handler estão prontos, mas não testáveis de ponta a ponta sem isso
+- [x] Quando o backend vai expor `POST /auth/social`? — resolvido em 2026-08-23, rota existe
+  e o contrato bate com a implementação do web
 - [ ] Credenciais reais de `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (Google Cloud Console) e
   `NEXT_PUBLIC_APPLE_CLIENT_ID` (Apple Developer, Services ID + domínio verificado) — nenhum
   dos dois foi criado ainda, `.env.local` está com as variáveis vazias (botões desabilitados)
@@ -188,7 +191,7 @@ testado ao vivo.
   implementado (`/api/me` repassa 401, `apiFetchJson` refaz com refresh), ainda não testado
   com expiração real
 - [ ] Usuário consegue solicitar reset de senha, confirmar o código e logar com a nova senha
-- [ ] Usuário consegue entrar via Google/Apple — **bloqueado**: UI e Route Handler
-  implementados e testados (botões renderizam, chamada chega em `/api/auth/social`), mas o
-  fluxo completo depende de (1) `POST /auth/social` existir no backend e (2) client IDs reais
-  configurados no Google Cloud Console / Apple Developer — nenhum dos dois está pronto ainda
+- [ ] Usuário consegue entrar via Google/Apple — backend agora pronto (✅ resolvido acima),
+  mas ainda **bloqueado por 1 item**: faltam os client IDs reais (Google Cloud Console /
+  Apple Developer). Sem eles os botões continuam desabilitados — nenhum teste ao vivo do
+  fluxo social foi feito ainda

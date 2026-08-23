@@ -58,9 +58,22 @@ completa entre todas as telas, criar/adicionar itens repetíveis, simulação de
 o resultado — tudo funcionando. **Nada está ligado no backend** — é puramente uma camada de
 UI/estado local por cima de dados fake, documentado como tal na spec.
 
+## Addendum — backend ganhou parse-pdf + shape real confirmado (2026-08-23)
+
+Push de um branch antigo do `backend_hirefy` trouxe `POST /resumes/parse-pdf` de verdade
+(rota pública, sem auth) e, ao ler `ai_service_impl.go` (prompt da IA), o shape exato de
+`personal`/`experiences[]`/`education[]`/`projects[]`/`languages[]` — resolve as duas
+maiores perguntas em aberto desta spec de uma vez. Detalhes completos no `spec.md`.
+
+**Achado que gera trabalho:** o shape real (`full_name`, `current_role`, `country`/`state`/
+`city` separados, `url` em vez de `link`, `language`/`proficiency` em vez de `name`/`level`)
+diverge do que o passe de UI mock assumiu ontem. `src/types/resume.ts` e `ResumeForm.tsx`
+vão precisar de ajuste antes de ligar na API — não documentei isso como bloqueio grave
+porque é um refactor mecânico, não uma decisão de arquitetura nova.
+
 ## Próximos passos
 
-Ligar as telas no backend de verdade: resolver a pergunta em aberto sobre o formato exato de
-`ManualResumeRequestDTO` antes de trocar o form mock por `POST /resumes/manual` real,
-implementar o polling real em `GET /resumes/optimize/jobs/{jobID}`, e resolver a pergunta
-sobre `parse-pdf` com o time de backend.
+Ligar as telas no backend de verdade: ajustar `types/resume.ts`/`ResumeForm.tsx` pro shape
+real, trocar o form mock por `POST /resumes/manual`, implementar o polling real em
+`GET /resumes/optimize/jobs/{jobID}`, e construir a tela de import de PDF (endpoint pronto,
+UI ainda não existe).

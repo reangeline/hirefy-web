@@ -124,3 +124,13 @@ entrada pra pegar o código).
 **Spec quase fechada** — falta só o teste de expiração real de token (precisa esperar o TTL
 do access token ou provocar isso de outra forma), confirmação de email por código, e reset
 de senha.
+
+## Addendum — backend ganhou `/auth/social` (2026-08-23)
+
+Usuário fez push de um branch antigo do `backend_hirefy` (`git pull`, fast-forward,
+53 arquivos). Entre outras coisas, implementa `POST /auth/social` de verdade
+(`authHandler.SocialSignIn` + `internal/adapters/outbound/auth/cognito/social_auth.go` +
+`internal/adapters/outbound/auth/social/token_validator.go`). Contrato bate exatamente com
+o que o web-app já tinha implementado — zero mudança de código necessária, só atualizei a
+spec removendo a marcação de bloqueio. Único bloqueio real que resta é externo (client IDs
+do Google/Apple), não depende de mais nenhum código.

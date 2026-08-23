@@ -10,24 +10,44 @@ onde não há push notification nativo (FCM) pra avisar quando o job termina.
 Depende de `.spec/001-auth/spec.md` já implementada (sessão via cookie + `Authorization:
 Bearer <access_token>` em toda chamada abaixo).
 
-## ⚠️ Achado importante — endpoint principal de import de PDF não existe no backend hoje
-O app mobile tem uma tela de "Import PDF Resume" (`resume_pdf_upload_screen.dart`) que é,
-pela UX, o caminho mais usado pra criar um currículo. Ela chama
-`POST /api/v1/resumes/parse-pdf` (multipart, campo `file`) — **essa rota não está registrada
-em `router.go`** e não existe em nenhum outro arquivo do backend (`grep` completo no repo não
-encontrou `parse-pdf` nem handler `ParsePdf`). Ou seja, hoje esse fluxo provavelmente está
-quebrado até no mobile, não é uma decisão consciente de escopo.
+## ✅ Resolvido em 2026-08-23 — import de PDF agora existe, e resolve a pergunta do shape
+O usuário fez push de um branch antigo do `backend_hirefy` que implementa
+`POST /resumes/parse-pdf` de verdade (`resumeHandler.ParsePDFResume`, multipart, campo
+`file`, até 10MB). Dois achados importantes:
 
-**Implicação pra essa spec:** não dá pra "replicar o mobile" nesse ponto porque o mobile não
-tem um backend funcional pra copiar. Duas opções:
-1. Web MVP entra só com currículo manual (`POST /resumes/manual`, endpoint real e testado) e
-   o import de PDF fica pra quando o backend tiver a rota `parse-pdf` implementada
-2. Confirmar com o backend antes de começar — se a rota for pra sair em breve, dá pra
-   desenhar a tela de upload já esperando o contrato (multipart, campo `file`) mesmo sem
-   poder testar contra um servidor real ainda
+1. **É rota pública, sem autenticação** (registrada antes do grupo com `AuthMiddleware` em
+   `router.go`) — bate com a UX que a landing anuncia ("score de ATS grátis, sem criar
+   conta"). O web pode oferecer isso até na home, antes do signup.
+2. **A resposta não é persistida** — `ParsePDFResume` no service
+   (`resume_optimizer_service_impl.go`) gera um `id` temporário e não grava nada no banco.
+   É só um preview: o client recebe o currículo parseado + `ats_score` +
+   `ats_improvements`, mostra pro usuário, e só se ele quiser salvar de verdade é que precisa
+   chamar `POST /resumes/manual` separadamente com os mesmos dados.
 
-Assumindo opção 1 como default até confirmação — ver critério de aceite marcado como
-condicional.
+**Isso também resolve a pergunta em aberto sobre o shape de `personal`/`experiences[]`/etc**
+(ver seção "Requisitos" → "Criar/editar currículo manual"): o prompt da IA em
+`ai_service_impl.go` (`ParseResumeFromText`) define o schema exato que `parse-pdf` retorna —
+e como o próprio código comenta, é "shaped like a manual resume", ou seja, o mesmo shape que
+`POST /resumes/manual` espera receber.
+
+### Shape real de `parsed_data` (confirmado no prompt da IA, não é mais suposição)
+```
+personal: {
+  full_name, email, phone, current_role, country, state, city,
+  linkedin_url, website_url, github_url, summary   // todos string | null
+}
+experiences: [{ role, company, start_date, end_date, is_current, description }]
+education: [{ institution, degree, start_date, end_date, is_current }]
+projects: [{ name, url, description }]
+languages: [{ language, proficiency }]
+ats_score: number        // 0–100
+ats_improvements: string[]
+```
+**Diverge do que a UI mock (spec 002, passe de UI de 2026-08-22) assumiu** —
+`src/types/resume.ts` usa `fullName`/`link`/`name`+`level` em vez de
+`full_name`/`url`/`language`+`proficiency`, e não tem `current_role`/`country`/`state`/`city`
+separados (só um `location` genérico). **Precisa de refactor nos tipos e no formulário antes
+de ligar na API de verdade** — não é só trocar a chamada, os campos do form também mudam.
 
 ## Endpoints consumidos (backend, base `/api/v1`, todos autenticados)
 - `POST /resumes/manual` — body: `{ nickname?, personal, experiences[], education[],
@@ -71,9 +91,21 @@ condicional.
 - Estado vazio: CTA pra criar o primeiro currículo
 
 ### Criar/editar currículo manual (`/resume/new`, `/resume/[id]/edit`)
-- Formulário estruturado: dados pessoais, experiências, formação, projetos, idiomas
-  (mesmos campos aceitos por `ManualResumeRequestDTO` no backend)
+- Formulário estruturado: dados pessoais, experiências, formação, projetos, idiomas — campos
+  exatos definidos na seção "Shape real de `parsed_data`" acima
 - Salvar chama `POST /resumes/manual` (criação) ou `PUT /resumes/manual/{id}` (edição)
+
+### Import de PDF (`/resume/new` — opção alternativa ao formulário manual)
+- Upload de PDF → `POST /resumes/parse-pdf` (multipart, campo `file`, até 10MB) — **rota
+  pública, não precisa de sessão**
+- Mostra o resultado parseado (score de ATS + sugestões + dados extraídos) como preview —
+  a chamada **não salva nada**, é só parsing
+- Usuário revisa/edita os campos extraídos (reaproveitar o mesmo formulário de
+  criar/editar manual, pré-preenchido) e só persiste de fato ao confirmar, via
+  `POST /resumes/manual`
+- Por ser rota pública, dá pra considerar oferecer essa prévia (score de ATS grátis) direto
+  na home (`/`), antes do signup — igual a landing anuncia ("Try it before even creating an
+  account"). Decisão de produto, não obrigatório pra fechar esta spec
 
 ### Otimizar currículo (`/resume/[id]/optimize` ou modal a partir da listagem)
 - Formulário: descrição da vaga (obrigatório), empresa alvo e cargo alvo (opcionais)
@@ -133,8 +165,6 @@ valor cru (`"intermediario"`) em vez do label (`"Intermediário"`) no estado fec
 passando `items={LANGUAGE_LEVELS}` pro `Select.Root`, que resolve o label automaticamente.
 
 ## Fora de escopo
-- Import de PDF com parsing por IA (`parse-pdf`) — endpoint não existe no backend hoje (ver
-  achado acima). Reavaliar quando o backend expuser a rota
 - Otimização para LinkedIn (`POST /resumes/linkedin/optimize`) — feature separada
   (carousel/formato próprio), spec própria futura
 - Gestão de assinatura/billing/checkout Stripe (`/subscription`, `/subscription/checkout`) —
@@ -142,12 +172,13 @@ passando `items={LANGUAGE_LEVELS}` pro `Select.Root`, que resolve o label automa
 - Upload "cru" via `POST /resumes` (`{ content }`) — não usado pelo mobile, contrato incerto
 
 ## Perguntas em aberto
-- [ ] Confirmar com o backend se/quando `POST /resumes/parse-pdf` (multipart) vai existir —
-  define se dá pra desenhar a tela de import de PDF nesta spec ou só na manual
-- [ ] Formato exato de `personal`, `experiences[]`, `education[]`, `projects[]`,
-  `languages[]` dentro de `ManualResumeRequestDTO` — backend aceita `map[string]interface{}`
-  genérico; levantar o shape real usado pelo mobile (`resume_manual_form.dart`) antes de
-  desenhar o formulário
+- [x] Confirmar com o backend se/quando `POST /resumes/parse-pdf` vai existir — resolvido
+  em 2026-08-23, rota pública já existe
+- [x] Formato exato de `personal`/`experiences[]`/`education[]`/`projects[]`/`languages[]` —
+  resolvido em 2026-08-23, via o prompt da IA em `ai_service_impl.go` (ver shape acima).
+  Ainda não confirmado se `POST /resumes/manual` (o endpoint de fato, diferente do
+  `parse-pdf`) valida/espera exatamente esse mesmo shape ou é mais permissivo — o comentário
+  no código sugere que sim ("shaped like a manual resume"), mas vale testar antes de fechar
 - [ ] Tempo médio real de processamento do job (pra calibrar intervalo/timeout do polling —
   mobile usa 5s/24 tentativas pro LinkedIn, mas é fluxo diferente)
 - [ ] Mensagem de erro exata que a worker grava em `job.error` quando falha por falta de
@@ -169,8 +200,8 @@ passando `items={LANGUAGE_LEVELS}` pro `Select.Root`, que resolve o label automa
   estimativa salarial — implementado e testado ao vivo, com dado mock
 - [x] Usuário consegue excluir um currículo — **UI only**, remove só do estado local (sem
   `DELETE /resumes/{id}`)
-- [ ] (Condicional — depende da pergunta em aberto sobre `parse-pdf`) Se o backend expuser a
-  rota antes da implementação, incluir também o fluxo de import de PDF
+- [ ] Usuário consegue importar um PDF, ver o preview (score + dados extraídos) e confirmar
+  pra salvar — **não implementado ainda**, endpoint liberado em 2026-08-23, UI a construir
 
 **Nenhum critério está de fato fechado** — todos os `[x]` acima são sobre o comportamento da
 UI isolada, não sobre o fluxo real contra o backend. Ligar em API de verdade (endpoints já
