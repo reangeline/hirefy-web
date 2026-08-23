@@ -41,6 +41,22 @@ export function postBackend(path: string, body: unknown): Promise<unknown> {
   return callBackend(path, { method: "POST", body: JSON.stringify(body) });
 }
 
+/**
+ * POST multipart/form-data — usa fetch direto, sem passar por `callBackend`, porque não
+ * podemos forçar `Content-Type: application/json` aqui (o multipart precisa do boundary que
+ * o próprio fetch gera a partir do FormData).
+ */
+export async function postMultipartBackend(path: string, formData: FormData): Promise<unknown> {
+  const res = await fetch(`${API_BASE_URL}/api/v1${path}`, { method: "POST", body: formData });
+  const body = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new BackendError(res.status, body as BackendErrorBody);
+  }
+
+  return body;
+}
+
 function authedCallBackend(
   path: string,
   accessToken: string,

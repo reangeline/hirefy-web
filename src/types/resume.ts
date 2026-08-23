@@ -62,6 +62,34 @@ export interface ManualResumeRequest {
   education: EducationEntry[];
   projects: ProjectEntry[];
   languages: LanguageEntry[];
+  // Preenchidos quando o currículo veio de um import de PDF (POST /resumes/parse-pdf) — o
+  // backend aceita esses campos opcionais em ManualResumeRequestDTO e preserva o score.
+  ats_score?: number;
+  ats_improvements?: string[];
+}
+
+// Campos crus que a IA devolve pra cada item de array — sem `id` (isso é só convenção do
+// nosso form, o parse-pdf não sabe disso).
+type RawExperience = Omit<ExperienceEntry, "id">;
+type RawEducation = Omit<EducationEntry, "id">;
+type RawProject = Omit<ProjectEntry, "id">;
+type RawLanguage = Omit<LanguageEntry, "id">;
+
+// Resposta de POST /resumes/parse-pdf — NÃO é persistida (id é temporário, não é um Resume
+// de verdade). Ver ParsePDFResume em resume_optimizer_service_impl.go.
+export interface ParsedPdfResult {
+  id: string;
+  type: "manual";
+  created_at: string;
+  parsed_data: {
+    personal?: PersonalInfo;
+    experiences?: RawExperience[];
+    education?: RawEducation[];
+    projects?: RawProject[];
+    languages?: RawLanguage[];
+    ats_score?: number;
+    ats_improvements?: string[];
+  };
 }
 
 export interface ParsedResumeData {
@@ -177,5 +205,28 @@ export function resumeToFormData(resume: Resume): ManualResumeRequest {
     education: d.education?.length ? d.education : [emptyEducation()],
     projects: d.projects ?? [],
     languages: d.languages?.length ? d.languages : [emptyLanguage()],
+  };
+}
+
+/**
+ * Converte o `parsed_data` de POST /resumes/parse-pdf (sem `id` nos itens, vem cru da IA)
+ * pro shape editável do formulário — atribui um `id` local a cada item de array.
+ */
+export function parsedPdfToFormData(parsed: ParsedPdfResult["parsed_data"]): ManualResumeRequest {
+  return {
+    nickname: "",
+    personal: parsed.personal ?? {},
+    experiences: parsed.experiences?.length
+      ? parsed.experiences.map((e) => ({ id: uid("exp"), ...e }))
+      : [emptyExperience()],
+    education: parsed.education?.length
+      ? parsed.education.map((e) => ({ id: uid("edu"), ...e }))
+      : [emptyEducation()],
+    projects: parsed.projects?.map((p) => ({ id: uid("proj"), ...p })) ?? [],
+    languages: parsed.languages?.length
+      ? parsed.languages.map((l) => ({ id: uid("lang"), ...l }))
+      : [emptyLanguage()],
+    ats_score: parsed.ats_score,
+    ats_improvements: parsed.ats_improvements,
   };
 }

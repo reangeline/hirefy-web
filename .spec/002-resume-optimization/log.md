@@ -100,7 +100,35 @@ Sequência completa, sem nenhum ajuste de código durante o teste:
    oculto corretamente
 6. `DELETE /resumes/{id}` — removeu de verdade, lista voltou ao estado vazio
 
+## Addendum — import de PDF implementado e testado ao vivo (2026-08-23)
+
+Construído o fluxo completo: `postMultipartBackend()` (nova, em `backend.ts` — `callBackend`
+força `Content-Type: application/json`, incompatível com multipart), Route Handler
+`/api/resumes/parse-pdf` (proxy da rota pública, com CSRF mesmo sem exigir sessão),
+`PdfImportUpload.tsx` (upload + chamada direta, sem `apiFetchJson`), `ParsedPdfResult` +
+`parsedPdfToFormData()` em `types/resume.ts`, e `resume/new/page.tsx` reescrita com máquina
+de estado (`choose | manual | pdf-upload | pdf-review`) oferecendo import de PDF como
+alternativa ao formulário manual.
+
+**Bug real encontrado ao testar com um PDF de verdade:** campos de data (Início/Fim de
+experiência e formação) usavam `<Input type="month">`, que só aceita `YYYY-MM` e mostra em
+branco pra qualquer outro formato — mas a IA extrai datas em texto livre ("Janeiro 2022").
+Corrigido trocando pra `<Input type="text">` com placeholder de exemplo, em ambos
+`ExperienceFields` e `EducationFields` (`ResumeForm.tsx`).
+
+Gerei um PDF de teste real localmente (`textutil` + `cupsfilter`, currículo fabricado de
+"Ana Teste") e testei ao vivo no Chrome: upload → `POST /resumes/parse-pdf` real → IA
+extraiu tudo certo (score 74%, 5 sugestões de ATS, dados pessoais, 2 experiências, 1
+formação, 2 idiomas) → datas aparecendo corretamente após o fix → revisão no form →
+`POST /resumes/manual` → currículo salvo e visível na listagem → excluído em seguida (dado
+de teste).
+
+**Achado menor, não corrigido:** proficiência de idioma extraída às vezes sem acento
+(`"Avancado"`) não bate com a chave do `Select` (`"Avançado"`), fica sem seleção visual no
+dropdown — baixa prioridade, não afeta o salvamento do valor.
+
 ## Próximos passos
 
-Testar o caminho de falha (crédito insuficiente) de propósito, e construir a tela de import
-de PDF (`POST /resumes/parse-pdf`, endpoint pronto desde 2026-08-23, UI ainda não existe).
+Testar o caminho de falha (crédito insuficiente) de propósito. Considerar oferecer o preview
+de PDF (score de ATS grátis) direto na home, antes do signup, como a landing anuncia —
+decisão de produto, registrada na spec mas não obrigatória.

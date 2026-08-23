@@ -214,8 +214,45 @@ restante). Detalhes completos + resultado do teste ao vivo nos Critérios de ace
   provavelmente `false` pro currículo de teste, quase vazio) — o card ficou oculto
   corretamente, sem quebrar
 - [x] Usuário consegue excluir um currículo — testado ao vivo, `DELETE /resumes/{id}` real
-- [ ] Usuário consegue importar um PDF, ver o preview (score + dados extraídos) e confirmar
-  pra salvar — **não implementado ainda**, endpoint liberado em 2026-08-23, UI a construir
+- [x] Usuário consegue importar um PDF, ver o preview (score + dados extraídos) e confirmar
+  pra salvar — **implementado e testado ao vivo em 2026-08-23** (ver seção "Import de PDF"
+  abaixo)
+
+## Import de PDF — implementado e testado ao vivo (2026-08-23)
+- `src/lib/api/backend.ts` — nova `postMultipartBackend()`: `callBackend()` força
+  `Content-Type: application/json`, o que quebra multipart (precisa do boundary que só o
+  próprio `fetch` gera a partir do `FormData`), então essa função crua bypassa o wrapper
+- `src/app/api/resumes/parse-pdf/route.ts` — novo Route Handler, proxy da rota pública
+  (com `requireSameOrigin()` de CSRF do mesmo jeito que as outras rotas de state-changing,
+  mesmo o backend não exigindo sessão aqui)
+- `src/components/resume/PdfImportUpload.tsx` — upload (limite de 10MB checado no client
+  também, espelhando o do backend), chama `POST /api/resumes/parse-pdf` direto via `fetch`
+  (não usa `apiFetchJson`, que é pra rotas autenticadas com refresh em 401 — não se aplica
+  aqui)
+- `src/types/resume.ts` — `ParsedPdfResult` + `parsedPdfToFormData()` (converte o preview
+  pro mesmo shape de `ManualResumeRequest`, gerando IDs locais pros itens de lista)
+- `src/app/(dashboard)/resume/new/page.tsx` — reescrita com máquina de estado de modo
+  (`choose | manual | pdf-upload | pdf-review`): tela inicial oferece as duas opções lado a
+  lado, e o preview do PDF (score + sugestões de ATS) aparece num card acima do mesmo
+  `ResumeForm` já usado pro fluxo manual, pré-preenchido — usuário revisa/edita e só persiste
+  ao clicar "Criar currículo" (`POST /resumes/manual`, nada é salvo automaticamente)
+
+**Bug real encontrado e corrigido durante o teste ao vivo:** os campos de Início/Fim de
+experiência e formação usavam `<Input type="month">`, que exige o formato `YYYY-MM` e mostra
+em branco silenciosamente pra qualquer outro valor. A IA extrai datas em texto livre (ex.:
+"Janeiro 2022"), então esses campos ficavam vazios mesmo com o dado certo presente no estado
+do form. Corrigido trocando por `<Input type="text">` com placeholder de exemplo (`"Ex: Jan
+2022"` / `"Ex: Dez 2023"`) em `ResumeForm.tsx` (`ExperienceFields` e `EducationFields`).
+
+**Achado menor, não corrigido (baixa prioridade):** o nível de idioma extraído pela IA às
+vezes vem sem acento (`"Avancado"`), que não bate com a chave exata do `Select`
+(`"Avançado"`) — o campo fica sem opção selecionada no dropdown, mas o valor de texto
+original não se perde (só não aparece marcado visualmente). Não afeta o fluxo de salvar.
+
+Testado ao vivo de ponta a ponta com um PDF real gerado localmente: upload → parse via IA
+real (score 74%, 5 sugestões, todos os campos pessoais/experiências/formação/idiomas
+extraídos corretamente) → revisão no formulário → `POST /resumes/manual` → apareceu na
+listagem → excluído em seguida (dado de teste).
 
 ## Status: loop principal fechado, testado ao vivo (2026-08-23)
 `types/resume.ts` reescrito pro shape real (confirmado no `resume_handler.go` +

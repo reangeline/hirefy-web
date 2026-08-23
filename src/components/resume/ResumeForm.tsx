@@ -353,7 +353,7 @@ function ExperienceFields({
       <div className="space-y-1.5">
         <Label>Início</Label>
         <Input
-          type="month"
+          placeholder="Ex: Jan 2022"
           value={item.start_date}
           onChange={(e) => onChange({ ...item, start_date: e.target.value })}
         />
@@ -361,7 +361,7 @@ function ExperienceFields({
       <div className="space-y-1.5">
         <Label>Fim</Label>
         <Input
-          type="month"
+          placeholder="Ex: Dez 2023"
           disabled={item.is_current}
           value={item.end_date}
           onChange={(e) => onChange({ ...item, end_date: e.target.value })}
@@ -411,7 +411,7 @@ function EducationFields({
       <div className="space-y-1.5">
         <Label>Início</Label>
         <Input
-          type="month"
+          placeholder="Ex: Jan 2022"
           value={item.start_date}
           onChange={(e) => onChange({ ...item, start_date: e.target.value })}
         />
@@ -419,7 +419,7 @@ function EducationFields({
       <div className="space-y-1.5">
         <Label>Fim</Label>
         <Input
-          type="month"
+          placeholder="Ex: Dez 2023"
           disabled={item.is_current}
           value={item.end_date}
           onChange={(e) => onChange({ ...item, end_date: e.target.value })}
