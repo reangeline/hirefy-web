@@ -8,47 +8,43 @@ function scoreVariant(score: number): "default" | "secondary" {
 }
 
 export function OptimizedResultView({ optimized }: { optimized: OptimizedResume }) {
+  const salary = optimized.salary_estimate;
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
-          <div>
-            <CardTitle>Match com a vaga</CardTitle>
-            {optimized.targetRole && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                {optimized.targetRole}
-                {optimized.targetCompany ? ` · ${optimized.targetCompany}` : ""}
-              </p>
-            )}
-          </div>
-          <Badge variant={scoreVariant(optimized.matchScore)} className="h-7 px-3 text-sm">
-            {optimized.matchScore}%
+          <CardTitle>Match com a vaga</CardTitle>
+          <Badge variant={scoreVariant(optimized.match_score)} className="h-7 px-3 text-sm">
+            {Math.round(optimized.match_score)}%
           </Badge>
         </CardHeader>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle2 className="size-4 text-primary" aria-hidden="true" />
-            Sugestões de melhoria
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-3">
-            {optimized.suggestions.map((suggestion, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm">
-                <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
-                  {i + 1}
-                </span>
-                {suggestion}
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+      {optimized.suggestions.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle2 className="size-4 text-primary" aria-hidden="true" />
+              Sugestões de melhoria
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-3">
+              {optimized.suggestions.map((suggestion, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    {i + 1}
+                  </span>
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
-      {optimized.missingRequirements.length > 0 && (
+      {optimized.missing_requirements.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -57,7 +53,7 @@ export function OptimizedResultView({ optimized }: { optimized: OptimizedResume 
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {optimized.missingRequirements.map((req) => (
+            {optimized.missing_requirements.map((req) => (
               <Badge key={req} variant="outline">
                 {req}
               </Badge>
@@ -66,7 +62,7 @@ export function OptimizedResultView({ optimized }: { optimized: OptimizedResume 
         </Card>
       )}
 
-      {optimized.salaryEstimate?.found && (
+      {salary?.found && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -76,18 +72,17 @@ export function OptimizedResultView({ optimized }: { optimized: OptimizedResume 
           </CardHeader>
           <CardContent>
             <p className="text-lg font-semibold tabular-nums">
-              {optimized.salaryEstimate.currency}{" "}
-              {optimized.salaryEstimate.minSalary?.toLocaleString("pt-BR")} –{" "}
-              {optimized.salaryEstimate.maxSalary?.toLocaleString("pt-BR")}
-              <span className="text-sm font-normal text-muted-foreground">
-                {" "}
-                / {optimized.salaryEstimate.period}
-              </span>
+              {salary.currency} {salary.min_salary?.toLocaleString("pt-BR")} –{" "}
+              {salary.max_salary?.toLocaleString("pt-BR")}
+              {salary.period && (
+                <span className="text-sm font-normal text-muted-foreground"> / {salary.period}</span>
+              )}
             </p>
-            {optimized.salaryEstimate.location && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                {optimized.salaryEstimate.location}
-              </p>
+            {salary.location && (
+              <p className="mt-1 text-sm text-muted-foreground">{salary.location}</p>
+            )}
+            {salary.disclaimer && (
+              <p className="mt-2 text-xs text-muted-foreground">{salary.disclaimer}</p>
             )}
           </CardContent>
         </Card>

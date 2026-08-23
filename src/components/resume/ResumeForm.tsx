@@ -15,40 +15,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { emptyEducation, emptyExperience, emptyLanguage, emptyProject } from "@/lib/mock/resumes";
-import type {
-  EducationEntry,
-  ExperienceEntry,
-  LanguageEntry,
-  LanguageLevel,
-  ProjectEntry,
-  ResumeFormData,
-} from "@/types/resume";
+import { apiFetchJson } from "@/lib/api/client";
+import { emptyEducation, emptyExperience, emptyLanguage, emptyProject } from "@/types/resume";
+import type { EducationEntry, ExperienceEntry, LanguageEntry, ManualResumeRequest, ProjectEntry } from "@/types/resume";
 
-const LANGUAGE_LEVELS: Record<LanguageLevel, string> = {
-  basico: "Básico",
-  intermediario: "Intermediário",
-  avancado: "Avançado",
-  fluente: "Fluente",
-  nativo: "Nativo",
-};
+const LANGUAGE_LEVEL_OPTIONS = ["Básico", "Intermediário", "Avançado", "Fluente", "Nativo"];
+// Select.Root usa `items` só pra resolver o label no trigger fechado — aqui value === label,
+// então o Record é {label: label} (mesma técnica de .spec/002-resume-optimization/spec.md,
+// achado do bug de Select do passe de UI mock).
+const LANGUAGE_LEVELS: Record<string, string> = Object.fromEntries(
+  LANGUAGE_LEVEL_OPTIONS.map((level) => [level, level]),
+);
 
 interface ResumeFormProps {
-  initialData: ResumeFormData;
+  initialData: ManualResumeRequest;
   mode: "create" | "edit";
+  resumeId?: string;
 }
 
-export function ResumeForm({ initialData, mode }: ResumeFormProps) {
+export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
   const router = useRouter();
-  const [data, setData] = useState<ResumeFormData>(initialData);
+  const [data, setData] = useState<ManualResumeRequest>(initialData);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setError(null);
     setSaving(true);
-    // TODO: ligar em POST /resumes/manual (create) ou PUT /resumes/manual/{id} (edit) quando
-    // a spec 002 for implementada de verdade — ver .spec/002-resume-optimization/spec.md.
-    setTimeout(() => router.push("/resume"), 400);
+
+    try {
+      if (mode === "create") {
+        await apiFetchJson("/api/resumes/manual", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } else {
+        await apiFetchJson(`/api/resumes/manual/${resumeId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      }
+      router.push("/resume");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível salvar o currículo.");
+      setSaving(false);
+    }
   }
 
   return (
@@ -77,9 +92,20 @@ export function ResumeForm({ initialData, mode }: ResumeFormProps) {
                 id="fullName"
                 name="fullName"
                 required
-                value={data.personal.fullName}
+                value={data.personal.full_name ?? ""}
                 onChange={(e) =>
-                  setData({ ...data, personal: { ...data.personal, fullName: e.target.value } })
+                  setData({ ...data, personal: { ...data.personal, full_name: e.target.value } })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="currentRole">Cargo atual</Label>
+              <Input
+                id="currentRole"
+                name="currentRole"
+                value={data.personal.current_role ?? ""}
+                onChange={(e) =>
+                  setData({ ...data, personal: { ...data.personal, current_role: e.target.value } })
                 }
               />
             </div>
@@ -90,7 +116,7 @@ export function ResumeForm({ initialData, mode }: ResumeFormProps) {
                 name="email"
                 type="email"
                 spellCheck={false}
-                value={data.personal.email}
+                value={data.personal.email ?? ""}
                 onChange={(e) =>
                   setData({ ...data, personal: { ...data.personal, email: e.target.value } })
                 }
@@ -102,32 +128,76 @@ export function ResumeForm({ initialData, mode }: ResumeFormProps) {
                 id="phone"
                 name="phone"
                 type="tel"
-                value={data.personal.phone}
+                value={data.personal.phone ?? ""}
                 onChange={(e) =>
                   setData({ ...data, personal: { ...data.personal, phone: e.target.value } })
                 }
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="location">Localização</Label>
+              <Label htmlFor="city">Cidade</Label>
               <Input
-                id="location"
-                name="location"
-                value={data.personal.location}
+                id="city"
+                name="city"
+                value={data.personal.city ?? ""}
                 onChange={(e) =>
-                  setData({ ...data, personal: { ...data.personal, location: e.target.value } })
+                  setData({ ...data, personal: { ...data.personal, city: e.target.value } })
                 }
               />
             </div>
-            <div className="space-y-1.5 sm:col-span-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="state">Estado</Label>
+              <Input
+                id="state"
+                name="state"
+                value={data.personal.state ?? ""}
+                onChange={(e) =>
+                  setData({ ...data, personal: { ...data.personal, state: e.target.value } })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="country">País</Label>
+              <Input
+                id="country"
+                name="country"
+                value={data.personal.country ?? ""}
+                onChange={(e) =>
+                  setData({ ...data, personal: { ...data.personal, country: e.target.value } })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
               <Label htmlFor="linkedin">LinkedIn</Label>
               <Input
                 id="linkedin"
                 name="linkedin"
                 placeholder="linkedin.com/in/seu-perfil"
-                value={data.personal.linkedin}
+                value={data.personal.linkedin_url ?? ""}
                 onChange={(e) =>
-                  setData({ ...data, personal: { ...data.personal, linkedin: e.target.value } })
+                  setData({ ...data, personal: { ...data.personal, linkedin_url: e.target.value } })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="website">Site pessoal</Label>
+              <Input
+                id="website"
+                name="website"
+                value={data.personal.website_url ?? ""}
+                onChange={(e) =>
+                  setData({ ...data, personal: { ...data.personal, website_url: e.target.value } })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="github">GitHub</Label>
+              <Input
+                id="github"
+                name="github"
+                value={data.personal.github_url ?? ""}
+                onChange={(e) =>
+                  setData({ ...data, personal: { ...data.personal, github_url: e.target.value } })
                 }
               />
             </div>
@@ -138,7 +208,7 @@ export function ResumeForm({ initialData, mode }: ResumeFormProps) {
               id="summary"
               name="summary"
               rows={3}
-              value={data.personal.summary}
+              value={data.personal.summary ?? ""}
               onChange={(e) =>
                 setData({ ...data, personal: { ...data.personal, summary: e.target.value } })
               }
@@ -182,6 +252,12 @@ export function ResumeForm({ initialData, mode }: ResumeFormProps) {
         createEmpty={emptyLanguage}
         renderItem={(item, onChange) => <LanguageFields item={item} onChange={onChange} />}
       />
+
+      {error && (
+        <p role="alert" aria-live="polite" className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
 
       <div className="flex justify-end gap-2">
         <Button type="submit" disabled={saving}>
@@ -278,24 +354,24 @@ function ExperienceFields({
         <Label>Início</Label>
         <Input
           type="month"
-          value={item.startDate}
-          onChange={(e) => onChange({ ...item, startDate: e.target.value })}
+          value={item.start_date}
+          onChange={(e) => onChange({ ...item, start_date: e.target.value })}
         />
       </div>
       <div className="space-y-1.5">
         <Label>Fim</Label>
         <Input
           type="month"
-          disabled={item.current}
-          value={item.endDate}
-          onChange={(e) => onChange({ ...item, endDate: e.target.value })}
+          disabled={item.is_current}
+          value={item.end_date}
+          onChange={(e) => onChange({ ...item, end_date: e.target.value })}
         />
       </div>
       <label className="flex items-center gap-2 text-sm sm:col-span-2">
         <input
           type="checkbox"
-          checked={item.current}
-          onChange={(e) => onChange({ ...item, current: e.target.checked, endDate: "" })}
+          checked={item.is_current}
+          onChange={(e) => onChange({ ...item, is_current: e.target.checked, end_date: "" })}
           className="size-4 rounded border-input accent-primary"
         />
         Emprego atual
@@ -329,32 +405,35 @@ function EducationFields({
         />
       </div>
       <div className="space-y-1.5">
-        <Label>Grau</Label>
+        <Label>Curso / grau</Label>
         <Input value={item.degree} onChange={(e) => onChange({ ...item, degree: e.target.value })} />
-      </div>
-      <div className="space-y-1.5 sm:col-span-2">
-        <Label>Área de estudo</Label>
-        <Input
-          value={item.fieldOfStudy}
-          onChange={(e) => onChange({ ...item, fieldOfStudy: e.target.value })}
-        />
       </div>
       <div className="space-y-1.5">
         <Label>Início</Label>
         <Input
           type="month"
-          value={item.startDate}
-          onChange={(e) => onChange({ ...item, startDate: e.target.value })}
+          value={item.start_date}
+          onChange={(e) => onChange({ ...item, start_date: e.target.value })}
         />
       </div>
       <div className="space-y-1.5">
         <Label>Fim</Label>
         <Input
           type="month"
-          value={item.endDate}
-          onChange={(e) => onChange({ ...item, endDate: e.target.value })}
+          disabled={item.is_current}
+          value={item.end_date}
+          onChange={(e) => onChange({ ...item, end_date: e.target.value })}
         />
       </div>
+      <label className="flex items-center gap-2 text-sm sm:col-span-2">
+        <input
+          type="checkbox"
+          checked={item.is_current}
+          onChange={(e) => onChange({ ...item, is_current: e.target.checked, end_date: "" })}
+          className="size-4 rounded border-input accent-primary"
+        />
+        Em andamento
+      </label>
     </div>
   );
 }
@@ -382,7 +461,7 @@ function ProjectFields({
       </div>
       <div className="space-y-1.5">
         <Label>Link</Label>
-        <Input value={item.link} onChange={(e) => onChange({ ...item, link: e.target.value })} />
+        <Input value={item.url} onChange={(e) => onChange({ ...item, url: e.target.value })} />
       </div>
     </div>
   );
@@ -399,22 +478,25 @@ function LanguageFields({
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-1.5">
         <Label>Idioma</Label>
-        <Input value={item.name} onChange={(e) => onChange({ ...item, name: e.target.value })} />
+        <Input
+          value={item.language}
+          onChange={(e) => onChange({ ...item, language: e.target.value })}
+        />
       </div>
       <div className="space-y-1.5">
         <Label>Nível</Label>
         <Select
           items={LANGUAGE_LEVELS}
-          value={item.level}
-          onValueChange={(level) => onChange({ ...item, level: level as LanguageLevel })}
+          value={item.proficiency}
+          onValueChange={(proficiency) => onChange({ ...item, proficiency: proficiency as string })}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Selecione" />
           </SelectTrigger>
           <SelectContent>
-            {Object.entries(LANGUAGE_LEVELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
+            {LANGUAGE_LEVEL_OPTIONS.map((level) => (
+              <SelectItem key={level} value={level}>
+                {level}
               </SelectItem>
             ))}
           </SelectContent>

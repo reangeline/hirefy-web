@@ -1,57 +1,117 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
-import { CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { AlertCircle, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { OptimizationJobStatus } from "@/types/resume";
+import { apiFetchJson } from "@/lib/api/client";
+import { INSUFFICIENT_CREDITS_ERROR, type OptimizationJob } from "@/types/resume";
 
 interface OptimizeFormProps {
+  resumeId: string;
   resumeName: string;
 }
 
-// UI da spec 002 com job simulado (queued → processing → completed), replicando o padrão
-// assíncrono real do backend (POST /resumes/optimize devolve o job, não o resultado — ver
-// .spec/002-resume-optimization/spec.md). Ainda sem polling de verdade em
-// GET /resumes/optimize/jobs/{jobID}.
-export function OptimizeForm({ resumeName }: OptimizeFormProps) {
+const POLL_INTERVAL_MS = 4000;
+const MAX_POLL_ATTEMPTS = 45; // ~3min
+
+export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
   const router = useRouter();
   const [jobDescription, setJobDescription] = useState("");
   const [targetCompany, setTargetCompany] = useState("");
   const [targetRole, setTargetRole] = useState("");
-  const [status, setStatus] = useState<OptimizationJobStatus | null>(null);
+  const [job, setJob] = useState<OptimizationJob | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const attemptsRef = useRef(0);
 
-  function handleSubmit(e: FormEvent) {
+  useEffect(() => {
+    if (!job || job.status === "completed" || job.status === "failed") return;
+
+    const timer = setTimeout(async () => {
+      attemptsRef.current += 1;
+      if (attemptsRef.current > MAX_POLL_ATTEMPTS) {
+        setError("A otimização está demorando mais que o esperado. Confira mais tarde em “Otimizados”.");
+        return;
+      }
+      try {
+        const updated = await apiFetchJson<OptimizationJob>(
+          `/api/resumes/optimize/jobs/${job.id}`,
+        );
+        setJob(updated);
+        if (updated.status === "completed" && updated.optimized_resume_id) {
+          router.push(`/resume/optimized/${updated.optimized_resume_id}`);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Falha ao consultar o status da otimização.");
+      }
+    }, POLL_INTERVAL_MS);
+
+    return () => clearTimeout(timer);
+  }, [job, router]);
+
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setStatus("queued");
+    setError(null);
+    setSubmitting(true);
 
-    // TODO: ligar em POST /resumes/optimize (202 + job) e fazer polling de verdade em
-    // GET /resumes/optimize/jobs/{jobID} até completed/failed — ver .spec/002-resume-optimization/spec.md.
-    setTimeout(() => setStatus("processing"), 800);
-    setTimeout(() => {
-      setStatus("completed");
-      setTimeout(() => router.push(`/resume/optimized/o1`), 600);
-    }, 2400);
+    try {
+      const created = await apiFetchJson<OptimizationJob>("/api/resumes/optimize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resume_id: resumeId,
+          job_description: jobDescription,
+          target_company: targetCompany || undefined,
+          target_role: targetRole || undefined,
+        }),
+      });
+      attemptsRef.current = 0;
+      setJob(created);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível iniciar a otimização.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  if (status) {
+  if (job && job.status === "failed") {
+    const isCreditsIssue = job.error === INSUFFICIENT_CREDITS_ERROR;
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-          {status === "completed" ? (
-            <CheckCircle2 className="size-10 text-success" aria-hidden="true" />
-          ) : (
-            <Loader2 className="size-10 animate-spin text-primary" aria-hidden="true" />
-          )}
+          <AlertCircle className="size-10 text-destructive" aria-hidden="true" />
           <div aria-live="polite">
             <p className="font-medium">
-              {status === "queued" && "Na fila de processamento…"}
-              {status === "processing" && "A IA está otimizando seu currículo…"}
-              {status === "completed" && "Otimização concluída!"}
+              {isCreditsIssue ? "Você não tem créditos suficientes" : "A otimização falhou"}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {isCreditsIssue
+                ? "Faça upgrade ou compre mais créditos pra continuar otimizando currículos."
+                : (job.error ?? "Tente novamente em alguns instantes.")}
+            </p>
+          </div>
+          <Button type="button" variant="outline" onClick={() => setJob(null)}>
+            Tentar de novo
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (job) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
+          <Loader2 className="size-10 animate-spin text-primary" aria-hidden="true" />
+          <div aria-live="polite">
+            <p className="font-medium">
+              {job.status === "queued" && "Na fila de processamento…"}
+              {job.status === "processing" && "A IA está otimizando seu currículo…"}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               Pode fechar esta tela — o resultado fica salvo em “Otimizados” quando terminar.
@@ -102,10 +162,16 @@ export function OptimizeForm({ resumeName }: OptimizeFormProps) {
         </div>
       </div>
 
+      {error && (
+        <p role="alert" aria-live="polite" className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
+
       <div className="flex justify-end">
-        <Button type="submit" className="gap-2">
+        <Button type="submit" disabled={submitting} className="gap-2">
           <Sparkles className="size-4" aria-hidden="true" />
-          Otimizar currículo
+          {submitting ? "Enviando…" : "Otimizar currículo"}
         </Button>
       </div>
     </form>

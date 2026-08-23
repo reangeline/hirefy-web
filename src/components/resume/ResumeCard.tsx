@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Pencil, Sparkles, Trash2 } from "lucide-react";
+import { FileText, Loader2, Pencil, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Resume } from "@/types/resume";
@@ -7,9 +7,13 @@ import type { Resume } from "@/types/resume";
 interface ResumeCardProps {
   resume: Resume;
   onDelete: (id: string) => void;
+  deleting?: boolean;
 }
 
-export function ResumeCard({ resume, onDelete }: ResumeCardProps) {
+export function ResumeCard({ resume, onDelete, deleting }: ResumeCardProps) {
+  const title = resume.parsed_data.nickname || resume.parsed_data.personal?.full_name || "Currículo sem nome";
+  const updatedAt = new Date(resume.updated_at).toLocaleDateString("pt-BR");
+
   return (
     <Card>
       <CardContent className="flex items-center gap-4">
@@ -18,8 +22,8 @@ export function ResumeCard({ resume, onDelete }: ResumeCardProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{resume.nickname}</p>
-          <p className="text-sm text-muted-foreground">Atualizado em {resume.updatedAt}</p>
+          <p className="truncate font-medium">{title}</p>
+          <p className="text-sm text-muted-foreground">Atualizado em {updatedAt}</p>
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
@@ -38,9 +42,14 @@ export function ResumeCard({ resume, onDelete }: ResumeCardProps) {
             variant="ghost"
             size="icon"
             aria-label="Excluir currículo"
+            disabled={deleting}
             onClick={() => onDelete(resume.id)}
           >
-            <Trash2 className="size-4 text-destructive" aria-hidden="true" />
+            {deleting ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <Trash2 className="size-4 text-destructive" aria-hidden="true" />
+            )}
           </Button>
         </div>
       </CardContent>

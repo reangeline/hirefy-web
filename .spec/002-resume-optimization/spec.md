@@ -164,6 +164,13 @@ encontrado e corrigido durante o teste: o `Select` de nível de idioma (Base UI)
 valor cru (`"intermediario"`) em vez do label (`"Intermediário"`) no estado fechado — corrigido
 passando `items={LANGUAGE_LEVELS}` pro `Select.Root`, que resolve o label automaticamente.
 
+**Atualização 2026-08-23 — ligado no backend de verdade.** `types/resume.ts` reescrito pro
+shape real, `src/lib/mock/resumes.ts` removido, 8 Route Handlers novos criados
+(`/api/resumes`, `/api/resumes/[id]`, `/api/resumes/manual`, `/api/resumes/manual/[id]`,
+`/api/resumes/optimize`, `/api/resumes/optimize/jobs/[jobId]`, `/api/resumes/optimized`,
+`/api/resumes/optimized/[id]`), todas as 5 telas ligadas na API real (nenhum dado mock
+restante). Detalhes completos + resultado do teste ao vivo nos Critérios de aceite abaixo.
+
 ## Fora de escopo
 - Otimização para LinkedIn (`POST /resumes/linkedin/optimize`) — feature separada
   (carousel/formato próprio), spec própria futura
@@ -179,30 +186,45 @@ passando `items={LANGUAGE_LEVELS}` pro `Select.Root`, que resolve o label automa
   Ainda não confirmado se `POST /resumes/manual` (o endpoint de fato, diferente do
   `parse-pdf`) valida/espera exatamente esse mesmo shape ou é mais permissivo — o comentário
   no código sugere que sim ("shaped like a manual resume"), mas vale testar antes de fechar
-- [ ] Tempo médio real de processamento do job (pra calibrar intervalo/timeout do polling —
-  mobile usa 5s/24 tentativas pro LinkedIn, mas é fluxo diferente)
-- [ ] Mensagem de erro exata que a worker grava em `job.error` quando falha por falta de
-  crédito, pra poder tratar esse caso específico na UI (hoje só sabemos que a checagem
-  acontece em `runOptimization`, não o texto retornado)
+- [x] Tempo médio real de processamento do job — testado ao vivo, ~15s (fila + IA) num
+  teste isolado. Polling implementado com 4s de intervalo, timeout em 45 tentativas (~3min)
+- [x] Mensagem de erro exata que a worker grava em `job.error` quando falha por falta de
+  crédito — resolvido lendo `internal/core/domain/erros.go`: é literalmente a string
+  `"insufficient credits"` (`ErrInsufficientCredits`). Implementado como
+  `INSUFFICIENT_CREDITS_ERROR` em `types/resume.ts`, comparado no `OptimizeForm` pra mostrar
+  mensagem específica — não testado ao vivo (não provoquei essa falha de propósito)
 
 ## Critérios de aceite
 - [x] Usuário cria um currículo manual e ele aparece na listagem — **UI only**: funciona com
-  dado mock, não persiste de verdade (sem `POST /resumes/manual`)
-- [x] Usuário edita um currículo manual existente — **UI only**, mesma ressalva
+  dado real, testado ao vivo com conta de teste — `POST /resumes/manual` confirmado
+- [x] Usuário edita um currículo manual existente — testado ao vivo: `GET /resumes/{id}` +
+  pré-preenchimento + `PUT /resumes/manual/{id}` funcionando
 - [x] Usuário dispara uma otimização e vê o job em estado de progresso (sem travar a UI) —
-  **UI only**: simulado com `setTimeout`, não é `POST /resumes/optimize` real
-- [ ] Polling detecta `completed` e leva o usuário pro resultado automaticamente — simulado
-  (timeout fixo leva ao resultado), **polling real em `GET /resumes/optimize/jobs/{jobID}`
-  ainda não implementado**
-- [ ] Polling detecta `failed` e mostra o erro de forma amigável — não implementado (não
-  simulei o caminho de falha ainda)
+  testado ao vivo, `POST /resumes/optimize` real (202 + job `queued`)
+- [x] Polling detecta `completed` e leva o usuário pro resultado automaticamente — **testado
+  ao vivo de ponta a ponta**: polling real em `GET /resumes/optimize/jobs/{jobID}` (a cada
+  4s), job foi de `queued` → `processing` → `completed`, redirecionou sozinho pro resultado
+  com `optimized_resume_id` real
+- [ ] Polling detecta `failed` e mostra o erro de forma amigável — implementado (trata
+  `error === "insufficient credits"` com mensagem específica), **não testado ao vivo** (não
+  provoquei uma falha real pra confirmar)
 - [x] Resultado otimizado exibe score, sugestões, requisitos faltando e (quando houver)
-  estimativa salarial — implementado e testado ao vivo, com dado mock
-- [x] Usuário consegue excluir um currículo — **UI only**, remove só do estado local (sem
-  `DELETE /resumes/{id}`)
+  estimativa salarial — testado ao vivo com resultado real de IA: score 21%, 9 sugestões,
+  5 badges de requisito faltando. Estimativa salarial não apareceu nesse teste (`salary_estimate.found`
+  provavelmente `false` pro currículo de teste, quase vazio) — o card ficou oculto
+  corretamente, sem quebrar
+- [x] Usuário consegue excluir um currículo — testado ao vivo, `DELETE /resumes/{id}` real
 - [ ] Usuário consegue importar um PDF, ver o preview (score + dados extraídos) e confirmar
   pra salvar — **não implementado ainda**, endpoint liberado em 2026-08-23, UI a construir
 
-**Nenhum critério está de fato fechado** — todos os `[x]` acima são sobre o comportamento da
-UI isolada, não sobre o fluxo real contra o backend. Ligar em API de verdade (endpoints já
-mapeados na seção acima) é o próximo passo.
+## Status: loop principal fechado, testado ao vivo (2026-08-23)
+`types/resume.ts` reescrito pro shape real (confirmado no `resume_handler.go` +
+`ai_service_impl.go`), 8 Route Handlers novos (`/api/resumes*`), todas as 5 telas ligadas na
+API de verdade (sem mock em lugar nenhum). Testado ao vivo, na ordem: criar currículo manual
+→ apareceu na lista → editar (pré-preenchido) → otimizar (job real, polling real, ~15s até
+completar) → resultado com dado de IA de verdade → excluir. **Todo o ciclo funcionou sem
+nenhum ajuste de código durante o teste** — os achados da spec (shape do `parsed_data`,
+contrato do `OptimizationJob`) estavam corretos.
+
+Falta pra fechar 100%: testar o caminho de falha (crédito insuficiente ou erro da IA), e
+construir a tela de import de PDF (endpoint pronto, UI não construída ainda).

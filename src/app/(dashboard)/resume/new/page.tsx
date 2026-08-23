@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ResumeForm } from "@/components/resume/ResumeForm";
-import { emptyResumeForm } from "@/lib/mock/resumes";
+import { emptyManualResumeRequest } from "@/types/resume";
 
 export default function NewResumePage() {
   return (
@@ -11,7 +11,7 @@ export default function NewResumePage() {
         Meus currículos
       </Link>
       <h1 className="text-2xl font-semibold">Novo currículo</h1>
-      <ResumeForm mode="create" initialData={emptyResumeForm()} />
+      <ResumeForm mode="create" initialData={emptyManualResumeRequest()} />
     </div>
   );
 }

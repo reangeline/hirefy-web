@@ -71,9 +71,36 @@ diverge do que o passe de UI mock assumiu ontem. `src/types/resume.ts` e `Resume
 vão precisar de ajuste antes de ligar na API — não documentei isso como bloqueio grave
 porque é um refactor mecânico, não uma decisão de arquitetura nova.
 
+## Addendum — ligado no backend real, testado ao vivo de ponta a ponta (2026-08-23)
+
+Reescrito `types/resume.ts` pro shape real (`full_name`, `current_role`,
+`country`/`state`/`city` separados, `url` em vez de `link`, `language`/`proficiency` em vez
+de `name`/`level` — tudo confirmado em `resume_handler.go` + o prompt de IA). Removido
+`src/lib/mock/resumes.ts`. Criados 8 Route Handlers novos em `src/app/api/resumes/**`,
+seguindo o mesmo padrão de proxy das specs anteriores (CSRF nas rotas que mudam estado,
+`getAccessToken()` + 401 se não tiver sessão). Reescritas as 5 telas e o `ResumeForm`/
+`OptimizeForm`/`OptimizedResultView` pra consumir a API de verdade via `apiFetchJson`.
+
+Ajuste no `Select.Root` de nível de idioma: trocado o array `LANGUAGE_LEVELS` por um
+`Record<string,string>` (`{label: label}`), porque `items` do Base UI Select não aceita
+array de strings — só `Record<string, ReactNode>` ou `{label, value}[]`.
+
+### Teste ao vivo (conta real, reangeline+test@hotmail.com)
+Sequência completa, sem nenhum ajuste de código durante o teste:
+1. `POST /resumes/manual` — criou "Curriculo Teste Backend", apareceu na listagem com data
+   real formatada
+2. `GET /resumes/{id}` — tela de editar pré-preencheu certinho (nome, cargo atual)
+3. `POST /resumes/optimize` — 202 real, job em `queued`
+4. Polling em `GET /resumes/optimize/jobs/{jobID}` (4s de intervalo) — foi de `queued` →
+   `processing` → `completed` em ~15s, redirecionou sozinho pro resultado
+5. Resultado com dado de IA de verdade: score 21% (currículo de teste quase vazio, faz
+   sentido), 9 sugestões (a IA misturou "missing requirement" dentro do texto das
+   sugestões, não é um bug meu — é como o modelo respondeu), 5 badges de requisito faltando.
+   Sem estimativa salarial (`salary_estimate.found` deve ter vindo `false`) — card ficou
+   oculto corretamente
+6. `DELETE /resumes/{id}` — removeu de verdade, lista voltou ao estado vazio
+
 ## Próximos passos
 
-Ligar as telas no backend de verdade: ajustar `types/resume.ts`/`ResumeForm.tsx` pro shape
-real, trocar o form mock por `POST /resumes/manual`, implementar o polling real em
-`GET /resumes/optimize/jobs/{jobID}`, e construir a tela de import de PDF (endpoint pronto,
-UI ainda não existe).
+Testar o caminho de falha (crédito insuficiente) de propósito, e construir a tela de import
+de PDF (`POST /resumes/parse-pdf`, endpoint pronto desde 2026-08-23, UI ainda não existe).

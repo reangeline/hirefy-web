@@ -41,11 +41,39 @@ export function postBackend(path: string, body: unknown): Promise<unknown> {
   return callBackend(path, { method: "POST", body: JSON.stringify(body) });
 }
 
-export function authedGetBackend(path: string, accessToken: string): Promise<unknown> {
+function authedCallBackend(
+  path: string,
+  accessToken: string,
+  init: RequestInit = {},
+): Promise<unknown> {
   return callBackend(path, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${accessToken}` },
+    ...init,
+    headers: { Authorization: `Bearer ${accessToken}`, ...init.headers },
   });
+}
+
+export function authedGetBackend(path: string, accessToken: string): Promise<unknown> {
+  return authedCallBackend(path, accessToken, { method: "GET" });
+}
+
+export function authedPostBackend(
+  path: string,
+  accessToken: string,
+  body: unknown,
+): Promise<unknown> {
+  return authedCallBackend(path, accessToken, { method: "POST", body: JSON.stringify(body) });
+}
+
+export function authedPutBackend(
+  path: string,
+  accessToken: string,
+  body: unknown,
+): Promise<unknown> {
+  return authedCallBackend(path, accessToken, { method: "PUT", body: JSON.stringify(body) });
+}
+
+export function authedDeleteBackend(path: string, accessToken: string): Promise<unknown> {
+  return authedCallBackend(path, accessToken, { method: "DELETE" });
 }
 
 /** Converte um erro de `callBackend` na mesma resposta (status + body) que o backend deu. */
