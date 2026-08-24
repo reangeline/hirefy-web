@@ -51,8 +51,84 @@ arquivos revisados:
    (só achei `ParseJobDescription(text)`, que recebe texto, não URL) — não é conclusivo,
    fica como pergunta em aberto
 
+## Addendum — implementação (2026-08-24)
+
+Spec 002 já estava fechada, então a implementação começou direto. Passei por Plan Mode antes
+de tocar em código (arquivo de plano com o achado novo + decisões confirmadas via
+`AskUserQuestion` com o usuário antes de codar).
+
+### Achados novos, confirmados lendo o código de novo antes de implementar
+1. **Coach não é gated por Premium no backend** — trata como otimização normal (consome
+   crédito free tier, sem checar plano). Decisão: não replicar o gate client-side do mobile.
+2. **Wizard mobile usa `atsScore` hardcoded (83) e nunca envia `matched_keywords`** — bug/
+   placeholder do mobile, não contrato de produto. Decisão (confirmada com o usuário): usar
+   `match_score` real da otimização, `missing_requirements` como `missing_keywords`,
+   `matched_keywords` fica de fora (sem fonte real).
+3. **"Colar descrição" não extrai empresa/cargo** — `JobAnalysis` (retorno de
+   `ParseJobDescription`) não tem esses campos. Empresa/cargo viraram sempre campos manuais no
+   wizard, independente do método.
+4. **Mobile permite pular a otimização** (`_submitWithoutOptimize`) — decisão (confirmada):
+   replicar os dois caminhos ("Adicionar rápido" e "Adicionar com otimização").
+
+Todos documentados em detalhe no `spec.md`.
+
+### O que foi construído
+- `src/types/pipeline.ts` — tipos espelhando `pipeline_handler.go`/`pipeline_analytics.go`,
+  documentando o casing misto (job snake_case, contacts com `linkedinUrl`, analytics 100%
+  camelCase)
+- `ApiError` (extends `Error`, com `status`) adicionado em `lib/api/client.ts` —
+  retrocompatível, necessário pro Coach distinguir 402/403/422
+- 9 Route Handlers em `src/app/api/pipeline/**`, mesmo padrão de proxy das specs anteriores
+- `npx shadcn add tabs` — primeiro uso de Tabs no projeto
+- `PipelineSection.tsx` (board + analytics, abas), embutida no dashboard — precisou alargar o
+  container do dashboard (`max-w-2xl` → `max-w-6xl`) pra caber as 5 colunas, mantendo o resto
+  do conteúdo do dashboard num sub-container de `max-w-2xl`
+- `AddJobQuickForm.tsx` e `AddJobOptimizeWizard.tsx` — os dois caminhos de adicionar vaga
+- `JobCoachTab.tsx`, `JobAtsMatchTab.tsx` (reaproveita `OptimizedResultView` da spec 002 sem
+  modificação), `JobContactsTab.tsx`, `JobActionsCard.tsx` (estágio/ghost/entrevista/follow-up)
+- Página de vagas arquivadas (`/pipeline/archived`)
+- **`src/proxy.ts` — bug real encontrado e corrigido durante a implementação**: `/pipeline`
+  não estava na lista de prefixos protegidos, então as páginas ficariam acessíveis sem sessão
+  (a chamada à API falharia com 401 já que o Route Handler exige `access_token`, mas a página
+  em si renderizaria sem redirecionar pro login, diferente do padrão do resto do dashboard)
+
+### Bugs de teste ao vivo encontrados durante a interação (não de código)
+Ao testar `<input type="datetime-local">` no formulário de registrar entrevista via
+automação de browser, digitar tudo de uma vez (`"09/15/2026 10:00AM"`) confundiu os segmentos
+do campo (formato é dia/mês/ano, não mês/dia/ano, e escrever direto sobrescreve errado) — não
+é um bug do app, é uma particularidade de como o Chrome renderiza esse tipo de input; resolvido
+clicando em cada segmento e digitando em partes. Documentado aqui só porque não é óbvio.
+
+### Teste ao vivo (conta real, reangeline+test@hotmail.com, créditos zerados desde a spec 002)
+Sequência completa sem nenhum ajuste de código durante o teste (exceto o fix do `proxy.ts`,
+encontrado e corrigido antes de testar ao vivo):
+1. `POST /pipeline` (rápido) → apareceu no board na coluna certa
+2. `PUT /pipeline/{id}` (mudar estágio via Select no card) → refletiu na coluna certa
+3. Coach → 402 real (crédito zerado), mensagem específica exibida
+4. ATS Match → estado vazio correto (vaga sem otimização)
+5. Contatos → adicionar, listar, remover — ciclo completo funcionando
+6. Registrar entrevista → moveu o estágio pra "Entrevista" automaticamente (comportamento do
+   backend)
+7. Registrar follow-up → salvou sem erro
+8. Marcar ghosted → badge "Ghosted" no board, permaneceu na mesma coluna
+9. Analytics → métricas reais (inclusive `responseRate: 0%` correto por causa do ghosting —
+   confirma que a lógica de exclusão de vaga ghosted do cálculo de resposta, já vista no
+   código, funciona de verdade)
+10. Criado um currículo de teste, tentei "Adicionar com otimização" → 402 real de novo (a
+    checagem de crédito acontece antes de qualquer chamada de IA, então falhou rápido)
+11. "Tentar de novo" voltou pro passo de seleção de currículo com o estado preservado
+12. Excluída a vaga e o currículo de teste ao final
+
+`tsc --noEmit`, `npm run lint`, `npm run build` limpos.
+
+### Não testado ao vivo
+- Caminho de sucesso completo de "Adicionar com otimização" (bloqueado por créditos zerados
+  — mas usa o mesmo mecanismo de polling já confirmado ao vivo na spec 002)
+- 403 do Coach (exigiria cancelar a assinatura de teste de propósito)
+- Vagas arquivadas (nenhuma vaga chegou a ser arquivada durante o teste)
+
 ## Próximos passos
 
-Spec escrita, aguardando decisão do usuário sobre quando implementar. Como o fluxo de
-adicionar vaga depende do fluxo de otimização (spec 002), faz sentido a 002 estar mais
-avançada (ligada ao backend de verdade) antes de começar a 005.
+Testar o caminho de sucesso da otimização integrada quando a conta de teste tiver créditos de
+novo (ex.: depois de testar upgrade/billing). Considerar se vale usar
+`offer_amount`/`rejection_feedback` no backend (pergunta em aberto já registrada no spec.md).

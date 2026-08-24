@@ -35,6 +35,19 @@ export async function apiFetch(path: string, init?: RequestInit): Promise<Respon
   return fetch(path, init);
 }
 
+// Erro de resposta não-ok com o status HTTP anexado — permite branches específicos (ex.:
+// 402/403/422 do coach de IA) sem parsear a mensagem. Continua sendo um `Error` normal pra
+// quem só faz `err instanceof Error` / `err.message`.
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 export async function apiFetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await apiFetch(path, init);
   const body = await res.json().catch(() => ({}));
@@ -44,7 +57,7 @@ export async function apiFetchJson<T>(path: string, init?: RequestInit): Promise
       (body as { message?: string; error?: string }).message ??
       (body as { message?: string; error?: string }).error ??
       `Erro ${res.status}`;
-    throw new Error(message);
+    throw new ApiError(message, res.status);
   }
 
   return body as T;
