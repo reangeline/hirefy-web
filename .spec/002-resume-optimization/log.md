@@ -127,8 +127,27 @@ de teste).
 (`"Avancado"`) não bate com a chave do `Select` (`"Avançado"`), fica sem seleção visual no
 dropdown — baixa prioridade, não afeta o salvamento do valor.
 
+## Addendum — caminho de falha (crédito insuficiente) testado ao vivo (2026-08-23)
+
+Zerei os créditos da conta de teste de propósito (2 otimizações reais bem-sucedidas
+consumindo os créditos restantes) e disparei uma terceira. Confirmado: `POST
+/resumes/optimize` aceita normalmente (202) mesmo sem crédito — a checagem só acontece
+dentro do processamento assíncrono do job, então falha rápido no polling (antes de qualquer
+chamada de IA, sem desperdiçar custo). A tela mostrou a mensagem amigável específica ("Você
+não tem créditos suficientes...") em vez de erro genérico, confirmando que o tratamento de
+`INSUFFICIENT_CREDITS_ERROR` no `OptimizeForm` funciona contra o erro real.
+
+**Achado novo:** a UI não avisa nem bloqueia proativamente antes de deixar o usuário tentar
+otimizar já sem créditos — o botão fica habilitado normalmente, só falha depois do polling.
+Já estava registrado na spec como melhoria não obrigatória ("considerar checar `GET
+/subscription/credits` antes"), continua não implementado — não é bloqueio, mas fica como
+próximo passo de UX se quiser evitar o ciclo de espera desnecessário.
+
+Com isso, todos os critérios de aceite da spec 002 estão fechados.
+
 ## Próximos passos
 
-Testar o caminho de falha (crédito insuficiente) de propósito. Considerar oferecer o preview
-de PDF (score de ATS grátis) direto na home, antes do signup, como a landing anuncia —
-decisão de produto, registrada na spec mas não obrigatória.
+Considerar oferecer o preview de PDF (score de ATS grátis) direto na home, antes do signup,
+como a landing anuncia — decisão de produto, registrada na spec mas não obrigatória.
+Considerar avisar proativamente sobre créditos zerados antes de deixar o usuário tentar
+otimizar (acima).

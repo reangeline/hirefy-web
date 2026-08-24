@@ -205,9 +205,8 @@ restante). Detalhes completos + resultado do teste ao vivo nos Critérios de ace
   ao vivo de ponta a ponta**: polling real em `GET /resumes/optimize/jobs/{jobID}` (a cada
   4s), job foi de `queued` → `processing` → `completed`, redirecionou sozinho pro resultado
   com `optimized_resume_id` real
-- [ ] Polling detecta `failed` e mostra o erro de forma amigável — implementado (trata
-  `error === "insufficient credits"` com mensagem específica), **não testado ao vivo** (não
-  provoquei uma falha real pra confirmar)
+- [x] Polling detecta `failed` e mostra o erro de forma amigável — **testado ao vivo em
+  2026-08-23** (ver seção "Caminho de falha — crédito insuficiente" abaixo)
 - [x] Resultado otimizado exibe score, sugestões, requisitos faltando e (quando houver)
   estimativa salarial — testado ao vivo com resultado real de IA: score 21%, 9 sugestões,
   5 badges de requisito faltando. Estimativa salarial não apareceu nesse teste (`salary_estimate.found`
@@ -254,6 +253,30 @@ real (score 74%, 5 sugestões, todos os campos pessoais/experiências/formação
 extraídos corretamente) → revisão no formulário → `POST /resumes/manual` → apareceu na
 listagem → excluído em seguida (dado de teste).
 
+## Caminho de falha — crédito insuficiente, testado ao vivo (2026-08-23)
+A conta de teste (`reangeline+test@hotmail.com`) começou com 3 créditos grátis (padrão de
+`NewSubscription`, `internal/core/domain/subscription.go`). Consumi os 2 restantes com duas
+otimizações reais e bem-sucedidas, confirmando `0 créditos` no dashboard, e disparei uma
+terceira otimização de propósito:
+
+1. `POST /resumes/optimize` retornou **202 normalmente** mesmo com 0 créditos — confirma o
+   que a spec já previa: a checagem de crédito só acontece dentro do processamento do job
+   (`resume_optimizer_service_impl.go:174-178`), não no handler síncrono
+2. **Achado confirmado ao vivo (não documentado antes):** a UI não bloqueia nem avisa
+   proativamente antes de deixar o usuário tentar otimizar com 0 créditos — o botão
+   "Otimizar currículo" fica habilitado normalmente. Isso bate com a nota já registrada na
+   spec ("considerar checar `GET /subscription/credits` antes" — nunca foi implementado,
+   fica como melhoria futura, não bloqueio)
+3. Polling detectou `status: "failed"` rápido (a checagem de crédito é a primeira coisa que
+   o worker faz, antes de qualquer chamada de IA — falha sem gastar tempo/custo de IA à toa)
+4. Tela de otimização mostrou a mensagem amigável específica: **"Você não tem créditos
+   suficientes — Faça upgrade ou compre mais créditos pra continuar otimizando currículos."**
+   com botão "Tentar de novo", em vez de um erro genérico — confirma que o tratamento de
+   `error === "insufficient credits"` no `OptimizeForm` funciona corretamente contra o erro
+   real do backend
+
+Currículo de teste (`Teste crédito insuficiente`) excluído em seguida.
+
 ## Status: loop principal fechado, testado ao vivo (2026-08-23)
 `types/resume.ts` reescrito pro shape real (confirmado no `resume_handler.go` +
 `ai_service_impl.go`), 8 Route Handlers novos (`/api/resumes*`), todas as 5 telas ligadas na
@@ -263,5 +286,8 @@ completar) → resultado com dado de IA de verdade → excluir. **Todo o ciclo f
 nenhum ajuste de código durante o teste** — os achados da spec (shape do `parsed_data`,
 contrato do `OptimizationJob`) estavam corretos.
 
-Falta pra fechar 100%: testar o caminho de falha (crédito insuficiente ou erro da IA), e
-construir a tela de import de PDF (endpoint pronto, UI não construída ainda).
+**Atualização 2026-08-23 — todos os critérios de aceite fechados.** Import de PDF
+implementado e testado ao vivo, e o caminho de falha por crédito insuficiente também testado
+ao vivo de propósito (ver seções acima). Não sobrou nenhum item pendente nos "Critérios de
+aceite" desta spec. Único achado sem correção (baixa prioridade, não bloqueia): proficiência
+de idioma extraída do PDF sem acento não casa com a chave do `Select`.
