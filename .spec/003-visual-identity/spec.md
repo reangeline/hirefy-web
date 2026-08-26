@@ -91,6 +91,27 @@ Reescrita completa de `src/app/page.tsx`, agora composta de seções em
   persiste depois de recarregar a página
 - [x] Toggle de tema funcional no navbar da home e no dashboard, detecta preferência do SO
   por padrão (`defaultTheme="system"`)
-- [ ] Paleta não foi validada com o usuário/design antes de implementar (implementação
-  direta a partir do `theme.dart`, sem mockup prévio) — pode precisar de ajuste fino depois
-  de review visual
+- [x] Paleta validada com o usuário/design (2026-08-25) — ver seção abaixo
+
+## Validação da paleta (2026-08-25)
+Tentei comparar ao vivo com o app mobile rodando (Chrome web e iOS Simulator), mas os dois
+caminhos bateram em problemas de build pré-existentes e não relacionados a esta spec:
+Firebase não configurado pra plataforma web (`firebase_options.dart` não tem caso `web`), e a
+dependência `home-widget` exige iOS 14+ enquanto o projeto mira 13.0 no `Podfile`. Não mexi em
+nenhum dos dois — são configurações do app mobile, fora de escopo de uma revisão de paleta.
+
+Em vez disso, fiz uma auditoria exata: converti cada token OKLCH de `globals.css` de volta pra
+hex (fórmula OKLab/OKLCH padrão) e comparei com os valores reais do `theme.dart`. A maioria
+bate por 1-3 pontos de RGB (diferença de arredondamento, imperceptível). Achado real: 3
+tokens estavam visivelmente errados —
+- `--primary` (teal): `oklch(0.585 0.09 190)` renderizava `#278D88` em vez do `#0D9488` real
+  (mais claro/lavado que o mobile) — é a cor mais visível de todo o app (botões, links, foco)
+- `--success`: `oklch(0.65 0.15 165)` renderizava `#00AB78` em vez de `#10B981`
+- `--ring` (dark mode, primaryLight): `oklch(0.66 0.1 185)` renderizava `#37A69A` em vez de
+  `#14B8A6`
+
+Corrigido pros valores OKLCH exatos (calculados via conversão inversa sRGB→OKLab, confirmados
+por round-trip): `--primary` → `oklch(0.600 0.104 184.7)`, `--success` →
+`oklch(0.696 0.149 162.5)`, `--ring` (dark) → `oklch(0.704 0.123 182.5)`. Validado ao vivo no
+Chrome, light e dark mode — teal agora visivelmente mais escuro/saturado, batendo com o
+mobile. `tsc`/`build` limpos.
