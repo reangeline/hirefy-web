@@ -90,3 +90,18 @@ visivelmente mais escuro/saturado, batendo com o valor real do mobile.
 `tsc --noEmit`/`build` limpos.
 
 Com isso, a única pendência da spec 003 (validação da paleta) está fechada.
+
+## Addendum — comparação ao vivo confirmada (2026-08-25, mesmo dia)
+
+Depois de corrigir os dois bloqueios de build do mobile (Firebase reconfigurado — ver
+`applywise_app` commits `5633942`/`715cdf2`), consegui rodar o mobile de verdade no Chrome
+web e fazer a comparação lado a lado que a spec pedia desde o início. Naveguei até a tela de
+login do mobile (Welcome back → Continue with Email → Sign in) e comparei com
+`/login` do web-app em light e dark mode.
+
+Resultado: botão primário (teal), fundo escuro, e tipografia batem entre as três telas — a
+correção OKLCH aplicada mais cedo hoje realmente resolveu o drift, confirmado visualmente
+contra o app rodando de verdade, não só matematicamente contra o `theme.dart`. Nenhuma
+discrepância de cor nova encontrada. Única diferença é de fluxo (mobile tem uma tela
+intermediária "Welcome back" com os botões sociais separados do formulário de email/senha;
+web mostra tudo numa tela só) — não é escopo desta spec.
