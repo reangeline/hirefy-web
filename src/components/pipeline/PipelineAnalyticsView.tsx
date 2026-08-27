@@ -10,10 +10,10 @@ interface PipelineAnalyticsViewProps {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <Card>
-      <CardContent className="space-y-1 p-4">
-        <p className="text-2xl font-semibold">{value}</p>
-        <p className="text-xs text-muted-foreground">{label}</p>
+    <Card size="sm">
+      <CardContent className="space-y-1">
+        <p className="font-mono text-xl font-semibold tabular-nums">{value}</p>
+        <p className="text-[11px] text-muted-foreground">{label}</p>
       </CardContent>
     </Card>
   );
@@ -74,7 +74,7 @@ export function PipelineAnalyticsView({ analytics }: PipelineAnalyticsViewProps)
                   <span className="text-muted-foreground">
                     {STAGE_LABELS[s.stage as PipelineJobStage] ?? s.stage}
                   </span>
-                  <span>{s.count}</span>
+                  <span className="font-mono tabular-nums">{s.count}</span>
                 </div>
               ))}
             </div>

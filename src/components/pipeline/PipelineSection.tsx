@@ -46,7 +46,7 @@ export function PipelineSection() {
     <Card>
       <CardContent className="space-y-4 p-4">
         <div className="flex items-center justify-between gap-2">
-          <p className="font-medium">Meu pipeline</p>
+          <p className="text-[13.5px] font-semibold">Pipeline de candidaturas</p>
           <div className="flex items-center gap-2">
             {archivedCount > 0 && (
               <Link

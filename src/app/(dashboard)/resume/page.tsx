@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FileText, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ResumeCard } from "@/components/resume/ResumeCard";
+import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import type { Resume } from "@/types/resume";
 
@@ -32,11 +33,13 @@ export default function ResumeListPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-12">
+    <>
+      <Topbar title="Currículos" />
+      <div className="mx-auto w-full max-w-2xl space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Meus currículos</h1>
+        <h1 className="text-lg font-semibold">Meus currículos</h1>
         <Link href="/resume/new">
-          <Button type="button" className="gap-2">
+          <Button type="button" size="sm" className="gap-2">
             <Plus className="size-4" aria-hidden="true" />
             Novo currículo
           </Button>
@@ -83,6 +86,7 @@ export default function ResumeListPage() {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

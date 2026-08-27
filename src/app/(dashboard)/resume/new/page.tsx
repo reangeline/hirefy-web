@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { PdfImportUpload } from "@/components/resume/PdfImportUpload";
 import { ResumeForm } from "@/components/resume/ResumeForm";
+import { Topbar } from "@/components/layout/Topbar";
 import { emptyManualResumeRequest, type ManualResumeRequest } from "@/types/resume";
 
 type Mode = "choose" | "manual" | "pdf-upload" | "pdf-review";
@@ -21,12 +22,13 @@ export default function NewResumePage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-12">
+    <>
+      <Topbar title="Novo currículo" />
+      <div className="mx-auto w-full max-w-2xl space-y-6 p-6">
       <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-4" aria-hidden="true" />
         Meus currículos
       </Link>
-      <h1 className="text-2xl font-semibold">Novo currículo</h1>
 
       {mode === "choose" && (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -79,7 +81,8 @@ export default function NewResumePage() {
           <ResumeForm mode="create" initialData={parsedData} />
         </>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

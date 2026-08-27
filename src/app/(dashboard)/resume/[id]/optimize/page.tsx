@@ -4,6 +4,7 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { OptimizeForm } from "@/components/resume/OptimizeForm";
+import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import type { Resume } from "@/types/resume";
 
@@ -21,24 +22,26 @@ export default function OptimizeResumePage({ params }: PageProps<"/resume/[id]/o
   const resumeName = resume?.parsed_data.nickname || resume?.parsed_data.personal?.full_name || "";
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-12">
-      <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        Meus currículos
-      </Link>
-      <h1 className="text-2xl font-semibold">Otimizar currículo</h1>
+    <>
+      <Topbar title="Otimizar currículo" />
+      <div className="mx-auto w-full max-w-2xl space-y-6 p-6">
+        <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Meus currículos
+        </Link>
 
-      {error && (
-        <p role="alert" aria-live="polite" className="text-sm text-destructive">
-          {error}
-        </p>
-      )}
-      {!resume && !error && (
-        <p aria-live="polite" className="text-sm text-muted-foreground">
-          Carregando…
-        </p>
-      )}
-      {resume && <OptimizeForm resumeId={id} resumeName={resumeName} />}
-    </div>
+        {error && (
+          <p role="alert" aria-live="polite" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
+        {!resume && !error && (
+          <p aria-live="polite" className="text-sm text-muted-foreground">
+            Carregando…
+          </p>
+        )}
+        {resume && <OptimizeForm resumeId={id} resumeName={resumeName} />}
+      </div>
+    </>
   );
 }

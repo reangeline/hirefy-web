@@ -15,18 +15,18 @@ export function ResumeCard({ resume, onDelete, deleting }: ResumeCardProps) {
   const updatedAt = new Date(resume.updated_at).toLocaleDateString("pt-BR");
 
   return (
-    <Card>
-      <CardContent className="flex items-center gap-4">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-          <FileText className="size-5 text-primary" aria-hidden="true" />
+    <Card size="sm">
+      <CardContent className="flex items-center gap-3">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded bg-primary/10">
+          <FileText className="size-4 text-primary" aria-hidden="true" />
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{title}</p>
-          <p className="text-sm text-muted-foreground">Atualizado em {updatedAt}</p>
+          <p className="truncate text-[13px] font-medium">{title}</p>
+          <p className="font-mono text-[11px] text-muted-foreground">Atualizado em {updatedAt}</p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-0.5">
           <Link href={`/resume/${resume.id}/optimize`} className="inline-flex">
             <Button type="button" variant="ghost" size="icon" aria-label="Otimizar currículo">
               <Sparkles className="size-4" aria-hidden="true" />

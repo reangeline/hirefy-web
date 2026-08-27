@@ -14,7 +14,12 @@ const PLAN_LABELS: Record<SubscriptionResponse["plan"], string> = {
   premium: "Premium",
 };
 
-export function SubscriptionCard() {
+interface SubscriptionCardProps {
+  /** "sm" — versão compacta pro rodapé da sidebar (spec 006), sem ícone/descrição longa. */
+  size?: "default" | "sm";
+}
+
+export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
   const [sub, setSub] = useState<SubscriptionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +31,7 @@ export function SubscriptionCard() {
 
   if (error) {
     return (
-      <Card>
+      <Card size={size}>
         <CardContent>
           <p role="alert" aria-live="polite" className="text-sm text-destructive">
             Falha ao carregar assinatura: {error}
@@ -38,7 +43,7 @@ export function SubscriptionCard() {
 
   if (!sub) {
     return (
-      <Card>
+      <Card size={size}>
         <CardContent>
           <p aria-live="polite" className="text-sm text-muted-foreground">
             Carregando assinatura…
@@ -52,6 +57,29 @@ export function SubscriptionCard() {
   // calculamos aqui. Ver .spec/004-dashboard-home/spec.md.
   const isPremium = sub.plan !== "free" && sub.status === "active";
   const credits = sub.credits ?? 0;
+
+  if (size === "sm") {
+    return (
+      <Card size="sm">
+        <CardContent className="space-y-2">
+          <div className="flex items-center justify-between text-[12.5px]">
+            <span className="font-semibold">{PLAN_LABELS[sub.plan]}</span>
+          </div>
+          {!isPremium && (
+            <div className="flex items-center justify-between text-[12px] text-muted-foreground">
+              <span>Créditos</span>
+              <span className="font-mono text-foreground">{credits}</span>
+            </div>
+          )}
+          {!isPremium && (
+            <Button type="button" disabled title="Em breve" variant="outline" size="sm" className="w-full">
+              Fazer upgrade
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

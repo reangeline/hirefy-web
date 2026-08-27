@@ -11,6 +11,7 @@ import { JobActionsCard } from "@/components/pipeline/JobActionsCard";
 import { JobAtsMatchTab } from "@/components/pipeline/JobAtsMatchTab";
 import { JobCoachTab } from "@/components/pipeline/JobCoachTab";
 import { JobContactsTab } from "@/components/pipeline/JobContactsTab";
+import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import { STAGE_LABELS, type PipelineJob } from "@/types/pipeline";
 
@@ -39,58 +40,63 @@ export default function PipelineJobDetailPage({ params }: PageProps<"/pipeline/[
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-12">
-      <Link href="/dashboard" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        Pipeline
-      </Link>
+    <>
+      <Topbar title={job?.company_name ?? "Vaga"} />
+      <div className="mx-auto w-full max-w-2xl space-y-6 p-6">
+        <Link href="/dashboard" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Pipeline
+        </Link>
 
-      {error && (
-        <p role="alert" aria-live="polite" className="text-sm text-destructive">
-          {error}
-        </p>
-      )}
+        {error && (
+          <p role="alert" aria-live="polite" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
 
-      {!job && !error && <p className="text-sm text-muted-foreground">Carregando…</p>}
+        {!job && !error && <p className="text-sm text-muted-foreground">Carregando…</p>}
 
-      {job && (
-        <>
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <h1 className="text-2xl font-semibold">{job.company_name}</h1>
-              <p className="text-muted-foreground">{job.job_title}</p>
-              <div className="mt-2 flex items-center gap-2">
-                <Badge variant="secondary">{STAGE_LABELS[job.stage]}</Badge>
-                {job.ats_score != null && (
-                  <Badge variant={job.ats_score >= 70 ? "default" : "secondary"}>{job.ats_score}% ATS</Badge>
-                )}
+        {job && (
+          <>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h1 className="text-lg font-semibold">{job.company_name}</h1>
+                <p className="text-sm text-muted-foreground">{job.job_title}</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <Badge variant="secondary">{STAGE_LABELS[job.stage]}</Badge>
+                  {job.ats_score != null && (
+                    <Badge variant={job.ats_score >= 70 ? "default" : "secondary"} className="font-mono">
+                      {job.ats_score}% ATS
+                    </Badge>
+                  )}
+                </div>
               </div>
+              <Button type="button" variant="ghost" size="icon" aria-label="Excluir vaga" disabled={deleting} onClick={handleDelete}>
+                {deleting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <Trash2 className="size-4 text-destructive" aria-hidden="true" />}
+              </Button>
             </div>
-            <Button type="button" variant="ghost" size="icon" aria-label="Excluir vaga" disabled={deleting} onClick={handleDelete}>
-              {deleting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <Trash2 className="size-4 text-destructive" aria-hidden="true" />}
-            </Button>
-          </div>
 
-          <JobActionsCard job={job} onUpdated={setJob} />
+            <JobActionsCard job={job} onUpdated={setJob} />
 
-          <Tabs defaultValue="coach">
-            <TabsList>
-              <TabsTrigger value="coach">Coach</TabsTrigger>
-              <TabsTrigger value="ats">ATS Match</TabsTrigger>
-              <TabsTrigger value="contacts">Contatos</TabsTrigger>
-            </TabsList>
-            <TabsContent value="coach">
-              <JobCoachTab job={job} />
-            </TabsContent>
-            <TabsContent value="ats">
-              <JobAtsMatchTab job={job} />
-            </TabsContent>
-            <TabsContent value="contacts">
-              <JobContactsTab jobId={job.id} />
-            </TabsContent>
-          </Tabs>
-        </>
-      )}
-    </div>
+            <Tabs defaultValue="coach">
+              <TabsList>
+                <TabsTrigger value="coach">Coach</TabsTrigger>
+                <TabsTrigger value="ats">ATS Match</TabsTrigger>
+                <TabsTrigger value="contacts">Contatos</TabsTrigger>
+              </TabsList>
+              <TabsContent value="coach">
+                <JobCoachTab job={job} />
+              </TabsContent>
+              <TabsContent value="ats">
+                <JobAtsMatchTab job={job} />
+              </TabsContent>
+              <TabsContent value="contacts">
+                <JobContactsTab jobId={job.id} />
+              </TabsContent>
+            </Tabs>
+          </>
+        )}
+      </div>
+    </>
   );
 }

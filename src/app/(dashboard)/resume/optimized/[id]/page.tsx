@@ -4,6 +4,7 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { OptimizedResultView } from "@/components/resume/OptimizedResultView";
+import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import type { OptimizedResume } from "@/types/resume";
 
@@ -19,24 +20,26 @@ export default function OptimizedResumePage({ params }: PageProps<"/resume/optim
   }, [id]);
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-12">
-      <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        Meus currículos
-      </Link>
-      <h1 className="text-2xl font-semibold">Currículo otimizado</h1>
+    <>
+      <Topbar title="Currículo otimizado" />
+      <div className="mx-auto w-full max-w-2xl space-y-6 p-6">
+        <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Meus currículos
+        </Link>
 
-      {error && (
-        <p role="alert" aria-live="polite" className="text-sm text-destructive">
-          {error}
-        </p>
-      )}
-      {!optimized && !error && (
-        <p aria-live="polite" className="text-sm text-muted-foreground">
-          Carregando…
-        </p>
-      )}
-      {optimized && <OptimizedResultView optimized={optimized} />}
-    </div>
+        {error && (
+          <p role="alert" aria-live="polite" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
+        {!optimized && !error && (
+          <p aria-live="polite" className="text-sm text-muted-foreground">
+            Carregando…
+          </p>
+        )}
+        {optimized && <OptimizedResultView optimized={optimized} />}
+      </div>
+    </>
   );
 }
