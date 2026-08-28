@@ -96,15 +96,36 @@ esta é a primeira vez que esse pilar do produto ganha implementação em qualqu
    (perfil do usuário: profissionais de TI mirando remoto) antes de decidir o esforço de
    parsing multi-idioma.
 
+## Achado durante a implementação — mudança de escopo pedida pelo usuário
+Depois do v1 (assiste uma vaga já aberta) funcionar ao vivo, o usuário pediu explicitamente
+pra trazer pra esta spec o item que tinha ficado como "fase 2" em "Fora de escopo": triagem
+da **lista** de resultados de busca do LinkedIn, não só da vaga aberta. Decisões tomadas com
+o usuário nessa hora:
+- Sem custo de IA na lista — filtro client-side por palavras-chave (currículo vs título da
+  vaga), só pra pré-ordenar. Score de ATS de verdade (IA) continua só na vaga aberta.
+- "Aprovar" só marca numa fila local (`chrome.storage.local`) de "quero aplicar" — não abre
+  nem prepara nada sozinho; usuário ainda abre cada vaga aprovada individualmente depois.
+- Fila aprovada visível em dois lugares (painel na página + popup da extensão), com botão
+  "Abrir" (nova aba) — fechado depois que o usuário testou o v1 da fila e achou o fluxo
+  incompleto sem um jeito de voltar nas vagas aprovadas.
+
 ## Critérios de aceite
-- [ ] Extensão instalável localmente (modo desenvolvedor) no Chrome
-- [ ] Login funciona e mantém sessão entre reinícios do navegador
-- [ ] Em uma vaga real do LinkedIn, "Preparar candidatura" mostra score de ATS e keywords
-  faltando usando o currículo escolhido, sem sair da página
-- [ ] Campos padrão do Easy Apply são preenchidos automaticamente a partir do currículo
-- [ ] Pergunta de triagem custom recebe sugestão de resposta via IA
+- [x] Extensão instalável localmente (modo desenvolvedor) no Chrome
+- [x] Login funciona e mantém sessão entre reinícios do navegador
+- [x] Em uma vaga real do LinkedIn, "Preparar candidatura" mostra score de ATS e keywords
+  faltando usando o currículo escolhido, sem sair da página — testado ao vivo (EasyPost,
+  score 45% real, ~49s de processamento)
+- [x] Campos padrão do Easy Apply são preenchidos automaticamente a partir do currículo —
+  achado ao testar: o próprio LinkedIn já preenche email/telefone/currículo a partir do
+  perfil da pessoa antes mesmo da extensão agir. Não precisou de código novo pra isso.
+- [ ] Pergunta de triagem custom recebe sugestão de resposta via IA — não testado ainda
+  (nenhuma vaga aberta durante os testes tinha pergunta de texto livre)
 - [ ] Toda a feature (preparar candidatura + sugestão de resposta) só funciona pra assinante
-  Premium, sem consumir crédito
+  Premium, sem consumir crédito — gate implementado no backend, não testado com uma conta
+  Free de verdade batendo o 403
 - [ ] Depois do envio manual pelo usuário, a vaga aparece no Pipeline (`stage=applied`) sem
-  precisar recadastrar nada
+  precisar recadastrar nada — não testado (evitado de propósito pra não criar candidatura
+  falsa na conta real durante os testes)
+- [x] Triagem da lista de busca: vagas ordenadas por palavra-chave, aprovar/remover, fila
+  visível no painel e no popup, "Abrir" leva direto pra vaga — testado ao vivo pelo usuário
 - [ ] Testado ao vivo contra o backend de dev, numa vaga real do LinkedIn
