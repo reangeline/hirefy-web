@@ -33,7 +33,7 @@ export function PipelineCard({ job, onStageChange }: PipelineCardProps) {
       ref={setNodeRef}
       size="sm"
       style={{ transform: CSS.Translate.toString(transform) }}
-      className={isDragging ? "opacity-40" : undefined}
+      className={`cursor-grab active:cursor-grabbing ${isDragging ? "opacity-40" : ""}`}
       {...listeners}
       {...attributes}
     >

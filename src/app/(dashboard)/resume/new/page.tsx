@@ -98,7 +98,7 @@ function MethodCard({
   onClick: () => void;
 }) {
   return (
-    <button type="button" onClick={onClick} className="text-left">
+    <button type="button" onClick={onClick} className="cursor-pointer text-left">
       <Card className="h-full transition-colors hover:bg-accent">
         <CardContent className="flex items-start gap-3">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">

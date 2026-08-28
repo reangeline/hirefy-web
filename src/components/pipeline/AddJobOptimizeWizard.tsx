@@ -167,7 +167,7 @@ export function AddJobOptimizeWizard() {
         <button
           type="button"
           onClick={() => setStep("details")}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          className="flex cursor-pointer items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-3.5" aria-hidden="true" />
           Voltar
@@ -198,7 +198,7 @@ export function AddJobOptimizeWizard() {
                 type="button"
                 key={resume.id}
                 onClick={() => setSelectedResumeId(resume.id)}
-                className="block w-full text-left"
+                className="block w-full cursor-pointer text-left"
               >
                 <Card className={selected ? "border-primary" : undefined}>
                   <CardContent className="flex items-center gap-3 p-3">
