@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
+import { trackEvent } from "@/lib/analytics";
 
 export default function LoginPage() {
   return (
@@ -46,6 +47,7 @@ function LoginForm() {
         return;
       }
 
+      trackEvent("login_completed");
       const redirect = searchParams.get("redirect") ?? "/dashboard";
       router.push(redirect);
       router.refresh();

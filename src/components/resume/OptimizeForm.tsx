@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import { INSUFFICIENT_CREDITS_ERROR, type OptimizationJob } from "@/types/resume";
 
 interface OptimizeFormProps {
@@ -44,6 +45,7 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
         );
         setJob(updated);
         if (updated.status === "completed" && updated.optimized_resume_id) {
+          trackEvent("resume_optimize_completed");
           router.push(`/resume/optimized/${updated.optimized_resume_id}`);
         }
       } catch (err) {
@@ -72,6 +74,7 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
       });
       attemptsRef.current = 0;
       setJob(created);
+      trackEvent("resume_optimize_started");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível iniciar a otimização.");
     } finally {

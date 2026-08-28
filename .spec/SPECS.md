@@ -1,7 +1,9 @@
 # Board de Specs — web-app
 
-Escopo: só `web-app`. Os outros 3 projetos do monorepo (`backend_hirefy`, `applywise_app`,
-`hirefy_lading`) não têm specs neste padrão ainda.
+Escopo principal: `web-app`. A partir da spec 007, algumas specs também tocam outros projetos
+do monorepo quando a feature exige (`backend_hirefy` na 007, `hirefy_lading` na 008) — nesses
+casos a coluna "Nome" indica isso explicitamente. `applywise_app` continua sem specs neste
+padrão.
 
 | # | Nome | Status | Log |
 |---|---|---|---|
@@ -12,6 +14,7 @@ Escopo: só `web-app`. Os outros 3 projetos do monorepo (`backend_hirefy`, `appl
 | 005 | Pipeline de candidaturas (Kanban + Coach + Contatos + Analytics) | 🚧 Implementado e testado ao vivo; falta testar o caminho de sucesso da otimização integrada (créditos zerados) e o 403 do coach | [log.md](005-pipeline-candidaturas/log.md) |
 | 006 | Refresh visual "SaaS" (Stripe/Vercel) — sidebar shell, densidade, tipografia mono pra dados | ✅ Implementado e testado ao vivo (light+dark, shell aplicado a toda a área logada) | [log.md](006-saas-visual-refresh/log.md) |
 | 007 | Billing com Stripe (Free + Premium) — toca também `backend_hirefy` | ✅ Implementado e testado ao vivo em dev na AWS (upgrade → checkout → webhook → Premium → cancelar → Free); achado e corrigido bug de assinatura duplicada no DynamoDB | [log.md](007-stripe-billing/log.md) |
+| 008 | Analytics de produto (GA4 + Mixpanel) + banner de cookies — toca também `hirefy_lading` | ✅ Implementado e testado ao vivo (banner, eventos principais confirmados via rede); métricas de negócio ficam no dashboard nativo do Stripe (sem código novo) | [log.md](008-analytics/log.md) |
 
 ## Legenda
 

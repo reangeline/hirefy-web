@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import { PIPELINE_STAGES, STAGE_LABELS, type PipelineJob, type PipelineJobStage } from "@/types/pipeline";
 
 // Adiciona a vaga direto, sem passar pela otimização de currículo — não gasta crédito.
@@ -43,6 +44,7 @@ export function AddJobQuickForm() {
           stage,
         }),
       });
+      trackEvent("pipeline_job_added", { method: "quick" });
       router.push(`/pipeline/${job.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível adicionar a vaga.");

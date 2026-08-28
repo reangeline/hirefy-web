@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import { INSUFFICIENT_CREDITS_ERROR, type OptimizationJob, type OptimizedResume, type Resume } from "@/types/resume";
 import type { PipelineJob } from "@/types/pipeline";
 
@@ -88,6 +89,7 @@ export function AddJobOptimizeWizard() {
           missing_keywords: optimized.missing_requirements,
         }),
       });
+      trackEvent("pipeline_job_added", { method: "optimize" });
       router.push(`/pipeline/${created.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Currículo otimizado, mas não foi possível salvar a vaga.");

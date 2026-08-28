@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { apiFetchJson } from "@/lib/api/client";
+import { setUserProperty, trackEvent } from "@/lib/analytics";
 import type { SubscriptionResponse } from "@/types/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,10 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
 
   useEffect(() => {
     apiFetchJson<SubscriptionResponse>("/api/subscription")
-      .then(setSub)
+      .then((data) => {
+        setSub(data);
+        setUserProperty("subscription_tier", data.plan);
+      })
       .catch((err: Error) => setError(err.message));
   }, []);
 
@@ -39,6 +43,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
     setActionError(null);
     setBusy(true);
     try {
+      trackEvent("upgrade_button_clicked");
       const { checkout_url } = await apiFetchJson<CheckoutResponse>("/api/subscription/checkout", {
         method: "POST",
       });
@@ -54,8 +59,10 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
     setBusy(true);
     try {
       await apiFetchJson<SubscriptionResponse>("/api/subscription", { method: "DELETE" });
+      trackEvent("subscription_cancelled");
       const refreshed = await apiFetchJson<SubscriptionResponse>("/api/subscription");
       setSub(refreshed);
+      setUserProperty("subscription_tier", refreshed.plan);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "Falha ao cancelar assinatura");
     } finally {

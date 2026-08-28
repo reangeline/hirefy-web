@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { trackEvent } from "@/lib/analytics";
 
 export default function SignupConfirmPage() {
   return (
@@ -45,6 +46,7 @@ function ConfirmForm() {
         return;
       }
 
+      trackEvent("signup_completed");
       router.push("/login");
     } finally {
       setLoading(false);

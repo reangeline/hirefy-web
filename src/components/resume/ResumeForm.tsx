@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import { emptyEducation, emptyExperience, emptyLanguage, emptyProject } from "@/types/resume";
 import type { EducationEntry, ExperienceEntry, LanguageEntry, ManualResumeRequest, ProjectEntry } from "@/types/resume";
 
@@ -51,6 +52,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
+        trackEvent("resume_created");
       } else {
         await apiFetchJson(`/api/resumes/manual/${resumeId}`, {
           method: "PUT",

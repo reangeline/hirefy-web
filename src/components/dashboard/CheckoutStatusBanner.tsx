@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 // Mensagem de retorno do Stripe Checkout hospedado (?checkout=success|cancelled, ver
 // payment_gateway_impl.go:CreateCheckoutSession). SubscriptionCard já busca o estado atual
@@ -18,6 +19,11 @@ function CheckoutStatusBannerInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const checkout = searchParams.get("checkout");
+
+  useEffect(() => {
+    if (checkout === "success") trackEvent("checkout_completed");
+    if (checkout === "cancelled") trackEvent("checkout_cancelled");
+  }, [checkout]);
 
   if (checkout !== "success" && checkout !== "cancelled") return null;
 

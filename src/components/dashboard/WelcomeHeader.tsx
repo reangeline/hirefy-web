@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiFetchJson } from "@/lib/api/client";
+import { identify } from "@/lib/analytics";
 import type { MeResponse } from "@/types/api";
 import { EmailVerificationBanner } from "@/components/dashboard/EmailVerificationBanner";
 
@@ -11,7 +12,10 @@ export function WelcomeHeader() {
 
   useEffect(() => {
     apiFetchJson<MeResponse>("/api/me")
-      .then(setMe)
+      .then((data) => {
+        setMe(data);
+        identify(data.id);
+      })
       .catch((err: Error) => setError(err.message));
   }, []);
 

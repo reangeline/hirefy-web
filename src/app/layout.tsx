@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
+import { AnalyticsPageview } from "@/components/AnalyticsPageview";
 
 // Mesma fonte do app mobile (AppTheme, GoogleFonts.inter) e da landing page.
 const inter = Inter({
@@ -31,7 +33,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AnalyticsPageview />
           {children}
+          <CookieConsentBanner />
         </ThemeProvider>
       </body>
     </html>
