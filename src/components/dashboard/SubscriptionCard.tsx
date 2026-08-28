@@ -8,6 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+interface CheckoutResponse {
+  checkout_url: string;
+}
+
 const PLAN_LABELS: Record<SubscriptionResponse["plan"], string> = {
   free: "Plano Free",
   basic: "Plano Basic",
@@ -22,12 +26,42 @@ interface SubscriptionCardProps {
 export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
   const [sub, setSub] = useState<SubscriptionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     apiFetchJson<SubscriptionResponse>("/api/subscription")
       .then(setSub)
       .catch((err: Error) => setError(err.message));
   }, []);
+
+  async function handleUpgrade() {
+    setActionError(null);
+    setBusy(true);
+    try {
+      const { checkout_url } = await apiFetchJson<CheckoutResponse>("/api/subscription/checkout", {
+        method: "POST",
+      });
+      window.location.href = checkout_url;
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Falha ao iniciar checkout");
+      setBusy(false);
+    }
+  }
+
+  async function handleCancel() {
+    setActionError(null);
+    setBusy(true);
+    try {
+      await apiFetchJson<SubscriptionResponse>("/api/subscription", { method: "DELETE" });
+      const refreshed = await apiFetchJson<SubscriptionResponse>("/api/subscription");
+      setSub(refreshed);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Falha ao cancelar assinatura");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   if (error) {
     return (
@@ -57,13 +91,17 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
   // calculamos aqui. Ver .spec/004-dashboard-home/spec.md.
   const isPremium = sub.plan !== "free" && sub.status === "active";
   const credits = sub.credits ?? 0;
+  // `plan` fica "premium" mesmo depois de cancelar (é o histórico do que a conta já teve —
+  // ver Subscription.Cancel() no backend, que só muda o status). O rótulo mostrado usa o
+  // estado efetivo, senão a UI mostraria "Premium" junto com créditos/botão de upgrade.
+  const planLabel = isPremium ? PLAN_LABELS[sub.plan] : PLAN_LABELS.free;
 
   if (size === "sm") {
     return (
       <Card size="sm">
         <CardContent className="space-y-2">
           <div className="flex items-center justify-between text-[12.5px]">
-            <span className="font-semibold">{PLAN_LABELS[sub.plan]}</span>
+            <span className="font-semibold">{planLabel}</span>
           </div>
           {!isPremium && (
             <div className="flex items-center justify-between text-[12px] text-muted-foreground">
@@ -71,9 +109,32 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
               <span className="font-mono text-foreground">{credits}</span>
             </div>
           )}
-          {!isPremium && (
-            <Button type="button" disabled title="Em breve" variant="outline" size="sm" className="w-full">
-              Fazer upgrade
+          {actionError && (
+            <p role="alert" aria-live="polite" className="text-[11px] text-destructive">
+              {actionError}
+            </p>
+          )}
+          {isPremium ? (
+            <Button
+              type="button"
+              onClick={handleCancel}
+              disabled={busy}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              {busy ? "Cancelando…" : "Cancelar assinatura"}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={handleUpgrade}
+              disabled={busy}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              {busy ? "Redirecionando…" : "Fazer upgrade"}
             </Button>
           )}
         </CardContent>
@@ -86,7 +147,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
       <CardHeader className="flex-row items-center justify-between space-y-0">
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="size-4 text-primary" aria-hidden="true" />
-          {PLAN_LABELS[sub.plan]}
+          {planLabel}
         </CardTitle>
         <Badge variant={isPremium ? "default" : "secondary"}>
           {credits} {credits === 1 ? "crédito" : "créditos"}
@@ -103,9 +164,25 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
                 : "Sem otimizações disponíveis no momento."}
         </p>
 
-        {!isPremium && (
-          <Button type="button" disabled title="Em breve" className="w-full sm:w-auto">
-            Fazer upgrade
+        {actionError && (
+          <p role="alert" aria-live="polite" className="text-sm text-destructive">
+            {actionError}
+          </p>
+        )}
+
+        {isPremium ? (
+          <Button
+            type="button"
+            onClick={handleCancel}
+            disabled={busy}
+            variant="outline"
+            className="w-full sm:w-auto"
+          >
+            {busy ? "Cancelando…" : "Cancelar assinatura"}
+          </Button>
+        ) : (
+          <Button type="button" onClick={handleUpgrade} disabled={busy} className="w-full sm:w-auto">
+            {busy ? "Redirecionando…" : "Fazer upgrade"}
           </Button>
         )}
       </CardContent>
