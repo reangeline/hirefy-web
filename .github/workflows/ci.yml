@@ -31,8 +31,11 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Type check
-        run: npx tsc --noEmit
-
       - name: Build
         run: npm run build
+
+      - name: Type check
+        # Depois do build de propósito: rotas/páginas novas só ganham os tipos gerados
+        # (RouteContext/PageProps/LayoutProps) depois de um `next build` — rodar tsc antes
+        # falha com "Cannot find name" mesmo em código correto.
+        run: npx tsc --noEmit
