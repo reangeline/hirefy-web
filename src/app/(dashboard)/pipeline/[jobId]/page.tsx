@@ -11,6 +11,7 @@ import { JobActionsCard } from "@/components/pipeline/JobActionsCard";
 import { JobAtsMatchTab } from "@/components/pipeline/JobAtsMatchTab";
 import { JobCoachTab } from "@/components/pipeline/JobCoachTab";
 import { JobContactsTab } from "@/components/pipeline/JobContactsTab";
+import { JobInterviewTab } from "@/components/pipeline/JobInterviewTab";
 import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import { STAGE_LABELS, type PipelineJob } from "@/types/pipeline";
@@ -81,11 +82,15 @@ export default function PipelineJobDetailPage({ params }: PageProps<"/pipeline/[
             <Tabs defaultValue="coach">
               <TabsList>
                 <TabsTrigger value="coach">Coach</TabsTrigger>
+                <TabsTrigger value="interview">Entrevista</TabsTrigger>
                 <TabsTrigger value="ats">ATS Match</TabsTrigger>
                 <TabsTrigger value="contacts">Contatos</TabsTrigger>
               </TabsList>
               <TabsContent value="coach">
                 <JobCoachTab job={job} />
+              </TabsContent>
+              <TabsContent value="interview">
+                <JobInterviewTab job={job} />
               </TabsContent>
               <TabsContent value="ats">
                 <JobAtsMatchTab job={job} />

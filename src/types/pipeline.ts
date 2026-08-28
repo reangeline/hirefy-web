@@ -199,3 +199,43 @@ export interface PipelineAnalytics {
   weeklyActivity: WeeklyPoint[];
   coachInsight: string;
 }
+
+// Prática de entrevista (spec 010) — GET/POST /pipeline/{jobId}/interview-practice[...].
+// Ver InterviewQuestionDTO em internal/core/ports/inbound/interview_practice_service.go.
+// Mesmos erros do Coach: 402 (sem créditos, só em SubmitAnswer — gerar pergunta é grátis),
+// 403 (assinatura inativa/não encontrada), 422 (sem prática nesse estágio — "wishlist").
+export type InterviewQuestionKind = "behavioral" | "technical" | "situational" | "screening";
+
+export const INTERVIEW_KINDS: InterviewQuestionKind[] = [
+  "behavioral",
+  "technical",
+  "situational",
+  "screening",
+];
+
+export const INTERVIEW_KIND_LABELS: Record<InterviewQuestionKind, string> = {
+  behavioral: "Comportamental",
+  technical: "Técnica",
+  situational: "Situacional",
+  screening: "Triagem",
+};
+
+export interface InterviewQuestion {
+  id: string;
+  kind: InterviewQuestionKind;
+  question: string;
+  what_they_want?: string;
+  method_hint?: string;
+  answer?: string;
+  content_score?: number;
+  star_situation?: number;
+  star_task?: number;
+  star_action?: number;
+  star_result?: number;
+  strengths?: string[];
+  gaps?: string[];
+  model_answer?: string;
+  follow_up?: string;
+  created_at: string;
+  answered: boolean;
+}
