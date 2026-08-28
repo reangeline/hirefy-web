@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import { Ghost, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,8 +21,22 @@ interface PipelineCardProps {
 }
 
 export function PipelineCard({ job, onStageChange }: PipelineCardProps) {
+  // Arrastar o card entre colunas é uma segunda forma de chamar o mesmo onStageChange do
+  // Select abaixo (ver PipelineBoard.tsx) — mantém o Select como alternativa acessível
+  // (teclado, leitor de tela, ou só preferência).
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: job.id,
+  });
+
   return (
-    <Card size="sm">
+    <Card
+      ref={setNodeRef}
+      size="sm"
+      style={{ transform: CSS.Translate.toString(transform) }}
+      className={isDragging ? "opacity-40" : undefined}
+      {...listeners}
+      {...attributes}
+    >
       <CardContent className="space-y-2 p-2.5">
         <div className="flex items-start justify-between gap-2">
           <Link href={`/pipeline/${job.id}`} className="min-w-0 flex-1">
