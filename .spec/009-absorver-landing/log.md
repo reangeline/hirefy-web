@@ -44,18 +44,28 @@ acordeão abre/fecha corretamente. Tabela de cookies renderiza como tabela de ve
 da correção do `remark-gfm`. Rodapé com os 4 links legais confirmados via árvore de
 acessibilidade.
 
-## Checklist de infraestrutura (entregue ao usuário, não executado)
+## Checklist de infraestrutura — fechado em 2026-08-28
 
-Fora do que código pode resolver — requer acesso a contas externas que não tenho:
+1. ✅ **Vercel**: novo projeto `hirefy-web` criado (linkado ao repo `reangeline/hirefy-web`),
+   env vars de produção configuradas (`API_BASE_URL`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`,
+   `NEXT_PUBLIC_MIXPANEL_TOKEN`), deploy de produção feito e validado.
+2. ✅ **Corte de domínio**: `hirefy.careers` e `www.hirefy.careers` removidos do projeto
+   `hirefy-lading` e adicionados ao `hirefy-web`. `vercel domains verify` confirmou
+   `configured-correctly` sem nenhuma mudança de DNS necessária.
+3. ⏳ **Google Cloud Console** (`https://hirefy.careers` em Authorized JavaScript origins) —
+   ainda não feito; baixa prioridade porque login social ainda não está habilitado
+   (`NEXT_PUBLIC_GOOGLE_CLIENT_ID` vazio).
+4. ✅ `NEXT_PUBLIC_GA_MEASUREMENT_ID`/`NEXT_PUBLIC_MIXPANEL_TOKEN` confirmados sem mudança.
+5. ✅ **Destino do `hirefy_lading`**: decisão do usuário foi desativar. Projeto `hirefy-lading`
+   **removido da Vercel** (`vercel project rm`) — a URL fallback `hirefy-lading.vercel.app`
+   (que continuava servindo o site antigo mesmo sem o domínio customizado) agora retorna 404.
+   O repositório GitHub `hirefy_lading` não foi tocado, só o deploy saiu do ar.
 
-1. **Vercel**: adicionar `hirefy.careers` como domínio do projeto `web-app` (hoje é do
-   projeto `hirefy_lading` — precisa remover de um antes de adicionar no outro)
-2. **DNS**: normalmente nenhuma mudança de registro é necessária se o domínio já aponta pro
-   Vercel, só a reassociação domínio→projeto dentro do próprio Vercel
-3. **Google Cloud Console**: adicionar `https://hirefy.careers` em "Authorized JavaScript
-   origins" do OAuth Client ID já usado pro login social (spec 001)
-4. `NEXT_PUBLIC_GA_MEASUREMENT_ID`/`NEXT_PUBLIC_MIXPANEL_TOKEN` do `web-app` (spec 008) não
-   precisam mudar — são os mesmos independente do domínio
-5. **Só depois de validar o corte ao vivo**: decidir o que fazer com o deploy/repositório da
-   `hirefy_lading` (arquivar, deletar, ou manter sem tráfego) — pedir confirmação separada
-   nessa hora, é uma ação difícil de reverter
+## Ambiente de dev do `web-app` (trabalho relacionado, mesma sessão)
+
+Fora do escopo original desta spec, mas na mesma linha de infraestrutura: criada branch
+`develop` com gitflow (CI próprio, branch protection) e preview estável na Vercel
+(`hirefy-web-git-develop-...vercel.app`) apontando pro backend de dev, com GA4/Mixpanel
+**desativados** nesse ambiente (removidos do escopo Preview na Vercel) pra não poluir as
+métricas reais de produção. Detalhes de CI/CD ficam fora do padrão de specs numeradas deste
+board — é infraestrutura transversal, não uma feature de produto.
