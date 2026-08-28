@@ -17,6 +17,7 @@ padrão.
 | 008 | Analytics de produto (GA4 + Mixpanel) + banner de cookies — toca também `hirefy_lading` | ✅ Implementado e testado ao vivo (banner, eventos principais confirmados via rede); métricas de negócio ficam no dashboard nativo do Stripe (sem código novo) | [log.md](008-analytics/log.md) |
 | 009 | Absorve a `hirefy_lading` no web-app (Preços, FAQ, páginas legais) | ✅ Implementado, testado ao vivo e checklist de infra fechado: domínio `hirefy.careers` cortado pra `web-app` na Vercel (sem downtime de DNS) e o projeto antigo `hirefy-lading` removido da Vercel (repositório GitHub preservado); testimonials fabricados da landing antiga não foram portados (decisão do usuário) | [log.md](009-absorver-landing/log.md) |
 | 010 | Prática de entrevista interativa — toca também `backend_hirefy` | ✅ Implementado e testado ao vivo em dev na AWS (pergunta → resposta → avaliação com STAR → próxima pergunta sem repetir tema); inspirado no módulo Interview do app pessoal `realtalk` do usuário | [log.md](010-interview-practice/log.md) |
+| 011 | Auto-apply assistido no LinkedIn (extensão de navegador) — novo projeto (`browser_extension/`), toca também `backend_hirefy` | 🚧 Backend novo (`POST /apply-assist/answer`) implementado e testado (401 sem auth) em dev na AWS; esqueleto da extensão (Vite+React+MV3) com build/lint/type-check limpos; scraping de vaga e detecção do modal Easy Apply testados contra o LinkedIn de verdade — falta testar o fluxo completo carregando a extensão no Chrome com login real | [spec.md](011-auto-apply-linkedin/spec.md) |
 
 ## Legenda
 
