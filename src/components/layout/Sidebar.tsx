@@ -15,7 +15,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-56 shrink-0 flex-col gap-1 border-r border-border bg-card px-3 py-4">
+    <aside className="flex w-56 shrink-0 flex-col gap-1 border-r border-border bg-card px-3 py-4">
       <Link href="/dashboard" className="flex items-center gap-2 px-2 pb-4">
         <span className="flex size-5 items-center justify-center rounded bg-primary text-[11px] font-bold text-primary-foreground">
           Hf
