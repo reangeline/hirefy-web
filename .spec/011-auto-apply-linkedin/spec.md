@@ -109,6 +109,23 @@ o usuário nessa hora:
   "Abrir" (nova aba) — fechado depois que o usuário testou o v1 da fila e achou o fluxo
   incompleto sem um jeito de voltar nas vagas aprovadas.
 
+Depois disso, o usuário pediu uma aba no web-app pra listar essas vagas, com referência à
+LoopCV. A pesquisa mostrou que o fluxo real da LoopCV é painel-cêntrico com **envio 100%
+automático** — diverge da decisão de segurança já tomada aqui (humano confirma o envio).
+Decisão final com o usuário: manter humano-confirma-envio, e sincronizar a lista entre
+extensão e web-app pelo backend. Em vez de criar uma tabela/endpoint novo, a "fila aprovada"
+virou o estágio **Wishlist** que o Pipeline já tinha — "Aprovar" chama o `POST /pipeline`
+real com `stage=wishlist`, e a "aba no web-app" é a própria coluna Wishlist do Dashboard
+(zero rota nova). Adicionado botão "Abrir vaga original" no `JobActionsCard.tsx` do web-app
+pra fechar o ciclo de volta pro LinkedIn.
+
+Testado ao vivo de ponta a ponta em 2026-08-28: aprovar uma vaga real (CyberCoders, jobId
+4451253302) na lista da extensão → apareceu instantaneamente na coluna Wishlist do
+Dashboard real, sem reload manual além de revisitar a página → "Abrir vaga original" abriu
+a aba certa (`linkedin.com/jobs/view/4451253302/`). Confirmado também que uma vaga
+pré-existente na Wishlist sem `job_url` (criada manualmente antes desta spec) não quebra a
+sincronização nem mostra o botão "Abrir" indevidamente.
+
 ## Critérios de aceite
 - [x] Extensão instalável localmente (modo desenvolvedor) no Chrome
 - [x] Login funciona e mantém sessão entre reinícios do navegador
@@ -128,4 +145,8 @@ o usuário nessa hora:
   falsa na conta real durante os testes)
 - [x] Triagem da lista de busca: vagas ordenadas por palavra-chave, aprovar/remover, fila
   visível no painel e no popup, "Abrir" leva direto pra vaga — testado ao vivo pelo usuário
-- [ ] Testado ao vivo contra o backend de dev, numa vaga real do LinkedIn
+- [x] Aprovar uma vaga na lista sincroniza com o Wishlist real do Pipeline (backend), aparece
+  no Dashboard do web-app sem recadastro manual, e "Abrir vaga original" leva pra vaga certa
+  no LinkedIn — testado ao vivo em 2026-08-28 (CyberCoders, jobId 4451253302)
+- [x] Testado ao vivo contra o backend de dev, numa vaga real do LinkedIn (múltiplos testes:
+  EasyPost pra otimização, CyberCoders pra sincronização com o Pipeline)
