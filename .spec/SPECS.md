@@ -15,6 +15,7 @@ padrão.
 | 006 | Refresh visual "SaaS" (Stripe/Vercel) — sidebar shell, densidade, tipografia mono pra dados | ✅ Implementado e testado ao vivo (light+dark, shell aplicado a toda a área logada) | [log.md](006-saas-visual-refresh/log.md) |
 | 007 | Billing com Stripe (Free + Premium) — toca também `backend_hirefy` | ✅ Implementado e testado ao vivo em dev na AWS (upgrade → checkout → webhook → Premium → cancelar → Free); achado e corrigido bug de assinatura duplicada no DynamoDB | [log.md](007-stripe-billing/log.md) |
 | 008 | Analytics de produto (GA4 + Mixpanel) + banner de cookies — toca também `hirefy_lading` | ✅ Implementado e testado ao vivo (banner, eventos principais confirmados via rede); métricas de negócio ficam no dashboard nativo do Stripe (sem código novo) | [log.md](008-analytics/log.md) |
+| 009 | Absorve a `hirefy_lading` no web-app (Preços, FAQ, páginas legais) | ✅ Implementado e testado ao vivo; testimonials fabricados da landing antiga não foram portados (decisão do usuário); corte de domínio (`hirefy.careers`) é infraestrutura, fica como checklist pro usuário | [log.md](009-absorver-landing/log.md) |
 
 ## Legenda
 

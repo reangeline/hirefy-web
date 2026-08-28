@@ -3,6 +3,8 @@ import { Hero } from "@/components/marketing/Hero";
 import { Problem } from "@/components/marketing/Problem";
 import { Features } from "@/components/marketing/Features";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
+import { Pricing } from "@/components/marketing/Pricing";
+import { FAQ } from "@/components/marketing/FAQ";
 import { CTASection } from "@/components/marketing/CTASection";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 
@@ -15,6 +17,8 @@ export default function Home() {
         <Problem />
         <Features />
         <HowItWorks />
+        <Pricing />
+        <FAQ />
         <CTASection />
       </main>
       <MarketingFooter />

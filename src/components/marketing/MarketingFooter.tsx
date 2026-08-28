@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 const LEGAL_LINKS = [
-  { label: "Privacidade", href: "https://hirefy.careers/privacy" },
-  { label: "Termos", href: "https://hirefy.careers/terms" },
+  { label: "Privacidade", href: "/privacy" },
+  { label: "Termos", href: "/terms" },
+  { label: "Cookies", href: "/cookies" },
+  { label: "Reembolso", href: "/refund" },
 ];
 
 export function MarketingFooter() {
@@ -20,9 +22,9 @@ export function MarketingFooter() {
 
         <div className="flex items-center gap-6 text-sm text-background/60">
           {LEGAL_LINKS.map((link) => (
-            <a key={link.label} href={link.href} className="hover:text-background">
+            <Link key={link.label} href={link.href} className="hover:text-background">
               {link.label}
-            </a>
+            </Link>
           ))}
           <a href="mailto:contact@hirefy.careers" className="hover:text-background">
             contact@hirefy.careers
