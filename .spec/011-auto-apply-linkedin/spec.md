@@ -137,9 +137,11 @@ sincronização nem mostra o botão "Abrir" indevidamente.
   perfil da pessoa antes mesmo da extensão agir. Não precisou de código novo pra isso.
 - [ ] Pergunta de triagem custom recebe sugestão de resposta via IA — não testado ainda
   (nenhuma vaga aberta durante os testes tinha pergunta de texto livre)
-- [ ] Toda a feature (preparar candidatura + sugestão de resposta) só funciona pra assinante
-  Premium, sem consumir crédito — gate implementado no backend, não testado com uma conta
-  Free de verdade batendo o 403
+- [x] Toda a feature (preparar candidatura + sugestão de resposta) só funciona pra assinante
+  Premium, sem consumir crédito — testado em 2026-08-28 com conta Free real (signup novo no
+  Cognito de dev, plano padrão Free): `POST /apply-assist/answer` retornou 403 com
+  `"recurso exclusivo para assinantes Premium"`, sem sequer buscar o currículo (checagem de
+  plano vem antes na `applyAssistServiceImpl.SuggestAnswer`). Conta de teste removida depois
 - [ ] Depois do envio manual pelo usuário, a vaga aparece no Pipeline (`stage=applied`) sem
   precisar recadastrar nada — não testado (evitado de propósito pra não criar candidatura
   falsa na conta real durante os testes)
