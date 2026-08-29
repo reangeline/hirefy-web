@@ -174,6 +174,44 @@ característica de como o Chrome injeta content scripts em MV3; ficou registrado
 consumiu boa parte do tempo de debug e explica por que os testes anteriores desta spec
 sempre navegaram clicando, nunca por URL direta.
 
+### Sugestão de resposta via IA testada numa pergunta de triagem real (2026-08-29)
+Ao tentar testar essa parte pendente da spec, apareceram dois bugs reais que bloqueavam a
+própria feature por completo — corrigidos antes de conseguir concluir o teste:
+
+1. **O painel inteiro ficava inclicável com o modal de Easy Apply aberto.** O modal é um
+   `<dialog>` nativo aberto via `showModal()`, que entra na "top layer" do navegador — o
+   `::backdrop` dele cobre a viewport inteira acima de QUALQUER conteúdo normal da página,
+   não importa o z-index. Nosso painel (um `<div fixed>` comum, anexado ao `body`) ficava só
+   visualmente por cima do modal: `document.elementFromPoint()` nas coordenadas do botão
+   confirmou que o clique caía no próprio `<dialog>`, não no botão. Corrigido em
+   `content/index.tsx` movendo o host da extensão pra dentro do `<dialog>` enquanto ele
+   estiver aberto (`reparentHostForDialog`, poll de 500ms) — como filho dele, o painel passa
+   a fazer parte da mesma top layer e volta a ser clicável.
+2. **A raspagem da vaga podia ficar vazia pro resto da navegação.** As duas tentativas fixas
+   de remontagem (800ms/2500ms) às vezes caíam, as duas, num instante ruim — testado contra
+   um ATS externo (SmartRecruiters) que mexe bastante no DOM da página ao abrir o modal — e
+   depois disso o painel ficava permanentemente vazio até a próxima troca de URL. Substituído
+   por um poll contínuo (`setInterval(mount, 1500)`), com desmontagem só depois de 3
+   raspagens vazias seguidas (evita esconder o painel por causa de uma falha isolada e
+   transitória).
+
+Também estendida a detecção de perguntas (`detectEasyApplyFields.ts`): o SmartRecruiters usa
+só `aria-label` no input, sem `label[for]` — a v1 só cobria `label[for]`, então perguntas
+desse ATS não apareciam no painel. Adicionado fallback por `aria-label`.
+
+Com os dois bugs corrigidos, testado ao vivo com uma pergunta de triagem real (MAVI, "How
+many years of work experience do you have with Python (Programming Language)?"): clicar
+"Sugerir resposta com IA" gerou uma resposta real e substantiva baseada no currículo ("I have
+approximately 3 years of work experience using Python, primarily focused on automating
+financial reporting...") e preencheu o campo de verdade no formulário do LinkedIn.
+
+**Achado de UX, não corrigido ainda**: o campo tinha limite de 20 caracteres (esperava algo
+tipo "3 anos"), mas a resposta da IA tinha 213 caracteres — o formulário mostrou o campo em
+estado de erro (excedeu o limite). O prompt de `SuggestApplyAnswer` não sabe do `maxlength`
+do campo porque a extensão não captura esse atributo hoje. Não corrigido nesta rodada — fica
+registrado como melhoria futura (ex: instruir a IA a responder de forma mais concisa, ou
+truncar/capturar o maxlength do campo e passar como restrição no prompt).
+
 ## Critérios de aceite
 - [x] Extensão instalável localmente (modo desenvolvedor) no Chrome
 - [x] Login funciona e mantém sessão entre reinícios do navegador
@@ -183,8 +221,12 @@ sempre navegaram clicando, nunca por URL direta.
 - [x] Campos padrão do Easy Apply são preenchidos automaticamente a partir do currículo —
   achado ao testar: o próprio LinkedIn já preenche email/telefone/currículo a partir do
   perfil da pessoa antes mesmo da extensão agir. Não precisou de código novo pra isso.
-- [ ] Pergunta de triagem custom recebe sugestão de resposta via IA — não testado ainda
-  (nenhuma vaga aberta durante os testes tinha pergunta de texto livre)
+- [x] Pergunta de triagem custom recebe sugestão de resposta via IA — testado ao vivo em
+  2026-08-29 (MAVI, pergunta sobre anos de experiência com Python), resposta real gerada e
+  preenchida no campo. Dois bugs bloqueantes encontrados e corrigidos no processo (painel
+  inclicável com o modal aberto; raspagem podendo ficar vazia até a próxima navegação) — ver
+  seção de achados acima. Achado de UX não corrigido: resposta da IA pode exceder o
+  `maxlength` do campo (não capturado hoje)
 - [x] Toda a feature (preparar candidatura + sugestão de resposta) só funciona pra assinante
   Premium, sem consumir crédito — testado em 2026-08-28 com conta Free real (signup novo no
   Cognito de dev, plano padrão Free): `POST /apply-assist/answer` retornou 403 com
