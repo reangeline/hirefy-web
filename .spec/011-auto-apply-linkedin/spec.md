@@ -126,6 +126,54 @@ a aba certa (`linkedin.com/jobs/view/4451253302/`). Confirmado também que uma v
 pré-existente na Wishlist sem `job_url` (criada manualmente antes desta spec) não quebra a
 sincronização nem mostra o botão "Abrir" indevidamente.
 
+### Auto-preparar candidatura pra vaga já aprovada (2026-08-29)
+O usuário pediu de novo pra "aplicar automaticamente" ao aprovar no web-app/extensão.
+Esclarecido o risco real de banimento de conta do LinkedIn (Termos de Uso proíbem
+automação; banimento é praticamente irreversível) e reafirmada a decisão de manter o envio
+manual. Escopo final, decidido com o usuário via perguntas diretas:
+- Envio continua 100% manual (clique nativo do LinkedIn).
+- Avaliação da lista continua sob demanda, sem custo de IA em lote.
+- Revisão/aprovação continua no painel da extensão, não move pro web-app.
+- Único ganho real: abrir de novo uma vaga já aprovada (Wishlist) não deve exigir um clique
+  extra em "Preparar candidatura" — aprovar já foi o sinal de intenção. Implementado em
+  `LinkedInJobPanel.tsx`: checa `LIST_WISHLIST` por `job_url` e dispara `prepareApplication()`
+  sozinho, mostrando "Vaga já aprovada no Wishlist — preparando candidatura
+  automaticamente…".
+
+Dois bugs reais encontrados e corrigidos durante a verificação ao vivo (não estavam na spec
+original):
+1. **`scrapeJobPosting()` gerava `jobUrl` diferente de `scrapeJobList()`** — usava
+   `location.href` cru (que na página de busca é `/jobs/search-results/?currentJobId=...`)
+   em vez do formato canônico `/jobs/view/<id>/` que a lista usa. Isso quebrava qualquer
+   comparação por `job_url`, inclusive o dedup do "Já enviei" que já tinha sido marcado como
+   testado antes — na prática, nunca funcionava quando a vaga era aberta a partir da busca
+   (o caso mais comum). Corrigido normalizando os dois pro mesmo formato.
+2. **`LinkedInJobPanel` nunca desmontava ao navegar de vaga pra vaga** (SPA do LinkedIn) —
+   estado como "Registrado no Pipeline ✓" ou o score de ATS da vaga anterior ficava colado
+   na vaga nova. Corrigido usando `job_url` como `key` do React em `content/index.tsx`,
+   forçando remontagem completa a cada vaga.
+3. (Achado mas não um bug de dado, só de timing) A remontagem por navegação SPA rodava só
+   uma vez, 800ms após a troca de URL — insuficiente pra algumas vagas cuja seção "About the
+   job" demora mais pra renderizar, fazendo o painel nunca aparecer. Adicionada uma segunda
+   tentativa aos 2500ms (remontar é idempotente).
+
+Testado ao vivo em 2026-08-29 (Urrly, jobId 4458536542): aprovar na lista → reabrir a vaga
+via navegação normal do LinkedIn (Jobs → Show all → clicar na vaga) → painel preparou a
+candidatura sozinho, chegando no score real de IA (27%, com lista real de requisitos
+faltando) sem nenhum clique manual. Confirmado sem regressão: uma vaga não aprovada
+(HARAMAIN) continua exigindo o clique manual, sem herdar estado da vaga anterior.
+
+**Achado de infraestrutura, não de código**: durante essa verificação, a extensão parou de
+injetar o content script depois de vários ciclos de desativar/reativar no
+`chrome://extensions` — sintoma `chrome-extension://invalid/ net::ERR_FAILED` no console.
+Reinstalação completa (remover + carregar sem compactação de novo) não resolveu sozinha;
+também descobrimos que uma navegação direta por URL (usada nos testes de automação) nunca
+injeta o content script de forma confiável — só funciona chegando pela navegação normal do
+LinkedIn (SPA, ex: Jobs → Show all → clicar num card). Isso não é um bug da extensão, é uma
+característica de como o Chrome injeta content scripts em MV3; ficou registrado aqui porque
+consumiu boa parte do tempo de debug e explica por que os testes anteriores desta spec
+sempre navegaram clicando, nunca por URL direta.
+
 ## Critérios de aceite
 - [x] Extensão instalável localmente (modo desenvolvedor) no Chrome
 - [x] Login funciona e mantém sessão entre reinícios do navegador
@@ -143,8 +191,11 @@ sincronização nem mostra o botão "Abrir" indevidamente.
   `"recurso exclusivo para assinantes Premium"`, sem sequer buscar o currículo (checagem de
   plano vem antes na `applyAssistServiceImpl.SuggestAnswer`). Conta de teste removida depois
 - [ ] Depois do envio manual pelo usuário, a vaga aparece no Pipeline (`stage=applied`) sem
-  precisar recadastrar nada — não testado (evitado de propósito pra não criar candidatura
-  falsa na conta real durante os testes)
+  precisar recadastrar nada — ainda não testado com um envio real (evitado de propósito pra
+  não criar candidatura falsa na conta real). Porém, em 2026-08-29 foi encontrado e corrigido
+  um bug que quebrava esse dedup na prática (`jobUrl` inconsistente entre abrir a vaga pela
+  busca vs. pela lista — ver seção de achados acima), então o teste anterior desse fluxo
+  (antes da correção) não teria funcionado de qualquer forma
 - [x] Triagem da lista de busca: vagas ordenadas por palavra-chave, aprovar/remover, fila
   visível no painel e no popup, "Abrir" leva direto pra vaga — testado ao vivo pelo usuário
 - [x] Aprovar uma vaga na lista sincroniza com o Wishlist real do Pipeline (backend), aparece
@@ -152,3 +203,6 @@ sincronização nem mostra o botão "Abrir" indevidamente.
   no LinkedIn — testado ao vivo em 2026-08-28 (CyberCoders, jobId 4451253302)
 - [x] Testado ao vivo contra o backend de dev, numa vaga real do LinkedIn (múltiplos testes:
   EasyPost pra otimização, CyberCoders pra sincronização com o Pipeline)
+- [x] Reabrir uma vaga já aprovada (Wishlist) prepara a candidatura sozinha (sem clique
+  manual), mantendo o envio 100% manual — testado ao vivo em 2026-08-29 (Urrly, jobId
+  4458536542, score real 27%); confirmado sem regressão em vaga não aprovada
