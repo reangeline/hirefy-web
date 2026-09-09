@@ -76,8 +76,11 @@ concentrada em `interview_practice_service_impl.go` (buscar `MissingRequirements
   texto das perguntas anteriores (não há rastreio estruturado de "pergunta X = gap Y") —
   funciona, mas é soft por design, documentado como limitação conhecida
 - [x] Vaga sem otimização prévia continua gerando pergunta genérica normalmente, sem erro —
-  garantido por construção (`if len(input.TargetGaps) > 0`), não testado ao vivo com uma
-  vaga sem gaps nesta rodada mas o código é direto o suficiente pra não exigir isso
+  testado ao vivo em dev (Plato, Full Stack Software Engineer, movida temporariamente de
+  Wishlist pra Aplicado só pra habilitar a aba, sem `missing_keywords`): gerou uma pergunta
+  comportamental genérica bem-formada ("balance front-end and back-end development"), sem
+  aviso de "modo focado" na UI e sem erro. Vaga devolvida pro estágio Wishlist original
+  depois do teste
 - [x] UI sinaliza quando a sessão está no modo "focado nos gaps da vaga" — testado ao vivo,
   aviso "Essa prática vai focar nos gaps reais que a IA já encontrou nessa vaga." aparece
   corretamente antes de gerar a primeira pergunta
