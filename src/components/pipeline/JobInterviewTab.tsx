@@ -155,6 +155,11 @@ export function JobInterviewTab({ job }: JobInterviewTabProps) {
                 Pratique perguntas de entrevista pra esta vaga, com avaliação da IA baseada no
                 seu currículo real.
               </p>
+              {job.missing_keywords && job.missing_keywords.length > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Essa prática vai focar nos gaps reais que a IA já encontrou nessa vaga.
+                </p>
+              )}
               <div className="flex w-full max-w-xs flex-col gap-2 sm:flex-row">
                 <Select
                   items={INTERVIEW_KIND_LABELS}
