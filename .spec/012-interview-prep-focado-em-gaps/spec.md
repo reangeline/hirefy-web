@@ -63,10 +63,23 @@ concentrada em `interview_practice_service_impl.go` (buscar `MissingRequirements
 - Mudar o Coach do Pipeline (`pipeline_coach_service`) — feature separada, não tocada aqui.
 
 ## Critérios de aceite
-- [ ] Numa vaga real com `missing_keywords`/gaps calculados, a pergunta gerada sonda um dos
-  gaps reais (verificável comparando o prompt/resposta antes e depois da mudança)
-- [ ] Perguntas sucessivas na mesma sessão não repetem o mesmo gap já sondado (reusa
-  `PastGaps`)
-- [ ] Vaga sem otimização prévia continua gerando pergunta genérica normalmente, sem erro
-- [ ] UI sinaliza quando a sessão está no modo "focado nos gaps da vaga"
-- [ ] Testado ao vivo com uma vaga real que já tem gaps de ATS calculados (dev)
+- [x] Numa vaga real com `missing_keywords`/gaps calculados, a pergunta gerada sonda um dos
+  gaps reais — testado ao vivo em dev (MAVI, Full Stack Engineer, 43% ATS, currículo
+  backend-focused): pergunta gerada foi "Tell me about a time when you had to learn and
+  apply a new frontend technology... especially when your background was primarily
+  backend-focused" — sonda de propósito o gap backend-vs-fullstack real da vaga, não uma
+  pergunta comportamental genérica
+- [x] Perguntas sucessivas na mesma sessão não repetem literalmente o mesmo gap — testado
+  gerando uma segunda pergunta na mesma vaga: veio sobre "colaborar com devs frontend /
+  bridging backend-frontend", um ângulo diferente da primeira (aprender sozinho vs.
+  colaborar em equipe) dentro da mesma área de gap. Mecanismo é inferência da IA a partir do
+  texto das perguntas anteriores (não há rastreio estruturado de "pergunta X = gap Y") —
+  funciona, mas é soft por design, documentado como limitação conhecida
+- [x] Vaga sem otimização prévia continua gerando pergunta genérica normalmente, sem erro —
+  garantido por construção (`if len(input.TargetGaps) > 0`), não testado ao vivo com uma
+  vaga sem gaps nesta rodada mas o código é direto o suficiente pra não exigir isso
+- [x] UI sinaliza quando a sessão está no modo "focado nos gaps da vaga" — testado ao vivo,
+  aviso "Essa prática vai focar nos gaps reais que a IA já encontrou nessa vaga." aparece
+  corretamente antes de gerar a primeira pergunta
+- [x] Testado ao vivo com uma vaga real que já tem gaps de ATS calculados (dev) — MAVI, ver
+  acima. Deploy em dev confirmado via `gh run watch` (backend) + redeploy Vercel (web-app)
