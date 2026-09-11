@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle2, CircleAlert, DollarSign, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularScore } from "@/components/resume/CircularScore";
+import { AddGapToResumeRow } from "@/components/resume/AddGapToResumeRow";
 import type { OptimizedResume } from "@/types/resume";
 
 interface OptimizedResultViewProps {
@@ -10,6 +11,13 @@ interface OptimizedResultViewProps {
   // dois ficam opcionais e a seção de palavras-chave some quando ausentes.
   matchedKeywords?: string[];
   missingKeywords?: string[];
+  // Contexto pro botão "Adicionar ao currículo" (spec 014) — resumeId precisa vir do
+  // currículo BASE (não do OptimizedResume), já que é ele que fica editável. Sem resumeId,
+  // o botão simplesmente não aparece (ex: visão standalone sem vaga do Pipeline por trás).
+  resumeId?: string;
+  jobTitle?: string;
+  companyName?: string;
+  jobDescription?: string;
 }
 
 // Barra de proporção real (batidas vs. faltando) — só desenhada quando dá pra calcular uma
@@ -47,7 +55,15 @@ function SidebarStat({
   );
 }
 
-function ChecklistRow({ ok, children }: { ok: boolean; children: React.ReactNode }) {
+function ChecklistRow({
+  ok,
+  children,
+  action,
+}: {
+  ok: boolean;
+  children: React.ReactNode;
+  action?: React.ReactNode;
+}) {
   return (
     <li className="flex items-start gap-2.5 text-sm">
       {ok ? (
@@ -55,7 +71,10 @@ function ChecklistRow({ ok, children }: { ok: boolean; children: React.ReactNode
       ) : (
         <XCircle className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" />
       )}
-      <span>{children}</span>
+      <div className="min-w-0 flex-1">
+        <span>{children}</span>
+        {action}
+      </div>
     </li>
   );
 }
@@ -64,6 +83,10 @@ export function OptimizedResultView({
   optimized,
   matchedKeywords,
   missingKeywords,
+  resumeId,
+  jobTitle,
+  companyName,
+  jobDescription,
 }: OptimizedResultViewProps) {
   const salary = optimized.salary_estimate;
   const hasKeywordData = (matchedKeywords?.length ?? 0) > 0 || (missingKeywords?.length ?? 0) > 0;
@@ -123,7 +146,21 @@ export function OptimizedResultView({
                   </ChecklistRow>
                 ))}
                 {missingKeywords?.map((kw) => (
-                  <ChecklistRow key={`missing-${kw}`} ok={false}>
+                  <ChecklistRow
+                    key={`missing-${kw}`}
+                    ok={false}
+                    action={
+                      resumeId && (
+                        <AddGapToResumeRow
+                          gap={kw}
+                          resumeId={resumeId}
+                          jobTitle={jobTitle}
+                          companyName={companyName}
+                          jobDescription={jobDescription}
+                        />
+                      )
+                    }
+                  >
                     <strong className="font-medium">{kw}</strong> — a vaga pede, seu currículo não
                     menciona.
                   </ChecklistRow>
@@ -167,7 +204,21 @@ export function OptimizedResultView({
             <CardContent>
               <ul className="space-y-2.5">
                 {optimized.missing_requirements.map((req) => (
-                  <ChecklistRow key={req} ok={false}>
+                  <ChecklistRow
+                    key={req}
+                    ok={false}
+                    action={
+                      resumeId && (
+                        <AddGapToResumeRow
+                          gap={req}
+                          resumeId={resumeId}
+                          jobTitle={jobTitle}
+                          companyName={companyName}
+                          jobDescription={jobDescription}
+                        />
+                      )
+                    }
+                  >
                     {req}
                   </ChecklistRow>
                 ))}

@@ -57,6 +57,10 @@ export function JobAtsMatchTab({ job }: { job: PipelineJob }) {
       optimized={optimized}
       matchedKeywords={job.matched_keywords}
       missingKeywords={job.missing_keywords}
+      resumeId={job.resume_id}
+      jobTitle={job.job_title}
+      companyName={job.company_name}
+      jobDescription={job.job_description}
     />
   );
 }
