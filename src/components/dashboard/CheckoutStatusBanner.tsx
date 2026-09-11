@@ -49,7 +49,7 @@ function CheckoutStatusBannerInner() {
       <button
         type="button"
         onClick={dismiss}
-        className="ml-4 shrink-0 text-xs underline-offset-4 hover:underline"
+        className="ml-4 shrink-0 cursor-pointer text-xs underline-offset-4 hover:underline"
       >
         Fechar
       </button>

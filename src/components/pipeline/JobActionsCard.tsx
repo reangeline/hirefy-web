@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Ghost, Loader2 } from "lucide-react";
+import { ExternalLink, Ghost, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -95,6 +95,18 @@ export function JobActionsCard({ job, onUpdated }: JobActionsCardProps) {
             <Button type="button" variant="outline" size="sm" disabled={busy} onClick={markGhosted} className="gap-1.5">
               <Ghost className="size-4" aria-hidden="true" />
               Marcar como ghosted
+            </Button>
+          )}
+
+          {job.job_url && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              render={<a href={job.job_url} target="_blank" rel="noopener noreferrer" />}
+            >
+              <ExternalLink className="size-4" aria-hidden="true" />
+              Abrir vaga original
             </Button>
           )}
         </div>
