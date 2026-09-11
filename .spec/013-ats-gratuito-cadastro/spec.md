@@ -72,10 +72,16 @@ inteiramente da otimização de currículo/LinkedIn.
   — não levantado pelo usuário, não assumido.
 
 ## Critérios de aceite
-- [ ] Usuário Free com 0 créditos consegue otimizar currículo pra uma vaga normalmente (sem
-  erro de crédito insuficiente) — testado ao vivo em dev
-- [ ] Prática de entrevista e coach do pipeline continuam consumindo crédito no Free, sem
-  mudança de comportamento — confirmado que não regrediu
-- [ ] UI (`SubscriptionCard`, `OptimizeForm`, `AddJobOptimizeWizard`, página de preços) não
-  menciona mais crédito/limite atrelado a otimizar currículo
-- [ ] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
+- [x] Usuário Free consegue otimizar currículo pra uma vaga normalmente, sem limite — testado
+  ao vivo em dev: conta Free nova (3 créditos) rodou a otimização 4 vezes seguidas sem erro
+  de crédito insuficiente e sem nenhuma dedução (`GET /subscription` confirmou `credits: 3`
+  intacto depois das 4 chamadas)
+- [x] Prática de entrevista e coach do pipeline continuam consumindo crédito no Free, sem
+  mudança de comportamento — confirmado ao vivo: gerar pergunta não descontou nada, submeter
+  resposta descontou 1 crédito normalmente (`credits: 3` → `credits: 2`)
+- [x] UI (`SubscriptionCard`, `OptimizeForm`, `AddJobOptimizeWizard`, página de preços) não
+  menciona mais crédito/limite atrelado a otimizar currículo — confirmado visualmente na
+  página de preços pública (Free: "Otimizações de currículo com IA ilimitadas"; Premium:
+  "Prática de entrevista com IA ilimitada" + "Coach de IA ilimitado", sem menção a
+  otimização ou gerador de LinkedIn)
+- [x] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
