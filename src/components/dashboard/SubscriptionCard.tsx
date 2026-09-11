@@ -163,12 +163,12 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">
           {isPremium
-            ? "Otimizações ilimitadas e recursos premium ativos."
+            ? "Prática de entrevista e coach de pipeline ilimitados."
             : credits === 1
-              ? "1 otimização disponível."
+              ? "1 consulta de IA disponível pra prática de entrevista e coach."
               : credits > 1
-                ? `${credits} otimizações disponíveis.`
-                : "Sem otimizações disponíveis no momento."}
+                ? `${credits} consultas de IA disponíveis pra prática de entrevista e coach.`
+                : "Sem consultas de IA disponíveis no momento pra prática de entrevista e coach."}
         </p>
 
         {actionError && (

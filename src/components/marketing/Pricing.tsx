@@ -20,7 +20,7 @@ const PLANS = [
     features: [
       "Pipeline de candidaturas (Kanban) ilimitado",
       "Contatos e histórico por vaga",
-      "3 otimizações de currículo com IA inclusas",
+      "Otimizações de currículo com IA ilimitadas",
       "Score de ATS e sugestões de melhoria",
     ],
     cta: "Começar grátis",
@@ -33,9 +33,8 @@ const PLANS = [
     description: "Pra quem está aplicando ativamente",
     icon: Zap,
     features: [
-      "Otimizações de currículo com IA ilimitadas",
+      "Prática de entrevista com IA ilimitada",
       "Coach de IA ilimitado em cada etapa da vaga",
-      "Gerador de perfil LinkedIn",
       "Analytics do pipeline de candidaturas",
     ],
     cta: "Assinar Premium",

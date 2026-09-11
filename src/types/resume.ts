@@ -129,10 +129,6 @@ export interface OptimizationJob {
   updated_at: string;
 }
 
-// Texto exato gravado pela worker quando falha por falta de crédito — ver
-// domain.ErrInsufficientCredits em internal/core/domain/erros.go
-export const INSUFFICIENT_CREDITS_ERROR = "insufficient credits";
-
 export interface SalaryEstimate {
   found: boolean;
   currency?: string;

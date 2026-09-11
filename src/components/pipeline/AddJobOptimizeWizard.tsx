@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetchJson } from "@/lib/api/client";
 import { trackEvent } from "@/lib/analytics";
-import { INSUFFICIENT_CREDITS_ERROR, type OptimizationJob, type OptimizedResume, type Resume } from "@/types/resume";
+import type { OptimizationJob, OptimizedResume, Resume } from "@/types/resume";
 import type { PipelineJob } from "@/types/pipeline";
 
 type Step = "details" | "resume" | "optimizing";
@@ -223,17 +223,14 @@ export function AddJobOptimizeWizard() {
 
   // step === "optimizing"
   if (job && job.status === "failed") {
-    const isCreditsIssue = job.error === INSUFFICIENT_CREDITS_ERROR;
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
           <AlertCircle className="size-10 text-destructive" aria-hidden="true" />
           <div aria-live="polite">
-            <p className="font-medium">{isCreditsIssue ? "Você não tem créditos suficientes" : "A otimização falhou"}</p>
+            <p className="font-medium">A otimização falhou</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {isCreditsIssue
-                ? "Faça upgrade ou compre mais créditos pra continuar otimizando currículos."
-                : (job.error ?? "Tente novamente em alguns instantes.")}
+              {job.error ?? "Tente novamente em alguns instantes."}
             </p>
           </div>
           <Button
