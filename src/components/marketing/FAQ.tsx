@@ -14,7 +14,7 @@ const FAQS = [
   {
     question: "O plano grátis é grátis mesmo?",
     answer:
-      "Sim! Você tem otimizações de currículo com IA inclusas sem precisar de cartão de crédito, além do pipeline de candidaturas ilimitado. Pra otimizações ilimitadas e coach de IA em todas as etapas, tem o Premium.",
+      "Sim! Otimizações de currículo com IA ilimitadas, score de ATS e pipeline de candidaturas, tudo sem precisar de cartão de crédito. Pra prática de entrevista com IA e coach em todas as etapas ilimitados, tem o Premium.",
   },
   {
     question: "Quais formatos de arquivo são aceitos?",

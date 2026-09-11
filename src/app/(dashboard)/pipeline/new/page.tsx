@@ -27,13 +27,13 @@ export default function NewPipelineJobPage() {
             <MethodCard
               icon={PenLine}
               title="Adicionar rápido"
-              description="Só empresa, cargo e estágio. Sem gastar crédito."
+              description="Só empresa, cargo e estágio, sem rodar a IA."
               onClick={() => setMode("quick")}
             />
             <MethodCard
               icon={Sparkles}
               title="Adicionar com otimização"
-              description="Otimiza seu currículo pra vaga com IA (gasta 1 crédito) e já entra com score de ATS."
+              description="Otimiza seu currículo pra vaga com IA e já entra com score de ATS — grátis."
               onClick={() => setMode("optimize")}
             />
           </div>
