@@ -52,5 +52,11 @@ export function JobAtsMatchTab({ job }: { job: PipelineJob }) {
     return <p className="text-sm text-muted-foreground">Carregando…</p>;
   }
 
-  return <OptimizedResultView optimized={optimized} />;
+  return (
+    <OptimizedResultView
+      optimized={optimized}
+      matchedKeywords={job.matched_keywords}
+      missingKeywords={job.missing_keywords}
+    />
+  );
 }
