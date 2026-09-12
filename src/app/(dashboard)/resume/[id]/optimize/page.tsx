@@ -24,7 +24,7 @@ export default function OptimizeResumePage({ params }: PageProps<"/resume/[id]/o
   return (
     <>
       <Topbar title="Otimizar currículo" />
-      <div className="mx-auto w-full max-w-4xl space-y-6 p-6">
+      <div className="w-full max-w-4xl space-y-6 p-6">
         <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" aria-hidden="true" />
           Meus currículos
