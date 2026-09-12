@@ -89,10 +89,10 @@ Score agregado = % de itens marcados como bem feito sobre o total de itens aplic
 - Botão de "aplicar sugestão" — aqui é só relatório de leitura (diferente da spec 014).
 
 ## Critérios de aceite
-- [ ] Upload de um PDF exportado do LinkedIn gera um relatório com score e itens reais (não
+- [x] Upload de um PDF exportado do LinkedIn gera um relatório com score e itens reais (não
   fixos/mockados), justificados pelo conteúdo real do texto extraído
-- [ ] Reabrir a aba sem novo upload mostra o último scan salvo
-- [ ] Fazer novo upload substitui o scan anterior
-- [ ] Nenhum item de checklist sobre foto/capa de perfil
-- [ ] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
-- [ ] Testado ao vivo em dev com um PDF de perfil real/realista
+- [x] Reabrir a aba sem novo upload mostra o último scan salvo
+- [x] Fazer novo upload substitui o scan anterior
+- [x] Nenhum item de checklist sobre foto/capa de perfil
+- [x] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
+- [x] Testado ao vivo em dev com um PDF de perfil real/realista
