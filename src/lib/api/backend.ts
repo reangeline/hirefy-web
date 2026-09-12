@@ -72,6 +72,30 @@ export function authedGetBackend(path: string, accessToken: string): Promise<unk
   return authedCallBackend(path, accessToken, { method: "GET" });
 }
 
+/**
+ * POST multipart/form-data autenticado — mesmo motivo de `postMultipartBackend` pra não
+ * passar por `callBackend` (precisa do boundary gerado pelo próprio fetch a partir do
+ * FormData), mas com o header de autenticação (spec 015).
+ */
+export async function authedPostMultipartBackend(
+  path: string,
+  accessToken: string,
+  formData: FormData,
+): Promise<unknown> {
+  const res = await fetch(`${API_BASE_URL}/api/v1${path}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: formData,
+  });
+  const body = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new BackendError(res.status, body as BackendErrorBody);
+  }
+
+  return body;
+}
+
 export function authedPostBackend(
   path: string,
   accessToken: string,

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, LayoutDashboard } from "lucide-react";
+import { FileText, LayoutDashboard, ScanSearch } from "lucide-react";
 import { SubscriptionCard } from "@/components/dashboard/SubscriptionCard";
 import { useSidebar } from "@/components/layout/sidebar-context";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/resume", label: "Currículos", icon: FileText },
+  { href: "/linkedin", label: "LinkedIn", icon: ScanSearch },
 ];
 
 export function Sidebar() {
