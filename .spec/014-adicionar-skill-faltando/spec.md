@@ -81,12 +81,12 @@ com um botão de ação por item que abre um campo de texto editável inline.
   decisão do usuário foi deixar a IA escrever a frase pronta sem fricção extra.
 
 ## Critérios de aceite
-- [ ] Clicar "+ Adicionar ao currículo" numa palavra-chave faltando gera uma sugestão real
+- [x] Clicar "+ Adicionar ao currículo" numa palavra-chave faltando gera uma sugestão real
   da IA, editável antes de confirmar
-- [ ] Confirmar a sugestão atualiza de verdade o `summary` do currículo (`GET /resumes/{id}`
+- [x] Confirmar a sugestão atualiza de verdade o `summary` do currículo (`GET /resumes/{id}`
   reflete a mudança depois)
-- [ ] Mesmo fluxo funciona pra um item de "Requisitos faltando"
-- [ ] Não aparece nenhum botão de adicionar na visão standalone de currículo otimizado (sem
+- [x] Mesmo fluxo funciona pra um item de "Requisitos faltando"
+- [x] Não aparece nenhum botão de adicionar na visão standalone de currículo otimizado (sem
   contexto de vaga do Pipeline)
-- [ ] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
-- [ ] Testado ao vivo em dev contra uma vaga real
+- [x] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
+- [x] Testado ao vivo em dev contra uma vaga real
