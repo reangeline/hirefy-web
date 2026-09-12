@@ -35,7 +35,7 @@ export default function ResumeListPage() {
   return (
     <>
       <Topbar title="Currículos" />
-      <div className="w-full max-w-4xl space-y-6 p-6">
+      <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold">Meus currículos</h1>
         <Link href="/resume/new">
