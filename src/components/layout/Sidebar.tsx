@@ -1,17 +1,120 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, LayoutDashboard, ScanSearch } from "lucide-react";
+import { ChevronDown, FileText, LayoutDashboard, ScanSearch, type LucideIcon } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SubscriptionCard } from "@/components/dashboard/SubscriptionCard";
 import { useSidebar } from "@/components/layout/sidebar-context";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/resume", label: "Currículos", icon: FileText },
-  { href: "/linkedin", label: "LinkedIn", icon: ScanSearch },
+interface NavSubItem {
+  href: string;
+  label: string;
+}
+
+interface NavSection {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  // Prefixos extras que também contam como "essa seção está ativa" — ex: /pipeline/* é
+  // conceitualmente parte do Dashboard (o board vive embutido lá, spec 005), mas não
+  // compartilha o prefixo /dashboard.
+  matchPrefixes: string[];
+  items: NavSubItem[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    href: "/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    matchPrefixes: ["/dashboard", "/pipeline"],
+    items: [
+      { href: "/pipeline/new", label: "Nova candidatura" },
+      { href: "/pipeline/archived", label: "Arquivadas" },
+    ],
+  },
+  {
+    href: "/resume",
+    label: "Currículos",
+    icon: FileText,
+    matchPrefixes: ["/resume"],
+    items: [{ href: "/resume/new", label: "Novo currículo" }],
+  },
+  {
+    href: "/linkedin",
+    label: "LinkedIn",
+    icon: ScanSearch,
+    matchPrefixes: ["/linkedin"],
+    items: [],
+  },
 ];
+
+function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection; pathname: string; onNavigate: () => void }) {
+  const [open, setOpen] = useState(true);
+  const Icon = section.icon;
+  const sectionActive = section.matchPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+  const hasSubItems = section.items.length > 0;
+
+  const link = (
+    <Link
+      href={section.href}
+      onClick={onNavigate}
+      className={cn(
+        "flex flex-1 items-center gap-2.5 rounded px-2 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+        sectionActive && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
+      )}
+    >
+      <Icon className="size-[15px]" aria-hidden="true" />
+      {section.label}
+    </Link>
+  );
+
+  if (!hasSubItems) {
+    return link;
+  }
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <div className="flex items-center gap-0.5">
+        {link}
+        <CollapsibleTrigger
+          className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          aria-label={open ? `Recolher ${section.label}` : `Expandir ${section.label}`}
+        >
+          <ChevronDown
+            className={cn("size-3.5 transition-transform duration-150", !open && "-rotate-90")}
+            aria-hidden="true"
+          />
+        </CollapsibleTrigger>
+      </div>
+      <CollapsibleContent>
+        <div className="flex flex-col gap-0.5 py-0.5 pl-7">
+          {section.items.map((item) => {
+            const itemActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onNavigate}
+                className={cn(
+                  "rounded px-2 py-1 text-[12.5px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                  itemActive && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -43,23 +146,9 @@ export function Sidebar() {
         </Link>
 
         <nav className="flex flex-col gap-0.5">
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href || pathname.startsWith(`${href}/`);
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={close}
-                className={cn(
-                  "flex items-center gap-2.5 rounded px-2 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-                  active && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
-                )}
-              >
-                <Icon className="size-[15px]" aria-hidden="true" />
-                {label}
-              </Link>
-            );
-          })}
+          {NAV_SECTIONS.map((section) => (
+            <NavSectionRow key={section.href} section={section} pathname={pathname} onNavigate={close} />
+          ))}
         </nav>
 
         <div className="mt-auto border-t border-border pt-3">
