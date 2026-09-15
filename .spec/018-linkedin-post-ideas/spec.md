@@ -47,12 +47,12 @@ do dia — copy da UI deixa isso explícito.
 - Agendamento de publicações.
 
 ## Critérios de aceite
-- [ ] Gerar temas reais (não fixos) a partir de um currículo de teste, relacionados à stack
+- [x] Gerar temas reais (não fixos) a partir de um currículo de teste, relacionados à stack
   dele
-- [ ] Gerar post pra um tema produz texto real, coerente com o currículo, sem inventar
+- [x] Gerar post pra um tema produz texto real, coerente com o currículo, sem inventar
   experiência
-- [ ] Botão Copiar funciona no post gerado
-- [ ] Reabrir a página sem gerar de novo mostra os mesmos temas salvos
-- [ ] Sidebar mostra o novo sub-item
-- [ ] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
-- [ ] Testado ao vivo em dev
+- [x] Botão Copiar funciona no post gerado
+- [x] Reabrir a página sem gerar de novo mostra os mesmos temas salvos
+- [x] Sidebar mostra o novo sub-item
+- [x] `go build`/`go vet` limpos no backend; `tsc`/`eslint` limpos no web-app
+- [x] Testado ao vivo em dev
