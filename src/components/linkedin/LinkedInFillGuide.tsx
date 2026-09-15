@@ -1,10 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { Briefcase, GraduationCap, Lightbulb, RefreshCcw, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 import { CircularScore } from "@/components/resume/CircularScore";
+import { cn } from "@/lib/utils";
 import type { LinkedInOptimizedProfile } from "@/types/linkedin";
 
 function formatPeriod(startDate: string, endDate: string | undefined, isCurrent: boolean): string {
@@ -21,6 +25,21 @@ interface LinkedInFillGuideProps {
 // pra preencher, seguindo a regra do prompt de nunca inventar experiência que o currículo
 // base não tem (ver ai_service_impl.go, OptimizeForLinkedIn).
 export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  function toggleSuggestion(i: number) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  }
+
+  const selectedSuggestionsText = profile.suggestions
+    .filter((_, i) => selected.has(i))
+    .join("\n");
+
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-[220px_1fr] lg:items-start">
@@ -137,22 +156,43 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
 
           {profile.suggestions.length > 0 && (
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Lightbulb className="size-4 text-primary" aria-hidden="true" />
                   Sugestões
                 </CardTitle>
+                <CopyButton
+                  text={selectedSuggestionsText}
+                  label="Copiar selecionadas"
+                  disabled={selected.size === 0}
+                />
               </CardHeader>
               <CardContent>
-                <ul className="space-y-3">
-                  {profile.suggestions.map((suggestion, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm">
-                      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
-                        {i + 1}
-                      </span>
-                      {suggestion}
-                    </li>
-                  ))}
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Marque as que você concorda pra copiar só essas.
+                </p>
+                <ul className="space-y-1">
+                  {profile.suggestions.map((suggestion, i) => {
+                    const isSelected = selected.has(i);
+                    return (
+                      <li key={i}>
+                        <label
+                          className={cn(
+                            "flex cursor-pointer items-start gap-3 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted",
+                            isSelected && "bg-primary/5",
+                          )}
+                        >
+                          <input
+                            type="checkbox"
+                            className="mt-1 size-3.5 shrink-0 accent-primary"
+                            checked={isSelected}
+                            onChange={() => toggleSuggestion(i)}
+                          />
+                          <span className={cn(!isSelected && "text-muted-foreground")}>{suggestion}</span>
+                        </label>
+                      </li>
+                    );
+                  })}
                 </ul>
               </CardContent>
             </Card>

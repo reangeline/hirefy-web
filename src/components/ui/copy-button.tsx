@@ -9,9 +9,10 @@ interface CopyButtonProps {
   text: string;
   label?: string;
   className?: string;
+  disabled?: boolean;
 }
 
-export function CopyButton({ text, label = "Copiar", className }: CopyButtonProps) {
+export function CopyButton({ text, label = "Copiar", className, disabled }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -30,6 +31,7 @@ export function CopyButton({ text, label = "Copiar", className }: CopyButtonProp
       variant="outline"
       size="xs"
       onClick={handleCopy}
+      disabled={disabled}
       className={cn("gap-1.5", className)}
     >
       {copied ? (
