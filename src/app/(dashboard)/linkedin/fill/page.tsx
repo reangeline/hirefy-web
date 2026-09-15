@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import type { OptimizationJob, Resume } from "@/types/resume";
 
 const POLL_INTERVAL_MS = 4000;
@@ -46,6 +47,7 @@ export default function LinkedInFillPage() {
         const updated = await apiFetchJson<OptimizationJob>(`/api/resumes/optimize/jobs/${job.id}`);
         setJob(updated);
         if (updated.status === "completed" && updated.optimized_resume_id) {
+          trackEvent("linkedin_fill_guide_completed");
           router.push(`/linkedin/fill/${updated.optimized_resume_id}`);
         }
       } catch (err) {
@@ -60,6 +62,7 @@ export default function LinkedInFillPage() {
     if (!selectedResumeId) return;
     setError(null);
     setSubmitting(true);
+    trackEvent("linkedin_fill_guide_started");
 
     try {
       const created = await apiFetchJson<OptimizationJob>("/api/resumes/linkedin/optimize", {

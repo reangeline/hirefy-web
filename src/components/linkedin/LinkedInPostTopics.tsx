@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import type { LinkedInPostTopic } from "@/types/linkedin";
 
 interface DraftState {
@@ -33,6 +34,7 @@ export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_id: resumeId, title: topic.title, angle: topic.angle }),
       });
+      trackEvent("linkedin_post_draft_generated");
       setDrafts((prev) => ({ ...prev, [i]: { status: "done", text: result.post_text } }));
     } catch (err) {
       setDrafts((prev) => ({

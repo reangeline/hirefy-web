@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Topbar } from "@/components/layout/Topbar";
 import { LinkedInPostTopics } from "@/components/linkedin/LinkedInPostTopics";
 import { ApiError, apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import type { Resume } from "@/types/resume";
 import type { LinkedInPostIdeas } from "@/types/linkedin";
 
@@ -49,6 +50,7 @@ export default function LinkedInPostsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_id: selectedResumeId }),
       });
+      trackEvent("linkedin_post_topics_generated", { topic_count: newIdeas.topics.length });
       setIdeas(newIdeas);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível gerar os temas.");

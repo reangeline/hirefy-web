@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import type { ManualResumeRequest, Resume } from "@/types/resume";
 
 interface AddGapToResumeRowProps {
@@ -75,6 +76,7 @@ export function AddGapToResumeRow({ gap, resumeId, jobTitle, companyName, jobDes
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      trackEvent("resume_addition_applied");
       setState("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível salvar no currículo.");

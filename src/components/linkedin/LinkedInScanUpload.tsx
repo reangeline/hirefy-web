@@ -5,6 +5,7 @@ import { AlertCircle, Loader2, ScanSearch, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { apiFetchJson } from "@/lib/api/client";
+import { trackEvent } from "@/lib/analytics";
 import type { LinkedInScan } from "@/types/linkedin";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB — mesmo limite do backend
@@ -37,6 +38,7 @@ export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
     if (!file) return;
     setUploading(true);
     setError(null);
+    trackEvent("linkedin_scan_started");
 
     try {
       const formData = new FormData();
@@ -46,6 +48,7 @@ export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
         method: "POST",
         body: formData,
       });
+      trackEvent("linkedin_scan_completed");
       onScanned(scan);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível analisar o perfil.");
