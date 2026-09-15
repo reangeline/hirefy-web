@@ -68,7 +68,7 @@ function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection;
       href={section.href}
       onClick={onNavigate}
       className={cn(
-        "flex flex-1 items-center gap-2.5 rounded px-2 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+        "flex flex-1 items-center gap-2.5 rounded-lg px-2 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
         sectionActive && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
       )}
     >
@@ -86,7 +86,7 @@ function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection;
       <div className="flex items-center gap-0.5">
         {link}
         <CollapsibleTrigger
-          className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="flex size-6 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label={open ? `Recolher ${section.label}` : `Expandir ${section.label}`}
         >
           <ChevronDown
@@ -105,7 +105,7 @@ function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection;
                 href={item.href}
                 onClick={onNavigate}
                 className={cn(
-                  "rounded px-2 py-1 text-[12.5px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                  "rounded-lg px-2 py-1 text-[12.5px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
                   itemActive && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
                 )}
               >
@@ -142,7 +142,7 @@ export function Sidebar() {
         )}
       >
         <Link href="/dashboard" onClick={close} className="flex items-center gap-2 px-2 pb-4">
-          <span className="flex size-5 items-center justify-center rounded bg-primary text-[11px] font-bold text-primary-foreground">
+          <span className="flex size-5 items-center justify-center rounded-lg bg-primary text-[11px] font-bold text-primary-foreground">
             Hf
           </span>
           <span className="text-[13.5px] font-semibold tracking-tight">Hirefy</span>

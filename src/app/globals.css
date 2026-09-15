@@ -2,14 +2,13 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-ibm-plex-mono);
-  --font-heading: var(--font-inter);
+  --font-heading: var(--font-signifier);
+  --font-signifier: var(--font-source-serif);
   --color-success-foreground: var(--success-foreground);
   --color-success: var(--success);
   --color-warning-foreground: var(--warning-foreground);
@@ -50,89 +49,63 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Raios nomeados do redesign "Steep" (spec 020, DESIGN.md) — Button/Card não derivam do
+     --radius base, então precisam de tokens próprios pra bater exatamente com o alvo. */
+  --radius-cards: 1.5rem; /* 24px */
+  --radius-buttons: 9999px;
+  --radius-inputs: 1rem; /* 16px */
+  --radius-images: 0.75rem; /* 12px */
+
+  /* Pêssego isolado (spec 020) — reservado pra um destaque raro (no máximo 1 por página),
+     de propósito NÃO cabeado em --accent (que continua neutro/cinza pra hover genérico).
+     Ainda sem uso em nenhum componente — só o token existe até a Fase 2+. */
+  --color-blush: #fbe1d1;
+  --color-sienna: #5d2a1a;
 }
 
 :root {
-  /* Paleta "SaaS técnica" (spec 006, referência Stripe/Vercel) — neutros mais frios com
-     leve viés de matiz (não cinza puro), teal da marca reservado só pra ação primária/foco,
-     estados semânticos numa família de cor separada do acento pra não competir com ele.
-     Mockup aprovado: https://claude.ai/code/artifact/db568622-5d49-40a7-973a-e30ec8874274 */
-  --background: oklch(0.982 0.003 84.6); /* #FAF9F7 */
-  --foreground: oklch(0.208 0.007 258.4); /* #16181B */
-  --card: oklch(1 0 0); /* #FFFFFF */
-  --card-foreground: oklch(0.208 0.007 258.4);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.208 0.007 258.4);
-  --primary: oklch(0.600 0.104 184.7); /* #0D9488 teal — mantido da spec 003 */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.964 0.004 91.4); /* #F4F3F0 */
-  --secondary-foreground: oklch(0.208 0.007 258.4);
-  --muted: oklch(0.964 0.004 91.4); /* #F4F3F0 */
-  --muted-foreground: oklch(0.541 0.012 261.8); /* #6B6F76 */
-  --accent: oklch(0.964 0.004 91.4); /* neutro — hover genérico, sem tingir de indigo */
-  --accent-foreground: oklch(0.208 0.007 258.4);
-  --destructive: oklch(0.578 0.198 18.0); /* #D5324B */
-  --success: oklch(0.606 0.141 155.5); /* #1A9A5C */
+  /* Redesign "Steep" (spec 020, web-app/DESIGN.md) — paleta quase monocromática (Ink Black
+     sobre Paper White) com um único acento pêssego reservado (ver --color-blush acima, não
+     usado aqui). Modo claro único — dark mode removido (decisão do usuário). Substitui a
+     paleta teal da spec 003/006. Cor semântica (erro/sucesso/aviso) mantida como estava —
+     DESIGN.md não cobre status, e cor de status fica separada da marca por princípio. */
+  --background: #ffffff; /* Paper White */
+  --foreground: #17191c; /* Ink Black */
+  --card: #f2f2f3; /* Mist Gray — Neutral Card do DESIGN.md */
+  --card-foreground: #17191c;
+  --popover: #ffffff; /* popover é elemento flutuante — fica branco, ganha sombra no componente */
+  --popover-foreground: #17191c;
+  --primary: #17191c; /* Ink Black — DESIGN.md usa preto como cor de ação, não o pêssego */
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f3; /* Mist Gray */
+  --secondary-foreground: #17191c;
+  --muted: #fafafb; /* Fog White — fundo secundário/seção alternada */
+  --muted-foreground: #777b86; /* Slate Gray */
+  --accent: #fafafb; /* neutro — hover genérico, pêssego fica reservado (ver --color-blush) */
+  --accent-foreground: #17191c;
+  --destructive: oklch(0.578 0.198 18.0); /* #D5324B — mantido, DESIGN.md não cobre cor de erro */
+  --success: oklch(0.606 0.141 155.5); /* #1A9A5C — mantido */
   --success-foreground: oklch(1 0 0);
-  --warning: oklch(0.626 0.125 70.4); /* #B7791F */
-  --warning-foreground: oklch(0.208 0.007 258.4);
-  --border: oklch(0.919 0.007 88.6); /* #E6E4DF */
-  --input: oklch(0.919 0.007 88.6);
-  --ring: oklch(0.600 0.104 184.7); /* #0D9488 — corrigido (antes ainda usava o valor pré-spec-003) */
+  --warning: oklch(0.626 0.125 70.4); /* #B7791F — mantido */
+  --warning-foreground: #17191c;
+  --border: #ececec; /* hairline — valor citado no próprio DESIGN.md pro Input/Composer */
+  --input: #ececec;
+  --ring: #17191c; /* Ink Black — anel de foco segue a cor de ação, não é mais teal */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.375rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  /* Paleta "SaaS técnica" dark (spec 006) — preto azulado (não preto puro), mesmo teal
-     de marca do modo claro, semânticos numa família própria mais clara pra contraste. */
-  --background: oklch(0.153 0.007 258.4); /* #0A0C0F */
-  --foreground: oklch(0.936 0.005 258.3); /* #E8EAED */
-  --card: oklch(0.185 0.009 255.6); /* #101317 */
-  --card-foreground: oklch(0.936 0.005 258.3);
-  --popover: oklch(0.185 0.009 255.6);
-  --popover-foreground: oklch(0.936 0.005 258.3);
-  --primary: oklch(0.600 0.104 184.7); /* #0D9488 — mesma cor do modo claro */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.220 0.012 254.1); /* #171B20 */
-  --secondary-foreground: oklch(0.936 0.005 258.3);
-  --muted: oklch(0.220 0.012 254.1); /* #171B20 */
-  --muted-foreground: oklch(0.657 0.016 254.6); /* #8B929B */
-  --accent: oklch(0.220 0.012 254.1); /* neutro — hover genérico */
-  --accent-foreground: oklch(0.936 0.005 258.3);
-  --destructive: oklch(0.665 0.188 16.2); /* #F0576B */
-  --success: oklch(0.793 0.180 154.0); /* #3DDC84 */
-  --success-foreground: oklch(0.153 0.007 258.4); /* texto escuro — o verde é claro demais pra texto branco */
-  --warning: oklch(0.762 0.148 79.4); /* #E3A527 */
-  --warning-foreground: oklch(0.153 0.007 258.4);
-  --border: oklch(0.271 0.013 258.4); /* #23272D */
-  --input: oklch(0.271 0.013 258.4);
-  --ring: oklch(0.704 0.123 182.5); /* #14B8A6 primaryLight — mantido da spec 003 */
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #17191c;
+  --sidebar-primary: #17191c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f2f2f3;
+  --sidebar-accent-foreground: #17191c;
+  --sidebar-border: #ececec;
+  --sidebar-ring: #17191c;
 }
 
 @layer base {
