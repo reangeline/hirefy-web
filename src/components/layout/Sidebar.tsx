@@ -48,7 +48,10 @@ const NAV_SECTIONS: NavSection[] = [
     label: "LinkedIn",
     icon: ScanSearch,
     matchPrefixes: ["/linkedin"],
-    items: [{ href: "/linkedin/fill", label: "Guia de preenchimento" }],
+    items: [
+      { href: "/linkedin/fill", label: "Guia de preenchimento" },
+      { href: "/linkedin/posts", label: "Ideias de publicação" },
+    ],
   },
 ];
 

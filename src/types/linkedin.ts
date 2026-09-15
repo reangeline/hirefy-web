@@ -48,3 +48,18 @@ export interface LinkedInOptimizedProfile {
   suggestions: string[];
   profile_strength_score: number;
 }
+
+// Ideias de publicação (spec 018) — temas gerados a partir do currículo, não são notícias
+// atuais (backend não tem integração de busca/notícias, decisão explícita do usuário).
+export interface LinkedInPostTopic {
+  title: string;
+  angle: string;
+}
+
+export interface LinkedInPostIdeas {
+  id: string;
+  user_id: string;
+  topics: LinkedInPostTopic[];
+  created_at: string;
+  updated_at: string;
+}
