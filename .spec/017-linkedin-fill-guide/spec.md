@@ -42,11 +42,11 @@ copiar e colar manualmente.
 - Integrar/misturar com a tela do Scan Report — ações separadas.
 
 ## Critérios de aceite
-- [ ] Gerar um guia real (não mockado) a partir de um currículo de teste, conteúdo reflete
+- [x] Gerar um guia real (não mockado) a partir de um currículo de teste, conteúdo reflete
   o currículo de verdade
-- [ ] Job assíncrono processa e redireciona pro resultado corretamente
-- [ ] Todos os botões "Copiar" funcionam (headline, sobre, cada experiência, skills)
-- [ ] Reabrir `/linkedin/fill/[id]` direto pela URL mostra o mesmo guia salvo
-- [ ] Sidebar mostra o novo sub-item, aberto por padrão
-- [ ] `tsc`/`eslint` limpos
-- [ ] Testado ao vivo em dev
+- [x] Job assíncrono processa e redireciona pro resultado corretamente
+- [x] Todos os botões "Copiar" funcionam (headline, sobre, cada experiência, skills)
+- [x] Reabrir `/linkedin/fill/[id]` direto pela URL mostra o mesmo guia salvo
+- [x] Sidebar mostra o novo sub-item, aberto por padrão
+- [x] `tsc`/`eslint` limpos
+- [x] Testado ao vivo em dev
