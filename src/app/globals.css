@@ -146,11 +146,34 @@
    dedicada em vez de utilitário dark: pra não disputar especificidade com bg-primary/hover. */
 .dark .cta-signature {
   background-image: var(--gradient-signature);
+  background-size: 200% 100%;
   color: #1a1a1a;
   border-color: transparent;
+  animation: signature-glow 6s ease-in-out infinite;
 }
 .dark .cta-signature:hover {
   opacity: 0.92;
+}
+
+@keyframes signature-glow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Ninguém aqui usa animação pra decidir hierarquia/estado — só polimento visual, então
+   desligar tudo com prefers-reduced-motion é seguro (nenhuma informação se perde). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @layer base {

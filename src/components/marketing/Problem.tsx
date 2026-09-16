@@ -1,4 +1,5 @@
 import { AlertTriangle, Clock, FileX, XCircle } from "lucide-react";
+import { Reveal } from "@/components/marketing/Reveal";
 
 const PROBLEMS = [
   {
@@ -32,7 +33,7 @@ export function Problem() {
     <section className="border-b border-border/60 bg-muted/50">
       <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[340px_1fr] lg:gap-16">
-          <div>
+          <Reveal>
             <h2 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">
               Por que candidatos qualificados são rejeitados
             </h2>
@@ -52,15 +53,17 @@ export function Problem() {
                 de verdade.
               </p>
             </div>
-          </div>
+          </Reveal>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            {PROBLEMS.map((problem) => (
-              <div key={problem.title} className="rounded-xl border border-border bg-background p-6 dark:rounded-[16px] dark:bg-card">
-                <problem.icon className="size-6 text-destructive" aria-hidden="true" />
-                <h3 className="mt-4 text-lg font-semibold">{problem.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{problem.description}</p>
-              </div>
+            {PROBLEMS.map((problem, i) => (
+              <Reveal key={problem.title} delayMs={i * 80}>
+                <div className="h-full rounded-xl border border-border bg-background p-6 dark:rounded-[16px] dark:bg-card dark:transition-colors dark:hover:bg-accent">
+                  <problem.icon className="size-6 text-destructive" aria-hidden="true" />
+                  <h3 className="mt-4 text-lg font-semibold">{problem.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{problem.description}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

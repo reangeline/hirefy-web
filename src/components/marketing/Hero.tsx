@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { CircularScore } from "@/components/resume/CircularScore";
+import { ParticleField } from "@/components/marketing/ParticleField";
 
 const STATS = [
   { value: "10.000+", label: "candidatos" },
@@ -17,21 +18,34 @@ const SCAN_CHECKS = [
 
 export function Hero() {
   return (
-    <section className="border-b border-border/60">
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+    <section className="relative overflow-hidden border-b border-border/60">
+      {/* Campo de partículas — só no tema escuro, atrás de tudo, não intercepta clique. */}
+      <div className="pointer-events-none absolute inset-0 hidden dark:block">
+        <ParticleField />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
         <div className="grid gap-14 lg:grid-cols-[1fr_400px] lg:items-center lg:gap-10">
-          <div>
+          <div
+            className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
+          >
             <h1 className="text-balance text-5xl font-bold tracking-tight md:text-6xl">
               Passe pelo ATS antes de{" "}
               <span className="text-primary">chegar ao recrutador</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-pretty text-lg text-muted-foreground">
+            <p
+              className="mt-6 max-w-xl text-pretty text-lg text-muted-foreground animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-700"
+              style={{ animationDelay: "100ms" }}
+            >
               O Hirefy usa IA pra otimizar seu currículo pra cada vaga, gerenciar sua
               candidatura de ponta a ponta e te dizer exatamente o que fazer a seguir.
             </p>
 
-            <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <div
+              className="mt-8 flex flex-col items-start gap-3 animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-700 sm:flex-row sm:items-center"
+              style={{ animationDelay: "200ms" }}
+            >
               <Link href="/signup" className={buttonVariants({ size: "lg" }) + " cta-signature gap-2"}>
                 Otimizar meu currículo grátis
                 <ArrowRight className="size-4" aria-hidden="true" />
@@ -40,11 +54,17 @@ export function Hero() {
                 Ver como funciona
               </a>
             </div>
-            <p className="mt-3 text-sm text-muted-foreground">
+            <p
+              className="mt-3 text-sm text-muted-foreground animate-in fade-in fill-mode-both duration-700"
+              style={{ animationDelay: "300ms" }}
+            >
               Sem cartão de crédito. Score de ATS grátis.
             </p>
 
-            <dl className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono">
+            <dl
+              className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono animate-in fade-in fill-mode-both duration-700"
+              style={{ animationDelay: "400ms" }}
+            >
               {STATS.map((stat, i) => (
                 <div key={stat.label} className="flex items-baseline gap-1.5">
                   {i > 0 && <span className="mr-4 text-border" aria-hidden="true">·</span>}
@@ -57,8 +77,13 @@ export function Hero() {
           </div>
 
           {/* Artefato real do produto — mesmo componente de score usado no ATS Match, não
-              uma ilustração decorativa. Mostra o que o Hirefy de fato calcula. */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-8px_rgba(0,0,0,0.12)] lg:rotate-1 dark:rounded-[16px] dark:shadow-none">
+              uma ilustração decorativa. Mostra o que o Hirefy de fato calcula. Flutua
+              devagar no escuro (float-y, ver globals.css) pra reforçar a sensação de
+              profundidade/água da referência. */}
+          <div
+            className="animate-in fade-in zoom-in-95 fill-mode-both rounded-2xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-8px_rgba(0,0,0,0.12)] duration-700 lg:rotate-1 dark:rounded-[16px] dark:shadow-none dark:[animation:float-y_6s_ease-in-out_infinite]"
+            style={{ animationDelay: "150ms" }}
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 Análise de ATS
