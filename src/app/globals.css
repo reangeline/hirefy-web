@@ -165,6 +165,18 @@
   50% { transform: translateY(-8px); }
 }
 
+/* Blob de luz ambiente atrás do headline do Hero (tema escuro) — reforça a sensação de
+   profundidade/água da referência sem imitar nenhum efeito específico de outro site. */
+@keyframes aurora-drift {
+  0%, 100% { transform: translate(-8%, -6%) scale(1); opacity: 0.5; }
+  50% { transform: translate(6%, 8%) scale(1.18); opacity: 0.8; }
+}
+.dark .aurora-blob {
+  background: radial-gradient(circle, #00827c 0%, transparent 70%);
+  filter: blur(60px);
+  animation: aurora-drift 14s ease-in-out infinite;
+}
+
 /* Ninguém aqui usa animação pra decidir hierarquia/estado — só polimento visual, então
    desligar tudo com prefers-reduced-motion é seguro (nenhuma informação se perde). */
 @media (prefers-reduced-motion: reduce) {

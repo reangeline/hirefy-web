@@ -12,7 +12,7 @@ interface Particle {
   alpha: number;
 }
 
-const PARTICLE_COUNT = 46;
+const PARTICLE_COUNT = 90;
 
 /** Campo de partículas flutuando devagar — implementação original e leve (canvas 2D puro,
  * sem lib), inspirada no espírito "orbe de dados bioluminescente" da referência trazida pelo
@@ -37,15 +37,18 @@ export function ParticleField() {
     let rafId = 0;
 
     function seedParticles() {
-      particles = Array.from({ length: PARTICLE_COUNT }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: 0.6 + Math.random() * 1.8,
-        vx: (Math.random() - 0.5) * 0.12,
-        vy: -0.05 - Math.random() * 0.12,
-        hue: Math.random() < 0.75 ? "cyan" : "white",
-        alpha: 0.15 + Math.random() * 0.35,
-      }));
+      particles = Array.from({ length: PARTICLE_COUNT }, () => {
+        const isSignal = Math.random() < 0.12;
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: isSignal ? 1.8 + Math.random() * 1.6 : 0.5 + Math.random() * 1.3,
+          vx: (Math.random() - 0.5) * 0.14,
+          vy: -0.06 - Math.random() * 0.16,
+          hue: Math.random() < 0.75 ? "cyan" : "white",
+          alpha: isSignal ? 0.5 + Math.random() * 0.4 : 0.12 + Math.random() * 0.3,
+        };
+      });
     }
 
     function resize() {
@@ -72,7 +75,10 @@ export function ParticleField() {
         ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx!.fillStyle =
           p.hue === "cyan" ? `rgba(203, 255, 252, ${p.alpha})` : `rgba(255, 255, 255, ${p.alpha})`;
+        ctx!.shadowColor = p.hue === "cyan" ? "rgba(203, 255, 252, 0.8)" : "rgba(255, 255, 255, 0.8)";
+        ctx!.shadowBlur = p.r > 1.6 ? 6 : 0;
         ctx!.fill();
+        ctx!.shadowBlur = 0;
       }
       rafId = requestAnimationFrame(draw);
     }

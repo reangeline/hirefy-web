@@ -7,15 +7,19 @@ import { Pricing } from "@/components/marketing/Pricing";
 import { FAQ } from "@/components/marketing/FAQ";
 import { CTASection } from "@/components/marketing/CTASection";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
+import { MarketingGradientBackdrop } from "@/components/marketing/MarketingGradientBackdrop";
 
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <MarketingNavbar />
       <main className="flex-1">
-        <Hero />
-        <Problem />
-        <Features />
+        <div className="relative">
+          <MarketingGradientBackdrop />
+          <Hero />
+          <Problem />
+          <Features />
+        </div>
         <HowItWorks />
         <Pricing />
         <FAQ />

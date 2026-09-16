@@ -1,5 +1,6 @@
 import { AlertTriangle, Clock, FileX, XCircle } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
+import { ParallaxCard } from "@/components/marketing/ParallaxCard";
 
 const PROBLEMS = [
   {
@@ -30,7 +31,7 @@ const PROBLEMS = [
 
 export function Problem() {
   return (
-    <section className="border-b border-border/60 bg-muted/50">
+    <section className="relative border-b border-border/60 bg-muted/50 dark:bg-transparent">
       <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[340px_1fr] lg:gap-16">
           <Reveal>
@@ -45,14 +46,16 @@ export function Problem() {
             {/* Claro: card sólido teal (como sempre foi). Escuro: segue o padrão "Statistic
                 Counter" do Auros — número grande em lavender-phosphor sobre a superfície
                 recuada, não um preenchimento sólido (isso é reservado pro CTA). */}
-            <div className="mt-8 rounded-2xl bg-primary p-6 text-primary-foreground dark:rounded-[16px] dark:border dark:border-border dark:bg-muted dark:text-inherit">
-              <div className="text-5xl font-bold tabular-nums dark:text-[#fde9ff]">98%</div>
-              <p className="mt-2 font-medium dark:text-[#edfffe]">das empresas Fortune 500 usam ATS</p>
-              <p className="mt-2 text-sm text-primary-foreground/80 dark:text-muted-foreground">
-                Seu currículo precisa ser otimizado pra robôs antes de chegar a um recrutador
-                de verdade.
-              </p>
-            </div>
+            <ParallaxCard strength={16} className="mt-8">
+              <div className="rounded-2xl bg-primary p-6 text-primary-foreground dark:rounded-[16px] dark:border dark:border-border dark:bg-muted dark:text-inherit">
+                <div className="text-5xl font-bold tabular-nums dark:text-[#fde9ff]">98%</div>
+                <p className="mt-2 font-medium dark:text-[#edfffe]">das empresas Fortune 500 usam ATS</p>
+                <p className="mt-2 text-sm text-primary-foreground/80 dark:text-muted-foreground">
+                  Seu currículo precisa ser otimizado pra robôs antes de chegar a um recrutador
+                  de verdade.
+                </p>
+              </div>
+            </ParallaxCard>
           </Reveal>
 
           <div className="grid gap-6 sm:grid-cols-2">
