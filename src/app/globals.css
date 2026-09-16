@@ -95,6 +95,50 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Redeclaração explícita do :root claro sob a classe "light" — o next-themes aplica essa
+   classe (não só a ausência de "dark") em qualquer provider, incluindo o aninhado da área
+   logada (ver (dashboard)/layout.tsx). Sem isso, uma seção "light" aninhada dentro de um
+   ancestral "dark" (ex: usuário com SO em dark mode, que deixa a Home escura, mas escolhe
+   claro só no dashboard) herdaria as variáveis escuras por cascata — CSS custom properties
+   atravessam classes, só um valor redeclarado localmente as sobrescreve. */
+.light {
+  --background: oklch(0.982 0.003 84.6);
+  --foreground: oklch(0.208 0.007 258.4);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.208 0.007 258.4);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.208 0.007 258.4);
+  --primary: oklch(0.600 0.104 184.7);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.964 0.004 91.4);
+  --secondary-foreground: oklch(0.208 0.007 258.4);
+  --muted: oklch(0.964 0.004 91.4);
+  --muted-foreground: oklch(0.541 0.012 261.8);
+  --accent: oklch(0.964 0.004 91.4);
+  --accent-foreground: oklch(0.208 0.007 258.4);
+  --destructive: oklch(0.578 0.198 18.0);
+  --success: oklch(0.606 0.141 155.5);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.626 0.125 70.4);
+  --warning-foreground: oklch(0.208 0.007 258.4);
+  --border: oklch(0.919 0.007 88.6);
+  --input: oklch(0.919 0.007 88.6);
+  --ring: oklch(0.600 0.104 184.7);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
 .dark {
   /* Paleta "Auros" (referência trazida pelo usuário) — terminal abissal: teal quase-preto
      com camadas de profundidade (abyss → deep → kelp) em vez de elevação por sombra. Só o
