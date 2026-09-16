@@ -72,8 +72,8 @@ export function Features() {
   return (
     <section id="recursos" className="border-b border-border/60">
       <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-balance text-3xl font-bold tracking-tight md:text-5xl">
+        <div className="max-w-2xl">
+          <h2 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">
             Tudo que você precisa pra passar pelo ATS
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -92,11 +92,11 @@ export function Features() {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {category.features.map((feature) => (
                   <div key={feature.title} className="rounded-xl border border-border p-6">
-                    <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-                      <feature.icon className="size-5 text-primary" aria-hidden="true" />
+                    <div className="flex items-center gap-2.5">
+                      <feature.icon className="size-[18px] text-primary" aria-hidden="true" />
+                      <h3 className="font-semibold">{feature.title}</h3>
                     </div>
-                    <h3 className="mt-4 font-semibold">{feature.title}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">{feature.description}</p>
+                    <p className="mt-2.5 text-sm text-muted-foreground">{feature.description}</p>
                   </div>
                 ))}
               </div>

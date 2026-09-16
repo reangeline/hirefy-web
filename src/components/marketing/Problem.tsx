@@ -31,35 +31,35 @@ export function Problem() {
   return (
     <section className="border-b border-border/60 bg-muted/50">
       <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-balance text-3xl font-bold tracking-tight md:text-5xl">
-            Por que candidatos qualificados são rejeitados
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Não é sobre suas habilidades. É sobre passar pelos robôs que leem seu currículo
-            primeiro.
-          </p>
-        </div>
+        <div className="grid gap-12 lg:grid-cols-[340px_1fr] lg:gap-16">
+          <div>
+            <h2 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">
+              Por que candidatos qualificados são rejeitados
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Não é sobre suas habilidades. É sobre passar pelos robôs que leem seu currículo
+              primeiro.
+            </p>
 
-        <div className="mx-auto mt-16 grid max-w-4xl gap-6 sm:grid-cols-2">
-          {PROBLEMS.map((problem) => (
-            <div key={problem.title} className="rounded-xl border border-border bg-background p-6">
-              <problem.icon className="size-6 text-destructive" aria-hidden="true" />
-              <h3 className="mt-4 text-lg font-semibold">{problem.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{problem.description}</p>
+            <div className="mt-8 rounded-2xl bg-primary p-6 text-primary-foreground">
+              <div className="text-5xl font-bold tabular-nums">98%</div>
+              <p className="mt-2 font-medium">das empresas Fortune 500 usam ATS</p>
+              <p className="mt-2 text-sm text-primary-foreground/80">
+                Seu currículo precisa ser otimizado pra robôs antes de chegar a um recrutador
+                de verdade.
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div className="mx-auto mt-12 max-w-4xl rounded-2xl bg-primary px-8 py-12 text-center text-primary-foreground">
-          <div className="text-6xl font-bold tabular-nums md:text-7xl">98%</div>
-          <p className="mt-3 text-lg font-medium md:text-xl">
-            das empresas Fortune 500 usam ATS
-          </p>
-          <p className="mx-auto mt-2 max-w-xl text-sm text-primary-foreground/80">
-            Ou seja: seu currículo precisa ser otimizado pra robôs antes de chegar a um
-            recrutador de verdade.
-          </p>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {PROBLEMS.map((problem) => (
+              <div key={problem.title} className="rounded-xl border border-border bg-background p-6">
+                <problem.icon className="size-6 text-destructive" aria-hidden="true" />
+                <h3 className="mt-4 text-lg font-semibold">{problem.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{problem.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
