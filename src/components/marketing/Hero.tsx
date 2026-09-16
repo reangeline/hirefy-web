@@ -32,7 +32,7 @@ export function Hero() {
             </p>
 
             <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-              <Link href="/signup" className={buttonVariants({ size: "lg" }) + " gap-2"}>
+              <Link href="/signup" className={buttonVariants({ size: "lg" }) + " cta-signature gap-2"}>
                 Otimizar meu currículo grátis
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
@@ -58,7 +58,7 @@ export function Hero() {
 
           {/* Artefato real do produto — mesmo componente de score usado no ATS Match, não
               uma ilustração decorativa. Mostra o que o Hirefy de fato calcula. */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-8px_rgba(0,0,0,0.12)] lg:rotate-1">
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-8px_rgba(0,0,0,0.12)] lg:rotate-1 dark:rounded-[16px] dark:shadow-none">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 Análise de ATS

@@ -41,10 +41,13 @@ export function Problem() {
               primeiro.
             </p>
 
-            <div className="mt-8 rounded-2xl bg-primary p-6 text-primary-foreground">
-              <div className="text-5xl font-bold tabular-nums">98%</div>
-              <p className="mt-2 font-medium">das empresas Fortune 500 usam ATS</p>
-              <p className="mt-2 text-sm text-primary-foreground/80">
+            {/* Claro: card sólido teal (como sempre foi). Escuro: segue o padrão "Statistic
+                Counter" do Auros — número grande em lavender-phosphor sobre a superfície
+                recuada, não um preenchimento sólido (isso é reservado pro CTA). */}
+            <div className="mt-8 rounded-2xl bg-primary p-6 text-primary-foreground dark:rounded-[16px] dark:border dark:border-border dark:bg-muted dark:text-inherit">
+              <div className="text-5xl font-bold tabular-nums dark:text-[#fde9ff]">98%</div>
+              <p className="mt-2 font-medium dark:text-[#edfffe]">das empresas Fortune 500 usam ATS</p>
+              <p className="mt-2 text-sm text-primary-foreground/80 dark:text-muted-foreground">
                 Seu currículo precisa ser otimizado pra robôs antes de chegar a um recrutador
                 de verdade.
               </p>
@@ -53,7 +56,7 @@ export function Problem() {
 
           <div className="grid gap-6 sm:grid-cols-2">
             {PROBLEMS.map((problem) => (
-              <div key={problem.title} className="rounded-xl border border-border bg-background p-6">
+              <div key={problem.title} className="rounded-xl border border-border bg-background p-6 dark:rounded-[16px] dark:bg-card">
                 <problem.icon className="size-6 text-destructive" aria-hidden="true" />
                 <h3 className="mt-4 text-lg font-semibold">{problem.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{problem.description}</p>

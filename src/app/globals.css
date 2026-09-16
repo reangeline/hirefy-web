@@ -96,30 +96,36 @@
 }
 
 .dark {
-  /* Paleta "SaaS técnica" dark (spec 006) — preto azulado (não preto puro), mesmo teal
-     de marca do modo claro, semânticos numa família própria mais clara pra contraste. */
-  --background: oklch(0.153 0.007 258.4); /* #0A0C0F */
-  --foreground: oklch(0.936 0.005 258.3); /* #E8EAED */
-  --card: oklch(0.185 0.009 255.6); /* #101317 */
-  --card-foreground: oklch(0.936 0.005 258.3);
-  --popover: oklch(0.185 0.009 255.6);
-  --popover-foreground: oklch(0.936 0.005 258.3);
-  --primary: oklch(0.600 0.104 184.7); /* #0D9488 — mesma cor do modo claro */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.220 0.012 254.1); /* #171B20 */
-  --secondary-foreground: oklch(0.936 0.005 258.3);
-  --muted: oklch(0.220 0.012 254.1); /* #171B20 */
-  --muted-foreground: oklch(0.657 0.016 254.6); /* #8B929B */
-  --accent: oklch(0.220 0.012 254.1); /* neutro — hover genérico */
-  --accent-foreground: oklch(0.936 0.005 258.3);
+  /* Paleta "Auros" (referência trazida pelo usuário) — terminal abissal: teal quase-preto
+     com camadas de profundidade (abyss → deep → kelp) em vez de elevação por sombra. Só o
+     tema ESCURO muda — o claro continua com o teal da spec 003/006. Escopo desta passada:
+     só Home/marketing (Hero/Problem/Features); o resto do app ainda não usa essa paleta.
+     Cor semântica (erro/sucesso/aviso) mantida como estava — fora do escopo da referência. */
+  --background: #012624; /* Liquid Abyss — canvas */
+  --foreground: #ffffff; /* Platinum — títulos, nav, texto de alto contraste */
+  --card: #003734; /* Liquid Kelp — superfície elevada */
+  --card-foreground: #ffffff;
+  --popover: #003734;
+  --popover-foreground: #ffffff;
+  --primary: #00827c; /* início do gradiente bioluminescente — usado como cor de destaque
+     (botão preenchido E texto de ênfase); Kelp (#003734) puro ficaria ilegível como texto
+     sobre o canvas quase-preto, então a versão mais clara do teal-sinal cobre os dois usos */
+  --primary-foreground: #ffffff;
+  --secondary: #003734;
+  --secondary-foreground: #ffffff;
+  --muted: #011d1c; /* Liquid Deep — superfície recuada/baixa ênfase */
+  --muted-foreground: #bbc7c6; /* Silver Mist — corpo de texto secundário */
+  --accent: #011d1c; /* neutro — hover genérico, sem tingir de gradiente */
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.665 0.188 16.2); /* #F0576B */
   --success: oklch(0.793 0.180 154.0); /* #3DDC84 */
   --success-foreground: oklch(0.153 0.007 258.4); /* texto escuro — o verde é claro demais pra texto branco */
   --warning: oklch(0.762 0.148 79.4); /* #E3A527 */
   --warning-foreground: oklch(0.153 0.007 258.4);
-  --border: oklch(0.271 0.013 258.4); /* #23272D */
-  --input: oklch(0.271 0.013 258.4);
-  --ring: oklch(0.704 0.123 182.5); /* #14B8A6 primaryLight — mantido da spec 003 */
+  --border: rgb(255 255 255 / 10%); /* hairline sobre o canvas — valor citado no próprio Auros */
+  --input: rgb(255 255 255 / 10%);
+  --ring: #00827c; /* início do gradiente bioluminescente — anel de foco "brilha" */
+  --gradient-signature: linear-gradient(90deg, #00827c 0%, #cbfffc 100%); /* Bioluminescent Gradient — reservado pro CTA principal, nunca decoração */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -133,6 +139,18 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* CTA de assinatura (Auros, tema escuro) — gradiente bioluminescente reservado pro botão
+   principal do Hero, nunca decoração/fundo genérico (regra explícita da referência). Classe
+   dedicada em vez de utilitário dark: pra não disputar especificidade com bg-primary/hover. */
+.dark .cta-signature {
+  background-image: var(--gradient-signature);
+  color: #1a1a1a;
+  border-color: transparent;
+}
+.dark .cta-signature:hover {
+  opacity: 0.92;
 }
 
 @layer base {

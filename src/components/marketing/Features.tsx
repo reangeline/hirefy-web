@@ -91,7 +91,7 @@ export function Features() {
               </div>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {category.features.map((feature) => (
-                  <div key={feature.title} className="rounded-xl border border-border p-6">
+                  <div key={feature.title} className="rounded-xl border border-border p-6 dark:rounded-[16px] dark:bg-card">
                     <div className="flex items-center gap-2.5">
                       <feature.icon className="size-[18px] text-primary" aria-hidden="true" />
                       <h3 className="font-semibold">{feature.title}</h3>
