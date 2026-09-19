@@ -140,26 +140,29 @@
 }
 
 .dark {
-  /* Paleta "Auros" (referência trazida pelo usuário) — terminal abissal: teal quase-preto
-     com camadas de profundidade (abyss → deep → kelp) em vez de elevação por sombra. Só o
-     tema ESCURO muda — o claro continua com o teal da spec 003/006. Escopo desta passada:
-     só Home/marketing (Hero/Problem/Features); o resto do app ainda não usa essa paleta.
-     Cor semântica (erro/sucesso/aviso) mantida como estava — fora do escopo da referência. */
-  --background: #012624; /* Liquid Abyss — canvas */
+  /* Paleta "Auros", revisão neutralizada — a primeira versão usava o teal da marca também
+     nas superfícies (fundo/card/muted todos com matiz verde-água: Abyss/Deep/Kelp), o que
+     acumulado em cada card do site inteiro lia como "verde demais" (feedback do usuário).
+     Agora as superfícies são cinza-grafite neutro (baixíssimo chroma, sem matiz verde) e o
+     teal fica reservado só pro que já era acento de propósito: botão primário, link, anel de
+     foco e o gradiente do CTA — a marca continua reconhecível, só não domina o fundo inteiro.
+     Cor semântica (erro/sucesso/aviso) mantida como estava — sucesso continua verde de
+     propósito (convenção de UI pra "score bom"), não faz parte da queixa. */
+  --background: #14171a; /* grafite quase-preto, chroma mínimo */
   --foreground: #ffffff; /* Platinum — títulos, nav, texto de alto contraste */
-  --card: #003734; /* Liquid Kelp — superfície elevada */
+  --card: #1f2327; /* grafite um tom mais claro — superfície elevada */
   --card-foreground: #ffffff;
-  --popover: #003734;
+  --popover: #1f2327;
   --popover-foreground: #ffffff;
   --primary: #00827c; /* início do gradiente bioluminescente — usado como cor de destaque
-     (botão preenchido E texto de ênfase); Kelp (#003734) puro ficaria ilegível como texto
-     sobre o canvas quase-preto, então a versão mais clara do teal-sinal cobre os dois usos */
+     (botão preenchido E texto de ênfase); único lugar reservado pro teal da marca agora que
+     as superfícies são neutras */
   --primary-foreground: #ffffff;
-  --secondary: #003734;
+  --secondary: #1f2327;
   --secondary-foreground: #ffffff;
-  --muted: #011d1c; /* Liquid Deep — superfície recuada/baixa ênfase */
-  --muted-foreground: #bbc7c6; /* Silver Mist — corpo de texto secundário */
-  --accent: #011d1c; /* neutro — hover genérico, sem tingir de gradiente */
+  --muted: #0d0f11; /* grafite recuado/baixa ênfase */
+  --muted-foreground: #a1a7ac; /* cinza neutro — antes tinha leve matiz verde */
+  --accent: #262b30; /* neutro — hover genérico */
   --accent-foreground: #ffffff;
   --destructive: oklch(0.665 0.188 16.2); /* #F0576B */
   --success: oklch(0.793 0.180 154.0); /* #3DDC84 */
