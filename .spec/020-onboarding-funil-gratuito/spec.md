@@ -48,13 +48,16 @@ ficar visível/experimentável sem fricção (grátis, com limite de uso), enqua
 
 ## Critérios de aceite
 - [ ] Conta de teste Free consegue rodar exatamente 3 otimizações de currículo/LinkedIn; a
-      4ª é bloqueada com a nova tela de limite, não com erro genérico.
+      4ª é bloqueada com a nova tela de limite, não com erro genérico. **Pendente** — a única
+      conta de teste disponível nesta sessão é Premium (não afetada pelo limite); ver log.md.
 - [ ] `/pontuacao` funciona sem sessão ativa (testar em aba anônima/sem cookie): upload de
-      PDF real → score + melhorias aparecem na tela.
+      PDF real → score + melhorias aparecem na tela. **Parcial** — página confirmada
+      renderizando e acessível sem proteção do proxy; upload com PDF real não testado (sem
+      arquivo de teste disponível nesta sessão).
 - [ ] Criar conta a partir de `/pontuacao` leva direto pra `resume/new` com os dados do PDF
-      já preenchidos, sem pedir upload de novo.
-- [ ] Fluxo de signup normal (sem passar por `/pontuacao`) continua funcionando sem mudança
-      de comportamento.
+      já preenchidos, sem pedir upload de novo. **Pendente** — depende do item acima.
+- [x] Fluxo de signup normal (sem passar por `/pontuacao`) continua funcionando sem mudança
+      de comportamento. Confirmado ao vivo (screenshot + console sem erros).
 - [ ] Eventos de analytics disparam nos pontos certos do funil (conferir no console/GA/
-      Mixpanel).
-- [ ] `go build/vet/test` (backend) e `tsc`/`eslint`/`build` (frontend) limpos.
+      Mixpanel). **Pendente** — só a instrumentação do código foi revisada.
+- [x] `go build/vet/test` (backend) e `tsc`/`eslint`/`build` (frontend) limpos.
