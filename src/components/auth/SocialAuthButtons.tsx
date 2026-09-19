@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 import { AppleSignInButton } from "@/components/auth/AppleSignInButton";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
@@ -13,6 +14,7 @@ interface SocialAuthButtonsProps {
 // nas vezes seguintes, então não existe distinção "signup social" vs "login social" aqui
 // (mesmo comportamento do mobile, ver auth_service.dart: signInWithSocial).
 export function SocialAuthButtons({ redirectTo = "/dashboard" }: SocialAuthButtonsProps) {
+  const t = useTranslations("Auth.social");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -30,7 +32,7 @@ export function SocialAuthButtons({ redirectTo = "/dashboard" }: SocialAuthButto
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(body.message ?? body.error ?? "Não foi possível continuar.");
+        setError(body.message ?? body.error ?? t("errorFallback"));
         return;
       }
 
@@ -62,7 +64,7 @@ export function SocialAuthButtons({ redirectTo = "/dashboard" }: SocialAuthButto
 
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-border" />
-        <span className="text-xs text-muted-foreground">ou</span>
+        <span className="text-xs text-muted-foreground">{t("or")}</span>
         <div className="h-px flex-1 bg-border" />
       </div>
     </div>

@@ -1,7 +1,9 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { trackEvent } from "@/lib/analytics";
 
 // Mensagem de retorno do Stripe Checkout hospedado (?checkout=success|cancelled, ver
@@ -16,6 +18,7 @@ export function CheckoutStatusBanner() {
 }
 
 function CheckoutStatusBannerInner() {
+  const t = useTranslations("Dashboard.checkoutStatus");
   const router = useRouter();
   const searchParams = useSearchParams();
   const checkout = searchParams.get("checkout");
@@ -41,17 +44,13 @@ function CheckoutStatusBannerInner() {
           : "flex items-center justify-between rounded-lg border border-border bg-muted px-4 py-3 text-sm text-muted-foreground"
       }
     >
-      <span>
-        {checkout === "success"
-          ? "Assinatura Premium ativada! Pode levar alguns segundos para refletir abaixo."
-          : "Checkout cancelado — nenhuma cobrança foi feita."}
-      </span>
+      <span>{checkout === "success" ? t("success") : t("cancelled")}</span>
       <button
         type="button"
         onClick={dismiss}
         className="ml-4 shrink-0 cursor-pointer text-xs underline-offset-4 hover:underline"
       >
-        Fechar
+        {t("close")}
       </button>
     </div>
   );

@@ -1,1 +1,154 @@
-{}
+{
+  "loading": "Cargando…",
+  "backToList": "Mis currículums",
+  "form": {
+    "nicknameLabel": "Nombre del currículum",
+    "nicknamePlaceholder": "Ej: Currículum — Backend",
+    "saveError": "No se pudo guardar el currículum.",
+    "personalDataTitle": "Datos personales",
+    "fullNameLabel": "Nombre completo",
+    "currentRoleLabel": "Puesto actual",
+    "emailLabel": "Correo electrónico",
+    "phoneLabel": "Teléfono",
+    "cityLabel": "Ciudad",
+    "stateLabel": "Provincia/Estado",
+    "countryLabel": "País",
+    "linkedinLabel": "LinkedIn",
+    "linkedinPlaceholder": "linkedin.com/in/tu-perfil",
+    "websiteLabel": "Sitio web personal",
+    "githubLabel": "GitHub",
+    "summaryLabel": "Resumen profesional",
+    "experiencesTitle": "Experiencia",
+    "educationTitle": "Formación",
+    "projectsTitle": "Proyectos",
+    "languagesTitle": "Idiomas",
+    "addItem": "Añadir",
+    "emptyItems": "Nada añadido todavía.",
+    "removeItemAria": "Eliminar {title} {index}",
+    "companyLabel": "Empresa",
+    "roleLabel": "Puesto",
+    "startDateLabel": "Inicio",
+    "startDatePlaceholder": "Ej: Ene 2022",
+    "endDateLabel": "Fin",
+    "endDatePlaceholder": "Ej: Dic 2023",
+    "currentJobLabel": "Empleo actual",
+    "descriptionLabel": "Descripción",
+    "institutionLabel": "Institución",
+    "degreeLabel": "Carrera / título",
+    "inProgressLabel": "En curso",
+    "nameLabel": "Nombre",
+    "linkLabel": "Enlace",
+    "languageLabel": "Idioma",
+    "proficiencyLabel": "Nivel",
+    "selectPlaceholder": "Seleccionar",
+    "saving": "Guardando…",
+    "createSubmit": "Crear currículum",
+    "saveSubmit": "Guardar cambios"
+  },
+  "languageLevels": {
+    "basic": "Básico",
+    "intermediate": "Intermedio",
+    "advanced": "Avanzado",
+    "fluent": "Fluido",
+    "native": "Nativo"
+  },
+  "optimizeForm": {
+    "pollTimeoutError": "La optimización está tardando más de lo esperado. Revisa más tarde en “Optimizados”.",
+    "pollError": "No se pudo consultar el estado de la optimización.",
+    "submitError": "No se pudo iniciar la optimización.",
+    "failedTitle": "La optimización falló",
+    "failedFallback": "Inténtalo de nuevo en unos instantes.",
+    "retry": "Intentar de nuevo",
+    "statusQueued": "En cola de procesamiento…",
+    "statusProcessing": "La IA está optimizando tu currículum…",
+    "processingHint": "Puedes cerrar esta pantalla — el resultado se guarda en “Optimizados” cuando termine.",
+    "optimizingPrefix": "Optimizando",
+    "jobDescriptionLabel": "Descripción del puesto",
+    "jobDescriptionPlaceholder": "Pega aquí la descripción completa del puesto…",
+    "targetCompanyLabel": "Empresa (opcional)",
+    "targetRoleLabel": "Puesto (opcional)",
+    "submitting": "Enviando…",
+    "submit": "Optimizar currículum"
+  },
+  "resultView": {
+    "matchLabel": "Coincidencia con el puesto",
+    "keywordsLabel": "Palabras clave",
+    "suggestionsLabel": "Sugerencias",
+    "suggestionsValue": "{count} para revisar",
+    "requirementsLabel": "Requisitos",
+    "requirementsValue": "{count} faltantes",
+    "keywordsSectionTitle": "Palabras clave del puesto",
+    "keywordFound": "<strong>{keyword}</strong> — encontrada en tu currículum.",
+    "keywordMissing": "<strong>{keyword}</strong> — el puesto la pide, tu currículum no la menciona.",
+    "suggestionsSectionTitle": "Sugerencias de mejora",
+    "missingRequirementsSectionTitle": "Requisitos que faltan en el currículum",
+    "salarySectionTitle": "Estimación salarial"
+  },
+  "pdfImport": {
+    "fileTooLarge": "Archivo mayor a 10MB. Elige un PDF más pequeño.",
+    "parseError": "No se pudo analizar el PDF.",
+    "title": "Importa tu currículum en PDF",
+    "description": "La IA extrae tus datos y calcula un puntaje de ATS al instante. Revisas todo antes de guardar.",
+    "chooseFile": "Elegir archivo",
+    "analyzing": "Analizando…",
+    "analyze": "Analizar currículum"
+  },
+  "addGap": {
+    "suggestError": "No se pudo generar la sugerencia.",
+    "saveError": "No se pudo guardar en el currículum.",
+    "done": "✓ Añadido al currículum",
+    "saving": "Guardando…",
+    "addToResume": "Añadir al currículum",
+    "cancel": "Cancelar",
+    "generating": "Generando sugerencia…"
+  },
+  "creditLimitCard": {
+    "headline": "Tus 3 optimizaciones gratis se acabaron",
+    "subheadline": "Suscríbete a Premium para seguir optimizando currículums y desbloquear:",
+    "checkoutError": "No se pudo iniciar el pago",
+    "redirecting": "Redirigiendo…",
+    "subscribeButton": "Suscribirse a Premium",
+    "features": {
+      "unlimitedOptimizations": "Optimizaciones ilimitadas de currículum/LinkedIn",
+      "unlimitedInterviewPractice": "Práctica de entrevistas con IA ilimitada",
+      "aiCoach": "Coach de IA en cada etapa de tu candidatura",
+      "pipelineAnalytics": "Analíticas del pipeline de candidaturas"
+    }
+  },
+  "card": {
+    "untitled": "Currículum sin nombre",
+    "updatedAt": "Actualizado el {date}",
+    "optimizeAria": "Optimizar currículum",
+    "editAria": "Editar currículum",
+    "deleteAria": "Eliminar currículum"
+  },
+  "page": {
+    "list": {
+      "topbarTitle": "Currículums",
+      "heading": "Mis currículums",
+      "newResume": "Nuevo currículum",
+      "deleteError": "No se pudo eliminar el currículum.",
+      "emptyTitle": "Aún no hay currículums",
+      "emptyDescription": "Crea tu primer currículum para empezar a optimizarlo para vacantes.",
+      "createResume": "Crear currículum"
+    },
+    "new": {
+      "topbarTitle": "Nuevo currículum",
+      "importTitle": "Importar PDF",
+      "importDescription": "La IA extrae tus datos y calcula un puntaje de ATS automáticamente.",
+      "manualTitle": "Completar manualmente",
+      "manualDescription": "Ingresa tus datos directamente en el formulario.",
+      "atsScoreTitle": "Puntaje de ATS del PDF importado",
+      "reviewHint": "Revisa los campos de abajo — todavía no se guardó nada."
+    },
+    "edit": {
+      "topbarTitle": "Editar currículum"
+    },
+    "optimize": {
+      "topbarTitle": "Optimizar currículum"
+    },
+    "optimized": {
+      "topbarTitle": "Currículum optimizado"
+    }
+  }
+}

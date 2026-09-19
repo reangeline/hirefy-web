@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { AlertCircle, Loader2, ScanSearch, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ interface LinkedInScanUploadProps {
 // PdfImportUpload.tsx, mas sem formulário de revisão depois (aqui é só relatório de leitura,
 // spec 015).
 export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
+  const t = useTranslations("LinkedIn");
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -27,7 +29,7 @@ export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
   function handleFileChange(selected: File | null) {
     setError(null);
     if (selected && selected.size > MAX_FILE_SIZE) {
-      setError("Arquivo maior que 10MB. Escolha um PDF menor.");
+      setError(t("scanUpload.fileTooLarge"));
       setFile(null);
       return;
     }
@@ -51,7 +53,7 @@ export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
       trackEvent("linkedin_scan_completed");
       onScanned(scan);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível analisar o perfil.");
+      setError(err instanceof Error ? err.message : t("scanUpload.uploadError"));
     } finally {
       setUploading(false);
     }
@@ -65,11 +67,11 @@ export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
         </div>
 
         <div>
-          <p className="font-medium">Audite seu perfil do LinkedIn</p>
+          <p className="font-medium">{t("scanUpload.heading")}</p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            No seu perfil do LinkedIn, use <strong>Mais → Salvar em PDF</strong> pra exportar,
-            depois envie o arquivo aqui. A IA analisa e mostra o que está bom e o que precisa
-            melhorar.
+            {t.rich("scanUpload.instructions", {
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
         </div>
 
@@ -82,7 +84,7 @@ export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
         />
 
         <Button type="button" variant="outline" onClick={() => inputRef.current?.click()}>
-          {file ? file.name : "Escolher arquivo"}
+          {file ? file.name : t("scanUpload.chooseFile")}
         </Button>
 
         {error && (
@@ -96,12 +98,12 @@ export function LinkedInScanUpload({ onScanned }: LinkedInScanUploadProps) {
           {uploading ? (
             <>
               <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              Analisando…
+              {t("scanUpload.analyzing")}
             </>
           ) : (
             <>
               <Upload className="size-4" aria-hidden="true" />
-              Analisar perfil
+              {t("scanUpload.analyzeProfile")}
             </>
           )}
         </Button>

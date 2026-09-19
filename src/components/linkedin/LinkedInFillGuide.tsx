@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 import { Briefcase, GraduationCap, Lightbulb, RefreshCcw, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -11,8 +12,13 @@ import { CircularScore } from "@/components/resume/CircularScore";
 import { cn } from "@/lib/utils";
 import type { LinkedInOptimizedProfile } from "@/types/linkedin";
 
-function formatPeriod(startDate: string, endDate: string | undefined, isCurrent: boolean): string {
-  const end = isCurrent ? "atual" : endDate || "?";
+function formatPeriod(
+  startDate: string,
+  endDate: string | undefined,
+  isCurrent: boolean,
+  currentLabel: string,
+): string {
+  const end = isCurrent ? currentLabel : endDate || "?";
   return `${startDate || "?"} — ${end}`;
 }
 
@@ -25,6 +31,7 @@ interface LinkedInFillGuideProps {
 // pra preencher, seguindo a regra do prompt de nunca inventar experiência que o currículo
 // base não tem (ver ai_service_impl.go, OptimizeForLinkedIn).
 export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
+  const t = useTranslations("LinkedIn");
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
   function toggleSuggestion(i: number) {
@@ -47,12 +54,12 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
           <CardContent className="flex flex-col items-center gap-4 py-6">
             <div className="flex flex-col items-center gap-2 text-center">
               <CircularScore value={profile.profile_strength_score} size={112} />
-              <p className="text-xs font-medium text-muted-foreground">Força do perfil sugerido</p>
+              <p className="text-xs font-medium text-muted-foreground">{t("fillGuide.profileStrengthLabel")}</p>
             </div>
             <Link href="/linkedin/fill">
               <Button type="button" variant="outline" size="sm" className="gap-1.5">
                 <RefreshCcw className="size-3.5" aria-hidden="true" />
-                Gerar novo guia
+                {t("fillGuide.generateNewGuide")}
               </Button>
             </Link>
           </CardContent>
@@ -61,7 +68,7 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
         <div className="space-y-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Headline</CardTitle>
+              <CardTitle>{t("fillGuide.headline")}</CardTitle>
               <CopyButton text={profile.headline} />
             </CardHeader>
             <CardContent>
@@ -71,7 +78,7 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Sobre</CardTitle>
+              <CardTitle>{t("fillGuide.about")}</CardTitle>
               <CopyButton text={profile.about} />
             </CardHeader>
             <CardContent>
@@ -84,7 +91,7 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Briefcase className="size-4 text-primary" aria-hidden="true" />
-                  Experiência
+                  {t("fillGuide.experience")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5">
@@ -96,7 +103,7 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
                           {exp.role} <span className="text-muted-foreground">· {exp.company}</span>
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {formatPeriod(exp.start_date, exp.end_date, exp.is_current)}
+                          {formatPeriod(exp.start_date, exp.end_date, exp.is_current, t("fillGuide.periodCurrent"))}
                         </p>
                       </div>
                       <CopyButton text={exp.description.join("\n")} />
@@ -117,9 +124,9 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="size-4 text-primary" aria-hidden="true" />
-                  Skills
+                  {t("fillGuide.skills")}
                 </CardTitle>
-                <CopyButton text={profile.skills.join(", ")} label="Copiar todas" />
+                <CopyButton text={profile.skills.join(", ")} label={t("fillGuide.copyAllSkills")} />
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -138,7 +145,7 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <GraduationCap className="size-4 text-primary" aria-hidden="true" />
-                  Idiomas
+                  {t("fillGuide.languages")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -159,17 +166,17 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Lightbulb className="size-4 text-primary" aria-hidden="true" />
-                  Sugestões
+                  {t("fillGuide.suggestions")}
                 </CardTitle>
                 <CopyButton
                   text={selectedSuggestionsText}
-                  label="Copiar selecionadas"
+                  label={t("fillGuide.copySelected")}
                   disabled={selected.size === 0}
                 />
               </CardHeader>
               <CardContent>
                 <p className="mb-3 text-xs text-muted-foreground">
-                  Marque as que você concorda pra copiar só essas.
+                  {t("fillGuide.suggestionsHint")}
                 </p>
                 <ul className="space-y-1">
                   {profile.suggestions.map((suggestion, i) => {
@@ -200,10 +207,7 @@ export function LinkedInFillGuide({ profile }: LinkedInFillGuideProps) {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Conteúdo gerado a partir do currículo escolhido — dê uma revisada antes de colar no
-        seu perfil do LinkedIn.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("fillGuide.footerNote")}</p>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   DndContext,
@@ -13,7 +14,8 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { PipelineCard } from "@/components/pipeline/PipelineCard";
-import { PIPELINE_STAGES, STAGE_LABELS, type PipelineJob, type PipelineJobStage } from "@/types/pipeline";
+import { useStageLabels } from "@/lib/hooks/usePipelineLabels";
+import { PIPELINE_STAGES, type PipelineJob, type PipelineJobStage } from "@/types/pipeline";
 
 interface PipelineBoardProps {
   jobs: PipelineJob[];
@@ -21,6 +23,7 @@ interface PipelineBoardProps {
 }
 
 export function PipelineBoard({ jobs, onStageChange }: PipelineBoardProps) {
+  const t = useTranslations("Pipeline.pipelineBoard");
   const visible = jobs.filter((j) => !j.is_archived);
   const [activeJob, setActiveJob] = useState<PipelineJob | null>(null);
 
@@ -56,7 +59,7 @@ export function PipelineBoard({ jobs, onStageChange }: PipelineBoardProps) {
               ))}
               {stageJobs.length === 0 && (
                 <p className="rounded border border-dashed border-border p-3 text-center text-[11px] text-muted-foreground">
-                  Nenhuma vaga
+                  {t("emptyColumn")}
                 </p>
               )}
             </StageColumn>
@@ -79,6 +82,7 @@ function StageColumn({
   count: number;
   children: React.ReactNode;
 }) {
+  const stageLabels = useStageLabels();
   const { setNodeRef, isOver } = useDroppable({ id: stage });
 
   return (
@@ -89,7 +93,7 @@ function StageColumn({
       }`}
     >
       <div className="flex items-center justify-between px-0.5">
-        <p className="text-[12px] font-semibold">{STAGE_LABELS[stage]}</p>
+        <p className="text-[12px] font-semibold">{stageLabels[stage]}</p>
         <span className="font-mono text-[11px] text-muted-foreground">{count}</span>
       </div>
       <div className="min-h-16 space-y-2">{children}</div>

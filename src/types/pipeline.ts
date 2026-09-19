@@ -17,14 +17,6 @@ export const PIPELINE_STAGES: PipelineJobStage[] = [
   "rejected",
 ];
 
-export const STAGE_LABELS: Record<PipelineJobStage, string> = {
-  wishlist: "Wishlist",
-  applied: "Aplicado",
-  interview: "Entrevista",
-  offer: "Oferta",
-  rejected: "Rejeitado",
-};
-
 export interface TimelineEvent {
   id: string;
   type: string;
@@ -212,13 +204,6 @@ export const INTERVIEW_KINDS: InterviewQuestionKind[] = [
   "situational",
   "screening",
 ];
-
-export const INTERVIEW_KIND_LABELS: Record<InterviewQuestionKind, string> = {
-  behavioral: "Comportamental",
-  technical: "Técnica",
-  situational: "Situacional",
-  screening: "Triagem",
-};
 
 export interface InterviewQuestion {
   id: string;

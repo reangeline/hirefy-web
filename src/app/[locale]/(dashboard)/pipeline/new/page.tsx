@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 import { ArrowLeft, ChevronRight, PenLine, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,29 +12,30 @@ import { Topbar } from "@/components/layout/Topbar";
 type Mode = "choose" | "quick" | "optimize";
 
 export default function NewPipelineJobPage() {
+  const t = useTranslations("Pipeline.newJobPage");
   const [mode, setMode] = useState<Mode>("choose");
 
   return (
     <>
-      <Topbar title="Adicionar vaga" />
+      <Topbar title={t("topbarTitle")} />
       <div className="space-y-6 p-6">
         <Link href="/dashboard" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" aria-hidden="true" />
-          Pipeline
+          {t("backLink")}
         </Link>
 
         {mode === "choose" && (
           <div className="grid gap-3 sm:grid-cols-2">
             <MethodCard
               icon={PenLine}
-              title="Adicionar rápido"
-              description="Só empresa, cargo e estágio, sem rodar a IA."
+              title={t("quickTitle")}
+              description={t("quickDescription")}
               onClick={() => setMode("quick")}
             />
             <MethodCard
               icon={Sparkles}
-              title="Adicionar com otimização"
-              description="Otimiza seu currículo pra vaga com IA e já entra com score de ATS — grátis."
+              title={t("optimizeTitle")}
+              description={t("optimizeDescription")}
               onClick={() => setMode("optimize")}
             />
           </div>

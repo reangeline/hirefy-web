@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { use, useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Topbar } from "@/components/layout/Topbar";
@@ -26,6 +27,7 @@ interface OptimizedResumeRaw {
 }
 
 export default function LinkedInFillResultPage({ params }: PageProps<"/[locale]/linkedin/fill/[id]">) {
+  const t = useTranslations("LinkedIn");
   const { id } = use(params);
   const [profile, setProfile] = useState<LinkedInOptimizedProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export default function LinkedInFillResultPage({ params }: PageProps<"/[locale]/
     apiFetchJson<OptimizedResumeRaw>(`/api/resumes/optimized/${id}`)
       .then((raw) => {
         if (raw.parsed_data.type !== "linkedin") {
-          setError("Esse resultado não é um guia de LinkedIn.");
+          setError(t("fillResultPage.notLinkedInResult"));
           return;
         }
         setProfile({
@@ -49,7 +51,7 @@ export default function LinkedInFillResultPage({ params }: PageProps<"/[locale]/
         });
       })
       .catch((err: Error) => setError(err.message));
-  }, [id]);
+  }, [id, t]);
 
   return (
     <>
@@ -57,7 +59,7 @@ export default function LinkedInFillResultPage({ params }: PageProps<"/[locale]/
       <div className="space-y-6 p-6">
         <Link href="/linkedin/fill" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-3.5" aria-hidden="true" />
-          Guia de preenchimento
+          {t("fillResultPage.backLink")}
         </Link>
 
         {error && (
@@ -68,7 +70,7 @@ export default function LinkedInFillResultPage({ params }: PageProps<"/[locale]/
 
         {!profile && !error && (
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            Carregando…
+            {t("fillResultPage.loading")}
           </p>
         )}
 

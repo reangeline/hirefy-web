@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Check, Sparkles, Zap } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
@@ -12,40 +13,24 @@ import { Reveal } from "@/components/marketing/Reveal";
 // Free + Premium só (spec 007) — sem Basic/Pro/Yearly. US$19,99/mês é o preço real
 // configurado no Stripe (achado registrado no log da spec 008: a versão anterior desta
 // seção, na hirefy_lading, mostrava $9.99/mês e $79.99/ano, que nunca existiram de verdade).
-const PLANS = [
-  {
-    name: "Free",
-    price: "US$0",
-    period: "pra sempre",
-    description: "Pra começar a organizar sua busca de emprego",
-    icon: Sparkles,
-    features: [
-      "Score de ATS e sugestões de melhoria ilimitados",
-      "Pipeline de candidaturas (Kanban) ilimitado",
-      "Contatos e histórico por vaga",
-      "3 otimizações de currículo/LinkedIn com IA grátis",
-    ],
-    cta: "Começar grátis",
-    popular: false,
-  },
-  {
-    name: "Premium",
-    price: "US$19,99",
-    period: "por mês",
-    description: "Pra quem está aplicando ativamente",
-    icon: Zap,
-    features: [
-      "Otimizações de currículo/LinkedIn com IA ilimitadas",
-      "Prática de entrevista com IA ilimitada",
-      "Coach de IA ilimitado em cada etapa da vaga",
-      "Analytics do pipeline de candidaturas",
-    ],
-    cta: "Assinar Premium",
-    popular: true,
-  },
-];
+const PLAN_ICONS = [Sparkles, Zap];
 
 export function Pricing() {
+  const t = useTranslations("Marketing.pricing");
+  const rawPlans = t.raw("plans") as {
+    name: string;
+    price: string;
+    period: string;
+    description: string;
+    cta: string;
+    features: string[];
+  }[];
+  const PLANS = rawPlans.map((plan, i) => ({
+    ...plan,
+    icon: PLAN_ICONS[i],
+    popular: i === 1,
+  }));
+
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -69,10 +54,10 @@ export function Pricing() {
       <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 lg:px-8">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="text-balance text-4xl font-bold tracking-tight md:text-5xl">
-            Preço simples
+            {t("heading")}
           </h2>
           <p className="mt-4 text-pretty text-lg text-muted-foreground">
-            Comece grátis, faça upgrade quando quiser. Cancele quando quiser.
+            {t("subheading")}
           </p>
         </Reveal>
 
@@ -87,7 +72,7 @@ export function Pricing() {
               >
                 {plan.popular && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    Mais popular
+                    {t("popularBadge")}
                   </span>
                 )}
 

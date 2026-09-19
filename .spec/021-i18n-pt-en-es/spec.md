@@ -28,10 +28,12 @@ depois — não bloqueia a implementação técnica.
   usuário).
 
 ## Critérios de aceite
-- [ ] `tsc`/`eslint`/`build` limpos.
-- [ ] `/`, `/en`, `/es` renderizam a Home no idioma certo.
-- [ ] Seletor de idioma troca o idioma preservando a rota atual.
+- [x] `tsc`/`eslint`/`build` limpos.
+- [x] `/`, `/en`, `/es` renderizam a Home no idioma certo.
+- [x] Seletor de idioma troca o idioma preservando a rota atual.
 - [ ] Fluxo autenticado (dashboard/currículos/pipeline/LinkedIn) testado nos 3 idiomas com
-      conta de teste real.
-- [ ] URLs sem prefixo continuam servindo PT (nenhuma quebra de SEO/link existente).
-- [ ] `/api/**` nunca recebe prefixo de idioma.
+      conta de teste real. **Pendente** — sem sessão de teste disponível nesta sessão; ver
+      log.md.
+- [x] URLs sem prefixo continuam servindo PT (nenhuma quebra de SEO/link existente).
+      Confirmado via `curl -I` (Phase 0) e build final.
+- [x] `/api/**` nunca recebe prefixo de idioma. Confirmado no matcher do proxy e no build.

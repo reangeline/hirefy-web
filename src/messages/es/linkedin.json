@@ -1,1 +1,88 @@
-{}
+{
+  "fillGuide": {
+    "periodCurrent": "actualidad",
+    "profileStrengthLabel": "Solidez de perfil sugerida",
+    "generateNewGuide": "Generar nueva guía",
+    "headline": "Titular",
+    "about": "Acerca de",
+    "experience": "Experiencia",
+    "skills": "Aptitudes",
+    "copyAllSkills": "Copiar todas",
+    "languages": "Idiomas",
+    "suggestions": "Sugerencias",
+    "copySelected": "Copiar seleccionadas",
+    "suggestionsHint": "Marca las que estés de acuerdo para copiar solo esas.",
+    "footerNote": "Contenido generado a partir del currículum elegido — revísalo antes de pegarlo en tu perfil de LinkedIn."
+  },
+  "scanUpload": {
+    "fileTooLarge": "Archivo mayor de 10MB. Elige un PDF más pequeño.",
+    "uploadError": "No se pudo analizar el perfil.",
+    "heading": "Audita tu perfil de LinkedIn",
+    "instructions": "En tu perfil de LinkedIn, usa <strong>Más → Guardar en PDF</strong> para exportarlo y luego sube el archivo aquí. La IA lo analiza y muestra qué está bien y qué necesita mejorar.",
+    "chooseFile": "Elegir archivo",
+    "analyzing": "Analizando…",
+    "analyzeProfile": "Analizar perfil"
+  },
+  "scanReport": {
+    "scoreLabel": "Puntuación del perfil",
+    "itemsPassed": "{passed}/{total} ítems bien resueltos",
+    "newScan": "Nuevo escaneo",
+    "suggestedSkills": "Aptitudes sugeridas",
+    "suggestedSkillsHint": "Sugerencias de la IA basadas en tu perfil — no significa que ya estén ahí.",
+    "tips": "Consejos"
+  },
+  "postTopics": {
+    "generatePost": "Generar publicación",
+    "writingPost": "Escribiendo la publicación…",
+    "tryAgain": "Intentar de nuevo",
+    "generateAnotherVersion": "Generar otra versión",
+    "draftError": "No se pudo generar la publicación."
+  },
+  "scanPage": {
+    "loadError": "No se pudo cargar el escaneo.",
+    "heading": "Informe de escaneo de LinkedIn",
+    "subheading": "Audita tu perfil de LinkedIn según las buenas prácticas de los reclutadores.",
+    "loading": "Cargando…"
+  },
+  "fillPage": {
+    "timeoutError": "La generación está tardando más de lo esperado. Inténtalo de nuevo en unos instantes.",
+    "pollError": "No se pudo consultar el estado de la generación.",
+    "generateError": "No se pudo generar la guía.",
+    "heading": "Guía de completado",
+    "subheading": "La IA genera lo que debes poner en cada campo de tu perfil de LinkedIn, basándose en un currículum que ya guardaste — tú lo revisas y lo copias allí.",
+    "failedTitle": "La generación falló",
+    "failedDefaultMessage": "Inténtalo de nuevo en unos instantes.",
+    "tryAgain": "Intentar de nuevo",
+    "queued": "En cola de procesamiento…",
+    "processing": "La IA está armando tu guía…",
+    "processingHint": "Esto toma menos de un minuto.",
+    "noResumesTitle": "Todavía no tienes un currículum guardado",
+    "noResumesHint": "Crea un currículum primero para generar la guía a partir de él.",
+    "createResume": "Crear currículum",
+    "resumeLabel": "Currículum base",
+    "unnamedResume": "Currículum sin nombre",
+    "submitting": "Enviando…",
+    "generateGuide": "Generar guía",
+    "loading": "Cargando…"
+  },
+  "fillResultPage": {
+    "notLinkedInResult": "Ese resultado no es una guía de LinkedIn.",
+    "backLink": "Guía de completado",
+    "loading": "Cargando…"
+  },
+  "postsPage": {
+    "generateError": "No se pudieron generar los temas.",
+    "unnamedResume": "Currículum sin nombre",
+    "heading": "Ideas de publicaciones",
+    "subheading": "La IA sugiere temas y enfoques relevantes para tu perfil, basándose en tu currículum — no son noticias del día, son asuntos sobre los que tiene sentido que escribas. Elige uno que te interese y genera una publicación lista para copiar.",
+    "loading": "Cargando…",
+    "noResumesTitle": "Todavía no tienes un currículum guardado",
+    "noResumesHint": "Crea un currículum primero para generar temas a partir de él.",
+    "createResume": "Crear currículum",
+    "resumeLabel": "Currículum base",
+    "generating": "Generando…",
+    "generateNewTopics": "Generar nuevos temas",
+    "generateTopics": "Generar temas",
+    "generatingHint": "La IA está armando los temas…"
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Loader2, PenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ interface LinkedInPostTopicsProps {
 // Lista de temas sugeridos (spec 018) — cada card gera um rascunho de post sob demanda,
 // mantido só no estado local (não persiste no backend).
 export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps) {
+  const t = useTranslations("LinkedIn");
   const [drafts, setDrafts] = useState<Record<number, DraftState>>({});
 
   async function handleDraft(i: number, topic: LinkedInPostTopic) {
@@ -42,7 +44,7 @@ export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps
         [i]: {
           status: "error",
           text: "",
-          error: err instanceof Error ? err.message : "Não foi possível gerar o post.",
+          error: err instanceof Error ? err.message : t("postTopics.draftError"),
         },
       }));
     }
@@ -63,14 +65,14 @@ export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps
               {(!draft || draft.status === "idle") && (
                 <Button type="button" variant="outline" size="sm" onClick={() => handleDraft(i, topic)} className="gap-1.5">
                   <PenLine className="size-3.5" aria-hidden="true" />
-                  Gerar post
+                  {t("postTopics.generatePost")}
                 </Button>
               )}
 
               {draft?.status === "loading" && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
-                  Escrevendo o post…
+                  {t("postTopics.writingPost")}
                 </div>
               )}
 
@@ -80,7 +82,7 @@ export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps
                     {draft.error}
                   </p>
                   <Button type="button" variant="outline" size="sm" onClick={() => handleDraft(i, topic)}>
-                    Tentar de novo
+                    {t("postTopics.tryAgain")}
                   </Button>
                 </div>
               )}
@@ -91,7 +93,7 @@ export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps
                   <div className="flex gap-2">
                     <CopyButton text={draft.text} />
                     <Button type="button" variant="ghost" size="xs" onClick={() => handleDraft(i, topic)}>
-                      Gerar outra versão
+                      {t("postTopics.generateAnotherVersion")}
                     </Button>
                   </div>
                 </div>

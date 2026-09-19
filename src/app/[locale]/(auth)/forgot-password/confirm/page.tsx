@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ export default function ForgotPasswordConfirmPage() {
 }
 
 function ResetForm() {
+  const t = useTranslations("Auth.forgotPasswordConfirm");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState(searchParams.get("email") ?? "");
@@ -39,7 +41,7 @@ function ResetForm() {
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(body.message ?? body.error ?? "Não foi possível redefinir a senha.");
+        setError(body.message ?? body.error ?? t("errorFallback"));
         return;
       }
 
@@ -53,13 +55,13 @@ function ResetForm() {
     <div className="flex flex-1 items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Redefinir senha</CardTitle>
-          <CardDescription>Informe o código recebido e a nova senha.</CardDescription>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("emailLabel")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -73,7 +75,7 @@ function ResetForm() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="code">Código</Label>
+              <Label htmlFor="code">{t("codeLabel")}</Label>
               <Input
                 id="code"
                 name="code"
@@ -88,7 +90,7 @@ function ResetForm() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="newPassword">Nova senha</Label>
+              <Label htmlFor="newPassword">{t("newPasswordLabel")}</Label>
               <Input
                 id="newPassword"
                 name="new-password"
@@ -108,13 +110,13 @@ function ResetForm() {
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Salvando…" : "Redefinir senha"}
+              {loading ? t("submitLoading") : t("submit")}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             <Link href="/login" className="font-medium text-foreground hover:underline">
-              Voltar pro login
+              {t("backToLogin")}
             </Link>
           </p>
         </CardContent>

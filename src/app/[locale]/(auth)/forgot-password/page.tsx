@@ -1,14 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("Auth.forgotPassword");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +29,7 @@ export default function ForgotPasswordPage() {
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(body.message ?? body.error ?? "Não foi possível enviar o código.");
+        setError(body.message ?? body.error ?? t("errorFallback"));
         return;
       }
 
@@ -42,13 +43,13 @@ export default function ForgotPasswordPage() {
     <div className="flex flex-1 items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Esqueci minha senha</CardTitle>
-          <CardDescription>Enviaremos um código pra você redefinir a senha.</CardDescription>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("emailLabel")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -68,13 +69,13 @@ export default function ForgotPasswordPage() {
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Enviando…" : "Enviar código"}
+              {loading ? t("submitLoading") : t("submit")}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             <Link href="/login" className="font-medium text-foreground hover:underline">
-              Voltar pro login
+              {t("backToLogin")}
             </Link>
           </p>
         </CardContent>

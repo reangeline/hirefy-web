@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Topbar } from "@/components/layout/Topbar";
 import { LinkedInScanUpload } from "@/components/linkedin/LinkedInScanUpload";
@@ -8,6 +9,7 @@ import { ApiError, apiFetchJson } from "@/lib/api/client";
 import type { LinkedInScan } from "@/types/linkedin";
 
 export default function LinkedInScanPage() {
+  const t = useTranslations("LinkedIn");
   const [scan, setScan] = useState<LinkedInScan | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,26 +22,26 @@ export default function LinkedInScanPage() {
         if (err instanceof ApiError && err.status === 404) {
           setScan(null); // nunca escaneou — estado normal, não é erro
         } else {
-          setError(err instanceof Error ? err.message : "Falha ao carregar o scan.");
+          setError(err instanceof Error ? err.message : t("scanPage.loadError"));
         }
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   return (
     <>
       <Topbar title="LinkedIn" />
       <div className="space-y-6 p-6">
         <div>
-          <h1 className="text-lg font-semibold">LinkedIn Scan Report</h1>
+          <h1 className="text-lg font-semibold">{t("scanPage.heading")}</h1>
           <p className="text-sm text-muted-foreground">
-            Audite seu perfil do LinkedIn contra boas práticas de recrutadores.
+            {t("scanPage.subheading")}
           </p>
         </div>
 
         {loading && (
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            Carregando…
+            {t("scanPage.loading")}
           </p>
         )}
 

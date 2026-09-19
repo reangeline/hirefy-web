@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type ComponentType, type FormEvent, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { Briefcase, GraduationCap, FolderGit2, Languages, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,13 +21,10 @@ import { trackEvent } from "@/lib/analytics";
 import { emptyEducation, emptyExperience, emptyLanguage, emptyProject } from "@/types/resume";
 import type { EducationEntry, ExperienceEntry, LanguageEntry, ManualResumeRequest, ProjectEntry } from "@/types/resume";
 
-const LANGUAGE_LEVEL_OPTIONS = ["Básico", "Intermediário", "Avançado", "Fluente", "Nativo"];
-// Select.Root usa `items` só pra resolver o label no trigger fechado — aqui value === label,
-// então o Record é {label: label} (mesma técnica de .spec/002-resume-optimization/spec.md,
-// achado do bug de Select do passe de UI mock).
-const LANGUAGE_LEVELS: Record<string, string> = Object.fromEntries(
-  LANGUAGE_LEVEL_OPTIONS.map((level) => [level, level]),
-);
+// Chaves estáveis pra cada nível de proficiência — o label exibido vem de
+// languageLevels.<key> em cada idioma (spec 021). O valor salvo no formulário passa a ser a
+// chave (ex: "advanced"), não mais a palavra em português.
+const LANGUAGE_LEVEL_KEYS = ["basic", "intermediate", "advanced", "fluent", "native"] as const;
 
 interface ResumeFormProps {
   initialData: ManualResumeRequest;
@@ -35,6 +33,7 @@ interface ResumeFormProps {
 }
 
 export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
+  const t = useTranslations("Resume");
   const router = useRouter();
   const [data, setData] = useState<ManualResumeRequest>(initialData);
   const [saving, setSaving] = useState(false);
@@ -63,7 +62,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
       router.push("/resume");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível salvar o currículo.");
+      setError(err instanceof Error ? err.message : t("form.saveError"));
       setSaving(false);
     }
   }
@@ -71,12 +70,12 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-1.5">
-        <Label htmlFor="nickname">Nome do currículo</Label>
+        <Label htmlFor="nickname">{t("form.nicknameLabel")}</Label>
         <Input
           id="nickname"
           name="nickname"
           required
-          placeholder="Ex: Currículo — Backend"
+          placeholder={t("form.nicknamePlaceholder")}
           value={data.nickname}
           onChange={(e) => setData({ ...data, nickname: e.target.value })}
         />
@@ -84,12 +83,12 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Dados pessoais</CardTitle>
+          <CardTitle>{t("form.personalDataTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="fullName">Nome completo</Label>
+              <Label htmlFor="fullName">{t("form.fullNameLabel")}</Label>
               <Input
                 id="fullName"
                 name="fullName"
@@ -101,7 +100,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="currentRole">Cargo atual</Label>
+              <Label htmlFor="currentRole">{t("form.currentRoleLabel")}</Label>
               <Input
                 id="currentRole"
                 name="currentRole"
@@ -112,7 +111,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="personalEmail">Email</Label>
+              <Label htmlFor="personalEmail">{t("form.emailLabel")}</Label>
               <Input
                 id="personalEmail"
                 name="email"
@@ -125,7 +124,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="phone">Telefone</Label>
+              <Label htmlFor="phone">{t("form.phoneLabel")}</Label>
               <Input
                 id="phone"
                 name="phone"
@@ -137,7 +136,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="city">Cidade</Label>
+              <Label htmlFor="city">{t("form.cityLabel")}</Label>
               <Input
                 id="city"
                 name="city"
@@ -148,7 +147,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="state">Estado</Label>
+              <Label htmlFor="state">{t("form.stateLabel")}</Label>
               <Input
                 id="state"
                 name="state"
@@ -159,7 +158,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="country">País</Label>
+              <Label htmlFor="country">{t("form.countryLabel")}</Label>
               <Input
                 id="country"
                 name="country"
@@ -170,11 +169,11 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="linkedin">LinkedIn</Label>
+              <Label htmlFor="linkedin">{t("form.linkedinLabel")}</Label>
               <Input
                 id="linkedin"
                 name="linkedin"
-                placeholder="linkedin.com/in/seu-perfil"
+                placeholder={t("form.linkedinPlaceholder")}
                 value={data.personal.linkedin_url ?? ""}
                 onChange={(e) =>
                   setData({ ...data, personal: { ...data.personal, linkedin_url: e.target.value } })
@@ -182,7 +181,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="website">Site pessoal</Label>
+              <Label htmlFor="website">{t("form.websiteLabel")}</Label>
               <Input
                 id="website"
                 name="website"
@@ -193,7 +192,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="github">GitHub</Label>
+              <Label htmlFor="github">{t("form.githubLabel")}</Label>
               <Input
                 id="github"
                 name="github"
@@ -205,7 +204,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="summary">Resumo profissional</Label>
+            <Label htmlFor="summary">{t("form.summaryLabel")}</Label>
             <Textarea
               id="summary"
               name="summary"
@@ -220,7 +219,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
       </Card>
 
       <RepeatableSection
-        title="Experiências"
+        title={t("form.experiencesTitle")}
         icon={Briefcase}
         items={data.experiences}
         onChange={(experiences) => setData({ ...data, experiences })}
@@ -229,7 +228,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
       />
 
       <RepeatableSection
-        title="Formação"
+        title={t("form.educationTitle")}
         icon={GraduationCap}
         items={data.education}
         onChange={(education) => setData({ ...data, education })}
@@ -238,7 +237,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
       />
 
       <RepeatableSection
-        title="Projetos"
+        title={t("form.projectsTitle")}
         icon={FolderGit2}
         items={data.projects}
         onChange={(projects) => setData({ ...data, projects })}
@@ -247,7 +246,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
       />
 
       <RepeatableSection
-        title="Idiomas"
+        title={t("form.languagesTitle")}
         icon={Languages}
         items={data.languages}
         onChange={(languages) => setData({ ...data, languages })}
@@ -263,7 +262,7 @@ export function ResumeForm({ initialData, mode, resumeId }: ResumeFormProps) {
 
       <div className="flex justify-end gap-2">
         <Button type="submit" disabled={saving}>
-          {saving ? "Salvando…" : mode === "create" ? "Criar currículo" : "Salvar alterações"}
+          {saving ? t("form.saving") : mode === "create" ? t("form.createSubmit") : t("form.saveSubmit")}
         </Button>
       </div>
     </form>
@@ -287,6 +286,7 @@ function RepeatableSection<T extends { id: string }>({
   createEmpty,
   renderItem,
 }: RepeatableSectionProps<T>) {
+  const t = useTranslations("Resume");
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between space-y-0">
@@ -302,12 +302,12 @@ function RepeatableSection<T extends { id: string }>({
           onClick={() => onChange([...items, createEmpty()])}
         >
           <Plus className="size-3.5" aria-hidden="true" />
-          Adicionar
+          {t("form.addItem")}
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
         {items.length === 0 && (
-          <p className="text-sm text-muted-foreground">Nada adicionado ainda.</p>
+          <p className="text-sm text-muted-foreground">{t("form.emptyItems")}</p>
         )}
         {items.map((item, index) => (
           <div key={item.id} className="space-y-4 rounded-lg border border-border p-4">
@@ -319,7 +319,7 @@ function RepeatableSection<T extends { id: string }>({
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label={`Remover ${title.toLowerCase()} ${index + 1}`}
+                aria-label={t("form.removeItemAria", { title: title.toLowerCase(), index: index + 1 })}
                 onClick={() => onChange(items.filter((x) => x.id !== item.id))}
               >
                 <Trash2 className="size-4 text-destructive" aria-hidden="true" />
@@ -342,28 +342,29 @@ function ExperienceFields({
   item: ExperienceEntry;
   onChange: (item: ExperienceEntry) => void;
 }) {
+  const t = useTranslations("Resume");
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-1.5">
-        <Label>Empresa</Label>
+        <Label>{t("form.companyLabel")}</Label>
         <Input value={item.company} onChange={(e) => onChange({ ...item, company: e.target.value })} />
       </div>
       <div className="space-y-1.5">
-        <Label>Cargo</Label>
+        <Label>{t("form.roleLabel")}</Label>
         <Input value={item.role} onChange={(e) => onChange({ ...item, role: e.target.value })} />
       </div>
       <div className="space-y-1.5">
-        <Label>Início</Label>
+        <Label>{t("form.startDateLabel")}</Label>
         <Input
-          placeholder="Ex: Jan 2022"
+          placeholder={t("form.startDatePlaceholder")}
           value={item.start_date}
           onChange={(e) => onChange({ ...item, start_date: e.target.value })}
         />
       </div>
       <div className="space-y-1.5">
-        <Label>Fim</Label>
+        <Label>{t("form.endDateLabel")}</Label>
         <Input
-          placeholder="Ex: Dez 2023"
+          placeholder={t("form.endDatePlaceholder")}
           disabled={item.is_current}
           value={item.end_date}
           onChange={(e) => onChange({ ...item, end_date: e.target.value })}
@@ -376,10 +377,10 @@ function ExperienceFields({
           onChange={(e) => onChange({ ...item, is_current: e.target.checked, end_date: "" })}
           className="size-4 rounded border-input accent-primary"
         />
-        Emprego atual
+        {t("form.currentJobLabel")}
       </label>
       <div className="space-y-1.5 sm:col-span-2">
-        <Label>Descrição</Label>
+        <Label>{t("form.descriptionLabel")}</Label>
         <Textarea
           rows={3}
           value={item.description}
@@ -397,31 +398,32 @@ function EducationFields({
   item: EducationEntry;
   onChange: (item: EducationEntry) => void;
 }) {
+  const t = useTranslations("Resume");
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-1.5">
-        <Label>Instituição</Label>
+        <Label>{t("form.institutionLabel")}</Label>
         <Input
           value={item.institution}
           onChange={(e) => onChange({ ...item, institution: e.target.value })}
         />
       </div>
       <div className="space-y-1.5">
-        <Label>Curso / grau</Label>
+        <Label>{t("form.degreeLabel")}</Label>
         <Input value={item.degree} onChange={(e) => onChange({ ...item, degree: e.target.value })} />
       </div>
       <div className="space-y-1.5">
-        <Label>Início</Label>
+        <Label>{t("form.startDateLabel")}</Label>
         <Input
-          placeholder="Ex: Jan 2022"
+          placeholder={t("form.startDatePlaceholder")}
           value={item.start_date}
           onChange={(e) => onChange({ ...item, start_date: e.target.value })}
         />
       </div>
       <div className="space-y-1.5">
-        <Label>Fim</Label>
+        <Label>{t("form.endDateLabel")}</Label>
         <Input
-          placeholder="Ex: Dez 2023"
+          placeholder={t("form.endDatePlaceholder")}
           disabled={item.is_current}
           value={item.end_date}
           onChange={(e) => onChange({ ...item, end_date: e.target.value })}
@@ -434,7 +436,7 @@ function EducationFields({
           onChange={(e) => onChange({ ...item, is_current: e.target.checked, end_date: "" })}
           className="size-4 rounded border-input accent-primary"
         />
-        Em andamento
+        {t("form.inProgressLabel")}
       </label>
     </div>
   );
@@ -447,14 +449,15 @@ function ProjectFields({
   item: ProjectEntry;
   onChange: (item: ProjectEntry) => void;
 }) {
+  const t = useTranslations("Resume");
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
-        <Label>Nome</Label>
+        <Label>{t("form.nameLabel")}</Label>
         <Input value={item.name} onChange={(e) => onChange({ ...item, name: e.target.value })} />
       </div>
       <div className="space-y-1.5">
-        <Label>Descrição</Label>
+        <Label>{t("form.descriptionLabel")}</Label>
         <Textarea
           rows={2}
           value={item.description}
@@ -462,7 +465,7 @@ function ProjectFields({
         />
       </div>
       <div className="space-y-1.5">
-        <Label>Link</Label>
+        <Label>{t("form.linkLabel")}</Label>
         <Input value={item.url} onChange={(e) => onChange({ ...item, url: e.target.value })} />
       </div>
     </div>
@@ -476,29 +479,36 @@ function LanguageFields({
   item: LanguageEntry;
   onChange: (item: LanguageEntry) => void;
 }) {
+  const t = useTranslations("Resume");
+  // Select.Root usa `items` só pra resolver o label no trigger fechado — aqui value !== label
+  // (value é a chave estável, label é o texto traduzido; mesma técnica de
+  // .spec/002-resume-optimization/spec.md, achado do bug de Select do passe de UI mock).
+  const languageLevelItems: Record<string, string> = Object.fromEntries(
+    LANGUAGE_LEVEL_KEYS.map((key) => [key, t(`languageLevels.${key}`)]),
+  );
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-1.5">
-        <Label>Idioma</Label>
+        <Label>{t("form.languageLabel")}</Label>
         <Input
           value={item.language}
           onChange={(e) => onChange({ ...item, language: e.target.value })}
         />
       </div>
       <div className="space-y-1.5">
-        <Label>Nível</Label>
+        <Label>{t("form.proficiencyLabel")}</Label>
         <Select
-          items={LANGUAGE_LEVELS}
+          items={languageLevelItems}
           value={item.proficiency}
           onValueChange={(proficiency) => onChange({ ...item, proficiency: proficiency as string })}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecione" />
+            <SelectValue placeholder={t("form.selectPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            {LANGUAGE_LEVEL_OPTIONS.map((level) => (
-              <SelectItem key={level} value={level}>
-                {level}
+            {LANGUAGE_LEVEL_KEYS.map((key) => (
+              <SelectItem key={key} value={key}>
+                {t(`languageLevels.${key}`)}
               </SelectItem>
             ))}
           </SelectContent>

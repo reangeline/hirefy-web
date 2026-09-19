@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { CheckCircle2, Lightbulb, RefreshCcw, Sparkles, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +34,7 @@ interface LinkedInScanReportProps {
 // o parser de PDF não processa imagem, então não há check de foto/capa de perfil aqui
 // (spec 015).
 export function LinkedInScanReport({ scan, onRescan }: LinkedInScanReportProps) {
+  const t = useTranslations("LinkedIn");
   const total = scan.sections.reduce((acc, s) => acc + s.checks.length, 0);
   const passedCount = scan.sections.reduce(
     (acc, s) => acc + s.checks.filter((c) => c.passed).length,
@@ -44,14 +48,14 @@ export function LinkedInScanReport({ scan, onRescan }: LinkedInScanReportProps) 
           <CardContent className="flex flex-col items-center gap-4 py-6">
             <div className="flex flex-col items-center gap-2 text-center">
               <CircularScore value={scan.score} />
-              <p className="text-xs font-medium text-muted-foreground">Score do perfil</p>
+              <p className="text-xs font-medium text-muted-foreground">{t("scanReport.scoreLabel")}</p>
             </div>
             <p className="text-center text-xs text-muted-foreground">
-              {passedCount}/{total} itens bem feitos
+              {t("scanReport.itemsPassed", { passed: passedCount, total })}
             </p>
             <Button type="button" variant="outline" size="sm" onClick={onRescan} className="gap-1.5">
               <RefreshCcw className="size-3.5" aria-hidden="true" />
-              Novo scan
+              {t("scanReport.newScan")}
             </Button>
           </CardContent>
         </Card>
@@ -84,12 +88,12 @@ export function LinkedInScanReport({ scan, onRescan }: LinkedInScanReportProps) 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="size-4 text-primary" aria-hidden="true" />
-              Skills sugeridas
+              {t("scanReport.suggestedSkills")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="mb-3 text-sm text-muted-foreground">
-              Sugestões da IA com base no seu perfil — não significa que já estão lá.
+              {t("scanReport.suggestedSkillsHint")}
             </p>
             <div className="flex flex-wrap gap-2">
               {scan.predicted_skills.map((skill) => (
@@ -107,7 +111,7 @@ export function LinkedInScanReport({ scan, onRescan }: LinkedInScanReportProps) 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lightbulb className="size-4 text-primary" aria-hidden="true" />
-              Dicas
+              {t("scanReport.tips")}
             </CardTitle>
           </CardHeader>
           <CardContent>

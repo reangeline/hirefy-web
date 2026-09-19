@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ export default function SignupConfirmPage() {
 }
 
 function ConfirmForm() {
+  const t = useTranslations("Auth.signupConfirm");
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
@@ -43,7 +45,7 @@ function ConfirmForm() {
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(body.message ?? body.error ?? "Código inválido ou expirado.");
+        setError(body.message ?? body.error ?? t("errorFallback"));
         return;
       }
 
@@ -70,11 +72,11 @@ function ConfirmForm() {
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(body.message ?? body.error ?? "Não foi possível reenviar o código.");
+        setError(body.message ?? body.error ?? t("resendErrorFallback"));
         return;
       }
 
-      setInfo("Código reenviado. Confira seu email.");
+      setInfo(t("resendSuccess"));
     } finally {
       setResending(false);
     }
@@ -84,13 +86,13 @@ function ConfirmForm() {
     <div className="flex flex-1 items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Confirme seu email</CardTitle>
-          <CardDescription>Enviamos um código de verificação para o seu email.</CardDescription>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("emailLabel")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -104,7 +106,7 @@ function ConfirmForm() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="code">Código</Label>
+              <Label htmlFor="code">{t("codeLabel")}</Label>
               <Input
                 id="code"
                 name="code"
@@ -130,7 +132,7 @@ function ConfirmForm() {
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Confirmando…" : "Confirmar"}
+              {loading ? t("submitLoading") : t("submit")}
             </Button>
           </form>
 
@@ -141,12 +143,12 @@ function ConfirmForm() {
             disabled={resending || !email}
             className="mt-2 w-full text-muted-foreground"
           >
-            {resending ? "Reenviando…" : "Reenviar código"}
+            {resending ? t("resendLoading") : t("resend")}
           </Button>
 
           <p className="mt-4 text-center text-sm text-muted-foreground">
             <Link href="/login" className="font-medium text-foreground hover:underline">
-              Voltar pro login
+              {t("backToLogin")}
             </Link>
           </p>
         </CardContent>

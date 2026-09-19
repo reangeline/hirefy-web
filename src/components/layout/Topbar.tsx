@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { DashboardThemeToggle } from "@/components/dashboard-theme-toggle";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
@@ -12,6 +13,7 @@ interface TopbarProps {
 }
 
 export function Topbar({ title }: TopbarProps) {
+  const t = useTranslations("Dashboard.topbar");
   const { toggle } = useSidebar();
 
   return (
@@ -23,7 +25,7 @@ export function Topbar({ title }: TopbarProps) {
           size="icon"
           onClick={toggle}
           className="md:hidden"
-          aria-label="Abrir menu"
+          aria-label={t("openMenu")}
         >
           <Menu className="size-4" aria-hidden="true" />
         </Button>

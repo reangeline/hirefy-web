@@ -1,15 +1,18 @@
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { href: "#recursos", label: "Recursos" },
-  { href: "#como-funciona", label: "Como funciona" },
-];
+export async function MarketingNavbar() {
+  const t = await getTranslations("Marketing.navbar");
 
-export function MarketingNavbar() {
+  const NAV_LINKS = [
+    { href: "#recursos", label: t("resources") },
+    { href: "#como-funciona", label: t("howItWorks") },
+  ];
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -33,10 +36,10 @@ export function MarketingNavbar() {
           <LocaleSwitcher />
           <ThemeToggle />
           <Link href="/login" className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:inline-flex")}>
-            Entrar
+            {t("login")}
           </Link>
           <Link href="/signup" className={buttonVariants()}>
-            Criar conta grátis
+            {t("signup")}
           </Link>
         </div>
       </div>

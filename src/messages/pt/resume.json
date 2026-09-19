@@ -1,1 +1,154 @@
-{}
+{
+  "loading": "Carregando…",
+  "backToList": "Meus currículos",
+  "form": {
+    "nicknameLabel": "Nome do currículo",
+    "nicknamePlaceholder": "Ex: Currículo — Backend",
+    "saveError": "Não foi possível salvar o currículo.",
+    "personalDataTitle": "Dados pessoais",
+    "fullNameLabel": "Nome completo",
+    "currentRoleLabel": "Cargo atual",
+    "emailLabel": "Email",
+    "phoneLabel": "Telefone",
+    "cityLabel": "Cidade",
+    "stateLabel": "Estado",
+    "countryLabel": "País",
+    "linkedinLabel": "LinkedIn",
+    "linkedinPlaceholder": "linkedin.com/in/seu-perfil",
+    "websiteLabel": "Site pessoal",
+    "githubLabel": "GitHub",
+    "summaryLabel": "Resumo profissional",
+    "experiencesTitle": "Experiências",
+    "educationTitle": "Formação",
+    "projectsTitle": "Projetos",
+    "languagesTitle": "Idiomas",
+    "addItem": "Adicionar",
+    "emptyItems": "Nada adicionado ainda.",
+    "removeItemAria": "Remover {title} {index}",
+    "companyLabel": "Empresa",
+    "roleLabel": "Cargo",
+    "startDateLabel": "Início",
+    "startDatePlaceholder": "Ex: Jan 2022",
+    "endDateLabel": "Fim",
+    "endDatePlaceholder": "Ex: Dez 2023",
+    "currentJobLabel": "Emprego atual",
+    "descriptionLabel": "Descrição",
+    "institutionLabel": "Instituição",
+    "degreeLabel": "Curso / grau",
+    "inProgressLabel": "Em andamento",
+    "nameLabel": "Nome",
+    "linkLabel": "Link",
+    "languageLabel": "Idioma",
+    "proficiencyLabel": "Nível",
+    "selectPlaceholder": "Selecione",
+    "saving": "Salvando…",
+    "createSubmit": "Criar currículo",
+    "saveSubmit": "Salvar alterações"
+  },
+  "languageLevels": {
+    "basic": "Básico",
+    "intermediate": "Intermediário",
+    "advanced": "Avançado",
+    "fluent": "Fluente",
+    "native": "Nativo"
+  },
+  "optimizeForm": {
+    "pollTimeoutError": "A otimização está demorando mais que o esperado. Confira mais tarde em “Otimizados”.",
+    "pollError": "Falha ao consultar o status da otimização.",
+    "submitError": "Não foi possível iniciar a otimização.",
+    "failedTitle": "A otimização falhou",
+    "failedFallback": "Tente novamente em alguns instantes.",
+    "retry": "Tentar de novo",
+    "statusQueued": "Na fila de processamento…",
+    "statusProcessing": "A IA está otimizando seu currículo…",
+    "processingHint": "Pode fechar esta tela — o resultado fica salvo em “Otimizados” quando terminar.",
+    "optimizingPrefix": "Otimizando",
+    "jobDescriptionLabel": "Descrição da vaga",
+    "jobDescriptionPlaceholder": "Cole aqui a descrição completa da vaga…",
+    "targetCompanyLabel": "Empresa (opcional)",
+    "targetRoleLabel": "Cargo (opcional)",
+    "submitting": "Enviando…",
+    "submit": "Otimizar currículo"
+  },
+  "resultView": {
+    "matchLabel": "Match com a vaga",
+    "keywordsLabel": "Palavras-chave",
+    "suggestionsLabel": "Sugestões",
+    "suggestionsValue": "{count} pra revisar",
+    "requirementsLabel": "Requisitos",
+    "requirementsValue": "{count} faltando",
+    "keywordsSectionTitle": "Palavras-chave da vaga",
+    "keywordFound": "<strong>{keyword}</strong> — encontrada no seu currículo.",
+    "keywordMissing": "<strong>{keyword}</strong> — a vaga pede, seu currículo não menciona.",
+    "suggestionsSectionTitle": "Sugestões de melhoria",
+    "missingRequirementsSectionTitle": "Requisitos faltando no currículo",
+    "salarySectionTitle": "Estimativa salarial"
+  },
+  "pdfImport": {
+    "fileTooLarge": "Arquivo maior que 10MB. Escolha um PDF menor.",
+    "parseError": "Não foi possível analisar o PDF.",
+    "title": "Importe seu currículo em PDF",
+    "description": "A IA extrai seus dados e já calcula um score de ATS. Você revisa tudo antes de salvar.",
+    "chooseFile": "Escolher arquivo",
+    "analyzing": "Analisando…",
+    "analyze": "Analisar currículo"
+  },
+  "addGap": {
+    "suggestError": "Não foi possível gerar a sugestão.",
+    "saveError": "Não foi possível salvar no currículo.",
+    "done": "✓ Adicionado ao currículo",
+    "saving": "Salvando…",
+    "addToResume": "Adicionar ao currículo",
+    "cancel": "Cancelar",
+    "generating": "Gerando sugestão…"
+  },
+  "creditLimitCard": {
+    "headline": "Suas 3 otimizações grátis acabaram",
+    "subheadline": "Assine o Premium pra continuar otimizando currículos e desbloquear:",
+    "checkoutError": "Falha ao iniciar checkout",
+    "redirecting": "Redirecionando…",
+    "subscribeButton": "Assinar Premium",
+    "features": {
+      "unlimitedOptimizations": "Otimizações de currículo/LinkedIn ilimitadas",
+      "unlimitedInterviewPractice": "Prática de entrevista com IA ilimitada",
+      "aiCoach": "Coach de IA em cada etapa da candidatura",
+      "pipelineAnalytics": "Analytics do pipeline de candidaturas"
+    }
+  },
+  "card": {
+    "untitled": "Currículo sem nome",
+    "updatedAt": "Atualizado em {date}",
+    "optimizeAria": "Otimizar currículo",
+    "editAria": "Editar currículo",
+    "deleteAria": "Excluir currículo"
+  },
+  "page": {
+    "list": {
+      "topbarTitle": "Currículos",
+      "heading": "Meus currículos",
+      "newResume": "Novo currículo",
+      "deleteError": "Falha ao excluir currículo.",
+      "emptyTitle": "Nenhum currículo ainda",
+      "emptyDescription": "Crie seu primeiro currículo pra começar a otimizar pra vagas.",
+      "createResume": "Criar currículo"
+    },
+    "new": {
+      "topbarTitle": "Novo currículo",
+      "importTitle": "Importar PDF",
+      "importDescription": "A IA extrai seus dados e calcula um score de ATS automaticamente.",
+      "manualTitle": "Preencher manualmente",
+      "manualDescription": "Digite seus dados diretamente no formulário.",
+      "atsScoreTitle": "Score de ATS do PDF importado",
+      "reviewHint": "Revise os campos abaixo — nada foi salvo ainda."
+    },
+    "edit": {
+      "topbarTitle": "Editar currículo"
+    },
+    "optimize": {
+      "topbarTitle": "Otimizar currículo"
+    },
+    "optimized": {
+      "topbarTitle": "Currículo otimizado"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import { FileText, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import type { Resume } from "@/types/resume";
 import type { LinkedInPostIdeas } from "@/types/linkedin";
 
 export default function LinkedInPostsPage() {
+  const t = useTranslations("LinkedIn");
   const [resumes, setResumes] = useState<Resume[] | null>(null);
   const [selectedResumeId, setSelectedResumeId] = useState<string>("");
   const [ideas, setIdeas] = useState<LinkedInPostIdeas | null>(null);
@@ -53,14 +55,14 @@ export default function LinkedInPostsPage() {
       trackEvent("linkedin_post_topics_generated", { topic_count: newIdeas.topics.length });
       setIdeas(newIdeas);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível gerar os temas.");
+      setError(err instanceof Error ? err.message : t("postsPage.generateError"));
     } finally {
       setGenerating(false);
     }
   }
 
   const resumeOptions = Object.fromEntries(
-    (resumes ?? []).map((r) => [r.id, r.parsed_data.nickname || "Currículo sem nome"]),
+    (resumes ?? []).map((r) => [r.id, r.parsed_data.nickname || t("postsPage.unnamedResume")]),
   );
 
   return (
@@ -68,17 +70,15 @@ export default function LinkedInPostsPage() {
       <Topbar title="LinkedIn" />
       <div className="space-y-6 p-6">
         <div>
-          <h1 className="text-lg font-semibold">Ideias de publicação</h1>
+          <h1 className="text-lg font-semibold">{t("postsPage.heading")}</h1>
           <p className="max-w-2xl text-sm text-muted-foreground">
-            A IA sugere temas e ângulos relevantes pro seu perfil, com base no seu currículo —
-            não são notícias do dia, são assuntos que fazem sentido você escrever sobre. Escolha
-            um que despertar interesse e gere um post pronto pra copiar.
+            {t("postsPage.subheading")}
           </p>
         </div>
 
         {loading && (
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            Carregando…
+            {t("postsPage.loading")}
           </p>
         )}
 
@@ -93,13 +93,13 @@ export default function LinkedInPostsPage() {
             <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
               <FileText className="size-10 text-muted-foreground" aria-hidden="true" />
               <div>
-                <p className="font-medium">Você ainda não tem um currículo salvo</p>
+                <p className="font-medium">{t("postsPage.noResumesTitle")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Crie um currículo primeiro pra gerar temas a partir dele.
+                  {t("postsPage.noResumesHint")}
                 </p>
               </div>
               <Link href="/resume/new">
-                <Button type="button">Criar currículo</Button>
+                <Button type="button">{t("postsPage.createResume")}</Button>
               </Link>
             </CardContent>
           </Card>
@@ -109,7 +109,7 @@ export default function LinkedInPostsPage() {
           <Card>
             <CardContent className="space-y-4 py-6">
               <div className="space-y-1.5">
-                <Label>Currículo base</Label>
+                <Label>{t("postsPage.resumeLabel")}</Label>
                 <Select items={resumeOptions} value={selectedResumeId} onValueChange={(v) => setSelectedResumeId(v ?? "")}>
                   <SelectTrigger className="w-full sm:w-80">
                     <SelectValue />
@@ -117,7 +117,7 @@ export default function LinkedInPostsPage() {
                   <SelectContent>
                     {resumes.map((r) => (
                       <SelectItem key={r.id} value={r.id}>
-                        {r.parsed_data.nickname || "Currículo sem nome"}
+                        {r.parsed_data.nickname || t("postsPage.unnamedResume")}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -126,7 +126,7 @@ export default function LinkedInPostsPage() {
 
               <Button type="button" disabled={generating || !selectedResumeId} onClick={handleGenerate} className="gap-2">
                 <Sparkles className="size-4" aria-hidden="true" />
-                {generating ? "Gerando…" : ideas ? "Gerar novos temas" : "Gerar temas"}
+                {generating ? t("postsPage.generating") : ideas ? t("postsPage.generateNewTopics") : t("postsPage.generateTopics")}
               </Button>
             </CardContent>
           </Card>
@@ -137,7 +137,7 @@ export default function LinkedInPostsPage() {
             <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
               <Loader2 className="size-10 animate-spin text-primary" aria-hidden="true" />
               <p aria-live="polite" className="text-sm text-muted-foreground">
-                A IA está montando os temas…
+                {t("postsPage.generatingHint")}
               </p>
             </CardContent>
           </Card>

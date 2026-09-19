@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ export default function SignupPage() {
 }
 
 function SignupForm() {
+  const t = useTranslations("Auth.signup");
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
@@ -41,7 +43,7 @@ function SignupForm() {
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(body.message ?? body.error ?? "Não foi possível criar a conta.");
+        setError(body.message ?? body.error ?? t("errorFallback"));
         return;
       }
 
@@ -58,15 +60,15 @@ function SignupForm() {
     <div className="flex flex-1 items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Criar conta</CardTitle>
-          <CardDescription>Otimize seu currículo com IA</CardDescription>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <SocialAuthButtons redirectTo={redirect ?? "/dashboard"} />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="name">Nome</Label>
+              <Label htmlFor="name">{t("nameLabel")}</Label>
               <Input
                 id="name"
                 name="name"
@@ -79,7 +81,7 @@ function SignupForm() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("emailLabel")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -93,7 +95,7 @@ function SignupForm() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">{t("passwordLabel")}</Label>
               <Input
                 id="password"
                 name="password"
@@ -104,7 +106,7 @@ function SignupForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">Mínimo de 8 caracteres.</p>
+              <p className="text-xs text-muted-foreground">{t("passwordHint")}</p>
             </div>
 
             {error && (
@@ -114,14 +116,14 @@ function SignupForm() {
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Criando…" : "Criar conta"}
+              {loading ? t("submitLoading") : t("submit")}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Já tem conta?{" "}
+            {t("hasAccount")}{" "}
             <Link href="/login" className="font-medium text-foreground hover:underline">
-              Entrar
+              {t("login")}
             </Link>
           </p>
         </CardContent>

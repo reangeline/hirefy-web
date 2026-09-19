@@ -1,46 +1,25 @@
+import { getTranslations } from "next-intl/server";
 import { AlertTriangle, Clock, FileX, XCircle } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
 import { ParallaxCard } from "@/components/marketing/ParallaxCard";
 
-const PROBLEMS = [
-  {
-    icon: FileX,
-    title: "75% dos currículos são rejeitados",
-    description:
-      "Seu currículo é filtrado por um ATS antes de chegar a um humano. Sem um score otimizado, sua candidatura nem existe — não importa sua qualificação.",
-  },
-  {
-    icon: AlertTriangle,
-    title: "Formatação invisível pro ATS",
-    description:
-      "Tabelas, colunas e layouts criativos confundem o parser do ATS — suas habilidades e experiências somem pro sistema que decide primeiro.",
-  },
-  {
-    icon: XCircle,
-    title: "Currículo genérico não passa",
-    description:
-      "Cada vaga tem palavras-chave específicas. Sem adaptar o currículo pra cada uma, até candidatos qualificados são rejeitados automaticamente.",
-  },
-  {
-    icon: Clock,
-    title: "Nenhum controle das candidaturas",
-    description:
-      "Você aplica pra dezenas de vagas sem forma de rastrear estágio, agendar follow-up ou gerenciar contatos. Oportunidades se perdem.",
-  },
-];
+const PROBLEM_ICONS = [FileX, AlertTriangle, XCircle, Clock];
 
-export function Problem() {
+export async function Problem() {
+  const t = await getTranslations("Marketing.problem");
+  const items = t.raw("items") as { title: string; description: string }[];
+  const PROBLEMS = items.map((item, i) => ({ ...item, icon: PROBLEM_ICONS[i] }));
+
   return (
     <section className="relative border-b border-border/60 bg-muted/50 dark:bg-transparent">
       <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[340px_1fr] lg:gap-16">
           <Reveal>
             <h2 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">
-              Por que candidatos qualificados são rejeitados
+              {t("heading")}
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Não é sobre suas habilidades. É sobre passar pelos robôs que leem seu currículo
-              primeiro.
+              {t("subheading")}
             </p>
 
             {/* Claro: card sólido teal (como sempre foi). Escuro: segue o padrão "Statistic
@@ -48,11 +27,10 @@ export function Problem() {
                 recuada, não um preenchimento sólido (isso é reservado pro CTA). */}
             <ParallaxCard strength={16} className="mt-8">
               <div className="rounded-2xl bg-primary p-6 text-primary-foreground dark:rounded-[16px] dark:border dark:border-border dark:bg-muted dark:text-inherit">
-                <div className="text-5xl font-bold tabular-nums dark:text-[#fde9ff]">98%</div>
-                <p className="mt-2 font-medium dark:text-[#edfffe]">das empresas Fortune 500 usam ATS</p>
+                <div className="text-5xl font-bold tabular-nums dark:text-[#fde9ff]">{t("statValue")}</div>
+                <p className="mt-2 font-medium dark:text-[#edfffe]">{t("statLabel")}</p>
                 <p className="mt-2 text-sm text-primary-foreground/80 dark:text-muted-foreground">
-                  Seu currículo precisa ser otimizado pra robôs antes de chegar a um recrutador
-                  de verdade.
+                  {t("statDescription")}
                 </p>
               </div>
             </ParallaxCard>

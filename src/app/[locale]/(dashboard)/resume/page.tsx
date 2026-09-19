@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { FileText, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { apiFetchJson } from "@/lib/api/client";
 import type { Resume } from "@/types/resume";
 
 export default function ResumeListPage() {
+  const t = useTranslations("Resume");
   const [resumes, setResumes] = useState<Resume[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export default function ResumeListPage() {
       await apiFetchJson(`/api/resumes/${id}`, { method: "DELETE" });
       setResumes((prev) => prev?.filter((r) => r.id !== id) ?? null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao excluir currículo.");
+      setError(err instanceof Error ? err.message : t("page.list.deleteError"));
     } finally {
       setDeletingId(null);
     }
@@ -34,14 +36,14 @@ export default function ResumeListPage() {
 
   return (
     <>
-      <Topbar title="Currículos" />
+      <Topbar title={t("page.list.topbarTitle")} />
       <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Meus currículos</h1>
+        <h1 className="text-lg font-semibold">{t("page.list.heading")}</h1>
         <Link href="/resume/new">
           <Button type="button" size="sm" className="gap-2">
             <Plus className="size-4" aria-hidden="true" />
-            Novo currículo
+            {t("page.list.newResume")}
           </Button>
         </Link>
       </div>
@@ -54,21 +56,21 @@ export default function ResumeListPage() {
 
       {!resumes && !error && (
         <p aria-live="polite" className="text-sm text-muted-foreground">
-          Carregando…
+          {t("loading")}
         </p>
       )}
 
       {resumes && resumes.length === 0 && (
         <div className="rounded-xl border border-dashed border-border p-12 text-center">
           <FileText className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
-          <p className="mt-4 font-medium">Nenhum currículo ainda</p>
+          <p className="mt-4 font-medium">{t("page.list.emptyTitle")}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Crie seu primeiro currículo pra começar a otimizar pra vagas.
+            {t("page.list.emptyDescription")}
           </p>
           <Link href="/resume/new">
             <Button type="button" className="mt-6 gap-2">
               <Plus className="size-4" aria-hidden="true" />
-              Criar currículo
+              {t("page.list.createResume")}
             </Button>
           </Link>
         </div>

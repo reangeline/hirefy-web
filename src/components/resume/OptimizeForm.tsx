@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AlertCircle, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ const POLL_INTERVAL_MS = 4000;
 const MAX_POLL_ATTEMPTS = 45; // ~3min
 
 export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
+  const t = useTranslations("Resume");
   const router = useRouter();
   const [jobDescription, setJobDescription] = useState("");
   const [targetCompany, setTargetCompany] = useState("");
@@ -37,7 +39,7 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
     const timer = setTimeout(async () => {
       attemptsRef.current += 1;
       if (attemptsRef.current > MAX_POLL_ATTEMPTS) {
-        setError("A otimização está demorando mais que o esperado. Confira mais tarde em “Otimizados”.");
+        setError(t("optimizeForm.pollTimeoutError"));
         return;
       }
       try {
@@ -50,12 +52,12 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
           router.push(`/resume/optimized/${updated.optimized_resume_id}`);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Falha ao consultar o status da otimização.");
+        setError(err instanceof Error ? err.message : t("optimizeForm.pollError"));
       }
     }, POLL_INTERVAL_MS);
 
     return () => clearTimeout(timer);
-  }, [job, router]);
+  }, [job, router, t]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -77,7 +79,7 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
       setJob(created);
       trackEvent("resume_optimize_started");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível iniciar a otimização.");
+      setError(err instanceof Error ? err.message : t("optimizeForm.submitError"));
     } finally {
       setSubmitting(false);
     }
@@ -92,13 +94,13 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
         <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
           <AlertCircle className="size-10 text-destructive" aria-hidden="true" />
           <div aria-live="polite">
-            <p className="font-medium">A otimização falhou</p>
+            <p className="font-medium">{t("optimizeForm.failedTitle")}</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {job.error ?? "Tente novamente em alguns instantes."}
+              {job.error ?? t("optimizeForm.failedFallback")}
             </p>
           </div>
           <Button type="button" variant="outline" onClick={() => setJob(null)}>
-            Tentar de novo
+            {t("optimizeForm.retry")}
           </Button>
         </CardContent>
       </Card>
@@ -112,11 +114,11 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
           <Loader2 className="size-10 animate-spin text-primary" aria-hidden="true" />
           <div aria-live="polite">
             <p className="font-medium">
-              {job.status === "queued" && "Na fila de processamento…"}
-              {job.status === "processing" && "A IA está otimizando seu currículo…"}
+              {job.status === "queued" && t("optimizeForm.statusQueued")}
+              {job.status === "processing" && t("optimizeForm.statusProcessing")}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Pode fechar esta tela — o resultado fica salvo em “Otimizados” quando terminar.
+              {t("optimizeForm.processingHint")}
             </p>
           </div>
         </CardContent>
@@ -127,17 +129,17 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Otimizando <span className="font-medium text-foreground">{resumeName}</span>
+        {t("optimizeForm.optimizingPrefix")} <span className="font-medium text-foreground">{resumeName}</span>
       </p>
 
       <div className="space-y-1.5">
-        <Label htmlFor="jobDescription">Descrição da vaga</Label>
+        <Label htmlFor="jobDescription">{t("optimizeForm.jobDescriptionLabel")}</Label>
         <Textarea
           id="jobDescription"
           name="jobDescription"
           required
           rows={8}
-          placeholder="Cole aqui a descrição completa da vaga…"
+          placeholder={t("optimizeForm.jobDescriptionPlaceholder")}
           value={jobDescription}
           onChange={(e) => setJobDescription(e.target.value)}
         />
@@ -145,7 +147,7 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="targetCompany">Empresa (opcional)</Label>
+          <Label htmlFor="targetCompany">{t("optimizeForm.targetCompanyLabel")}</Label>
           <Input
             id="targetCompany"
             name="targetCompany"
@@ -154,7 +156,7 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="targetRole">Cargo (opcional)</Label>
+          <Label htmlFor="targetRole">{t("optimizeForm.targetRoleLabel")}</Label>
           <Input
             id="targetRole"
             name="targetRole"
@@ -173,7 +175,7 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
       <div className="flex justify-end">
         <Button type="submit" disabled={submitting} className="gap-2">
           <Sparkles className="size-4" aria-hidden="true" />
-          {submitting ? "Enviando…" : "Otimizar currículo"}
+          {submitting ? t("optimizeForm.submitting") : t("optimizeForm.submit")}
         </Button>
       </div>
     </form>

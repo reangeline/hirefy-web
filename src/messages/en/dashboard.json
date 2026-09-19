@@ -1,1 +1,72 @@
-{}
+{
+  "nav": {
+    "dashboard": {
+      "label": "Dashboard",
+      "items": {
+        "newApplication": "New application",
+        "archived": "Archived"
+      }
+    },
+    "resume": {
+      "label": "Resumes",
+      "items": {
+        "newResume": "New resume"
+      }
+    },
+    "linkedin": {
+      "label": "LinkedIn",
+      "items": {
+        "fillGuide": "Fill-in guide",
+        "postIdeas": "Post ideas"
+      }
+    }
+  },
+  "sidebar": {
+    "collapseSection": "Collapse {label}",
+    "expandSection": "Expand {label}"
+  },
+  "subscriptionCard": {
+    "planLabels": {
+      "free": "Free Plan",
+      "basic": "Basic Plan",
+      "premium": "Premium"
+    },
+    "loadError": "Failed to load subscription: {error}",
+    "loading": "Loading subscription…",
+    "credits": "{count, plural, one {# credit} other {# credits}}",
+    "creditsLabel": "Credits",
+    "premiumDescription": "Unlimited resume/LinkedIn optimizations, interview practice, and pipeline coaching.",
+    "creditsAvailable": "{count, plural, =0 {No AI credits available right now — subscribe to Premium to keep going.} one {1 AI credit available for resume/LinkedIn optimization, interview practice, or coaching.} other {# AI credits available for resume/LinkedIn optimization, interview practice, or coaching.}}",
+    "cancelling": "Cancelling…",
+    "cancelSubscription": "Cancel subscription",
+    "redirecting": "Redirecting…",
+    "upgrade": "Upgrade",
+    "checkoutError": "Failed to start checkout",
+    "cancelError": "Failed to cancel subscription"
+  },
+  "welcomeHeader": {
+    "greeting": "Welcome, {name}",
+    "greetingFallback": "Welcome",
+    "loadError": "Failed to load profile: {error}"
+  },
+  "emailVerification": {
+    "title": "Confirm your email",
+    "description": "Check your inbox to unlock all features.",
+    "cta": "Confirm"
+  },
+  "checkoutStatus": {
+    "success": "Premium subscription activated! It may take a few seconds to show up below.",
+    "cancelled": "Checkout cancelled — no charge was made.",
+    "close": "Close"
+  },
+  "logoutButton": {
+    "signOut": "Sign out",
+    "signingOut": "Signing out…"
+  },
+  "topbar": {
+    "openMenu": "Open menu"
+  },
+  "topbarTitles": {
+    "dashboard": "Dashboard"
+  }
+}

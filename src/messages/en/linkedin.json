@@ -1,1 +1,88 @@
-{}
+{
+  "fillGuide": {
+    "periodCurrent": "present",
+    "profileStrengthLabel": "Suggested profile strength",
+    "generateNewGuide": "Generate new guide",
+    "headline": "Headline",
+    "about": "About",
+    "experience": "Experience",
+    "skills": "Skills",
+    "copyAllSkills": "Copy all",
+    "languages": "Languages",
+    "suggestions": "Suggestions",
+    "copySelected": "Copy selected",
+    "suggestionsHint": "Check the ones you agree with to copy only those.",
+    "footerNote": "Content generated from the resume you chose — give it a review before pasting it into your LinkedIn profile."
+  },
+  "scanUpload": {
+    "fileTooLarge": "File larger than 10MB. Choose a smaller PDF.",
+    "uploadError": "We couldn't analyze your profile.",
+    "heading": "Audit your LinkedIn profile",
+    "instructions": "On your LinkedIn profile, use <strong>More → Save to PDF</strong> to export it, then upload the file here. The AI analyzes it and shows what's working and what needs improvement.",
+    "chooseFile": "Choose file",
+    "analyzing": "Analyzing…",
+    "analyzeProfile": "Analyze profile"
+  },
+  "scanReport": {
+    "scoreLabel": "Profile score",
+    "itemsPassed": "{passed}/{total} items done well",
+    "newScan": "New scan",
+    "suggestedSkills": "Suggested skills",
+    "suggestedSkillsHint": "AI suggestions based on your profile — doesn't mean they're already there.",
+    "tips": "Tips"
+  },
+  "postTopics": {
+    "generatePost": "Generate post",
+    "writingPost": "Writing the post…",
+    "tryAgain": "Try again",
+    "generateAnotherVersion": "Generate another version",
+    "draftError": "We couldn't generate the post."
+  },
+  "scanPage": {
+    "loadError": "Failed to load the scan.",
+    "heading": "LinkedIn Scan Report",
+    "subheading": "Audit your LinkedIn profile against recruiter best practices.",
+    "loading": "Loading…"
+  },
+  "fillPage": {
+    "timeoutError": "Generation is taking longer than expected. Try again in a moment.",
+    "pollError": "Failed to check the generation status.",
+    "generateError": "We couldn't generate the guide.",
+    "heading": "Fill-in guide",
+    "subheading": "The AI generates what to put in each field of your LinkedIn profile, based on a resume you already saved — you review and copy it over.",
+    "failedTitle": "Generation failed",
+    "failedDefaultMessage": "Please try again in a few moments.",
+    "tryAgain": "Try again",
+    "queued": "In the processing queue…",
+    "processing": "The AI is putting your guide together…",
+    "processingHint": "This takes less than a minute.",
+    "noResumesTitle": "You don't have a saved resume yet",
+    "noResumesHint": "Create a resume first to generate the guide from it.",
+    "createResume": "Create resume",
+    "resumeLabel": "Base resume",
+    "unnamedResume": "Untitled resume",
+    "submitting": "Submitting…",
+    "generateGuide": "Generate guide",
+    "loading": "Loading…"
+  },
+  "fillResultPage": {
+    "notLinkedInResult": "This result isn't a LinkedIn guide.",
+    "backLink": "Fill-in guide",
+    "loading": "Loading…"
+  },
+  "postsPage": {
+    "generateError": "We couldn't generate the topics.",
+    "unnamedResume": "Untitled resume",
+    "heading": "Post ideas",
+    "subheading": "The AI suggests topics and angles relevant to your profile, based on your resume — these aren't the day's news, they're subjects that make sense for you to write about. Pick one that sparks your interest and generate a ready-to-copy post.",
+    "loading": "Loading…",
+    "noResumesTitle": "You don't have a saved resume yet",
+    "noResumesHint": "Create a resume first to generate topics from it.",
+    "createResume": "Create resume",
+    "resumeLabel": "Base resume",
+    "generating": "Generating…",
+    "generateNewTopics": "Generate new topics",
+    "generateTopics": "Generate topics",
+    "generatingHint": "The AI is putting the topics together…"
+  }
+}

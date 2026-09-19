@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,7 @@ type RowState = "idle" | "loading" | "editing" | "saving" | "done";
 // confirmar. Sem editor de rich-text/diff (decisão do usuário, escopo bem mais simples que
 // a referência visual trazida).
 export function AddGapToResumeRow({ gap, resumeId, jobTitle, companyName, jobDescription }: AddGapToResumeRowProps) {
+  const t = useTranslations("Resume");
   const [state, setState] = useState<RowState>("idle");
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export function AddGapToResumeRow({ gap, resumeId, jobTitle, companyName, jobDes
       setText(res.suggested_text);
       setState("editing");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível gerar a sugestão.");
+      setError(err instanceof Error ? err.message : t("addGap.suggestError"));
       setState("idle");
     }
   }
@@ -79,13 +81,13 @@ export function AddGapToResumeRow({ gap, resumeId, jobTitle, companyName, jobDes
       trackEvent("resume_addition_applied");
       setState("done");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível salvar no currículo.");
+      setError(err instanceof Error ? err.message : t("addGap.saveError"));
       setState("editing");
     }
   }
 
   if (state === "done") {
-    return <p className="mt-1 text-xs text-success">✓ Adicionado ao currículo</p>;
+    return <p className="mt-1 text-xs text-success">{t("addGap.done")}</p>;
   }
 
   if (state === "editing" || state === "saving") {
@@ -101,10 +103,10 @@ export function AddGapToResumeRow({ gap, resumeId, jobTitle, companyName, jobDes
         {error && <p className="text-xs text-destructive">{error}</p>}
         <div className="flex gap-2">
           <Button type="button" size="xs" onClick={handleConfirm} disabled={state === "saving" || !text.trim()}>
-            {state === "saving" ? "Salvando…" : "Adicionar ao currículo"}
+            {state === "saving" ? t("addGap.saving") : t("addGap.addToResume")}
           </Button>
           <Button type="button" size="xs" variant="outline" onClick={() => setState("idle")} disabled={state === "saving"}>
-            Cancelar
+            {t("addGap.cancel")}
           </Button>
         </div>
       </div>
@@ -115,7 +117,7 @@ export function AddGapToResumeRow({ gap, resumeId, jobTitle, companyName, jobDes
     <div className="mt-0.5">
       <Button type="button" variant="link" size="xs" className="h-auto gap-1 p-0" onClick={handleSuggest} disabled={state === "loading"}>
         <Plus className="size-3" aria-hidden="true" />
-        {state === "loading" ? "Gerando sugestão…" : "Adicionar ao currículo"}
+        {state === "loading" ? t("addGap.generating") : t("addGap.addToResume")}
       </Button>
       {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
     </div>

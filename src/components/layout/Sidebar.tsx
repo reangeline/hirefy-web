@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { ChevronDown, FileText, LayoutDashboard, ScanSearch, type LucideIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SubscriptionCard } from "@/components/dashboard/SubscriptionCard";
@@ -11,12 +11,15 @@ import { cn } from "@/lib/utils";
 
 interface NavSubItem {
   href: string;
-  label: string;
+  // Chave dentro do namespace "Dashboard.nav", resolvida em render-time via t() — o array
+  // fica fora do componente (module scope), então não pode chamar hooks, daí guardar só a
+  // chave aqui em vez do texto já traduzido (spec 021).
+  labelKey: string;
 }
 
 interface NavSection {
   href: string;
-  label: string;
+  labelKey: string;
   icon: LucideIcon;
   // Prefixos extras que também contam como "essa seção está ativa" — ex: /pipeline/* é
   // conceitualmente parte do Dashboard (o board vive embutido lá, spec 005), mas não
@@ -28,40 +31,43 @@ interface NavSection {
 const NAV_SECTIONS: NavSection[] = [
   {
     href: "/dashboard",
-    label: "Dashboard",
+    labelKey: "dashboard.label",
     icon: LayoutDashboard,
     matchPrefixes: ["/dashboard", "/pipeline"],
     items: [
-      { href: "/pipeline/new", label: "Nova candidatura" },
-      { href: "/pipeline/archived", label: "Arquivadas" },
+      { href: "/pipeline/new", labelKey: "dashboard.items.newApplication" },
+      { href: "/pipeline/archived", labelKey: "dashboard.items.archived" },
     ],
   },
   {
     href: "/resume",
-    label: "Currículos",
+    labelKey: "resume.label",
     icon: FileText,
     matchPrefixes: ["/resume"],
-    items: [{ href: "/resume/new", label: "Novo currículo" }],
+    items: [{ href: "/resume/new", labelKey: "resume.items.newResume" }],
   },
   {
     href: "/linkedin",
-    label: "LinkedIn",
+    labelKey: "linkedin.label",
     icon: ScanSearch,
     matchPrefixes: ["/linkedin"],
     items: [
-      { href: "/linkedin/fill", label: "Guia de preenchimento" },
-      { href: "/linkedin/posts", label: "Ideias de publicação" },
+      { href: "/linkedin/fill", labelKey: "linkedin.items.fillGuide" },
+      { href: "/linkedin/posts", labelKey: "linkedin.items.postIdeas" },
     ],
   },
 ];
 
 function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection; pathname: string; onNavigate: () => void }) {
+  const t = useTranslations("Dashboard.nav");
+  const tSidebar = useTranslations("Dashboard.sidebar");
   const [open, setOpen] = useState(true);
   const Icon = section.icon;
   const sectionActive = section.matchPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
   const hasSubItems = section.items.length > 0;
+  const sectionLabel = t(section.labelKey);
 
   const link = (
     <Link
@@ -73,7 +79,7 @@ function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection;
       )}
     >
       <Icon className="size-[15px]" aria-hidden="true" />
-      {section.label}
+      {sectionLabel}
     </Link>
   );
 
@@ -87,7 +93,11 @@ function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection;
         {link}
         <CollapsibleTrigger
           className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          aria-label={open ? `Recolher ${section.label}` : `Expandir ${section.label}`}
+          aria-label={
+            open
+              ? tSidebar("collapseSection", { label: sectionLabel })
+              : tSidebar("expandSection", { label: sectionLabel })
+          }
         >
           <ChevronDown
             className={cn("size-3.5 transition-transform duration-150", !open && "-rotate-90")}
@@ -109,7 +119,7 @@ function NavSectionRow({ section, pathname, onNavigate }: { section: NavSection;
                   itemActive && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary",
                 )}
               >
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             );
           })}

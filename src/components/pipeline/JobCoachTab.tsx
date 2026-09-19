@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { AlertCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ interface JobCoachTabProps {
 // tentar e tomar erro. 402 (sem crédito) e 403 (assinatura inativa) só aparecem depois de
 // tentar, tratados com mensagens distintas. Ver .spec/005-pipeline-candidaturas/spec.md.
 export function JobCoachTab({ job }: JobCoachTabProps) {
+  const t = useTranslations("Pipeline.jobCoachTab");
   const [result, setResult] = useState<CoachResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<number | null>(null);
@@ -26,8 +28,7 @@ export function JobCoachTab({ job }: JobCoachTabProps) {
     return (
       <Card>
         <CardContent className="py-8 text-center text-sm text-muted-foreground">
-          O coach de IA fica disponível depois que a vaga sai da Wishlist (ex.: quando você
-          aplica).
+          {t("wishlistGate")}
         </CardContent>
       </Card>
     );
@@ -65,7 +66,7 @@ export function JobCoachTab({ job }: JobCoachTabProps) {
       if (err instanceof ApiError) {
         setErrorStatus(err.status);
       }
-      setErrorMessage(err instanceof Error ? err.message : "Não foi possível gerar o coaching.");
+      setErrorMessage(err instanceof Error ? err.message : t("generateError"));
     } finally {
       setLoading(false);
     }
@@ -74,15 +75,15 @@ export function JobCoachTab({ job }: JobCoachTabProps) {
   if (errorStatus) {
     const title =
       errorStatus === 402
-        ? "Você não tem créditos suficientes"
+        ? t("creditsErrorTitle")
         : errorStatus === 403
-          ? "Assinatura indisponível"
-          : "Não foi possível gerar o coaching";
+          ? t("subscriptionErrorTitle")
+          : t("genericErrorTitle");
     const description =
       errorStatus === 402
-        ? "Faça upgrade ou compre mais créditos pra usar o coach de IA."
+        ? t("creditsErrorDescription")
         : errorStatus === 403
-          ? "Sua assinatura precisa estar ativa pra usar o coach de IA."
+          ? t("subscriptionErrorDescription")
           : errorMessage;
 
     return (
@@ -94,7 +95,7 @@ export function JobCoachTab({ job }: JobCoachTabProps) {
             {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
           </div>
           <Button type="button" variant="outline" onClick={generateCoaching} disabled={loading}>
-            Tentar de novo
+            {t("tryAgainButton")}
           </Button>
         </CardContent>
       </Card>
@@ -107,7 +108,7 @@ export function JobCoachTab({ job }: JobCoachTabProps) {
         <CardContent className="space-y-3 py-6">
           <p className="whitespace-pre-wrap text-sm">{result.content}</p>
           <Button type="button" variant="outline" size="sm" onClick={generateCoaching} disabled={loading}>
-            Gerar de novo
+            {t("regenerateButton")}
           </Button>
         </CardContent>
       </Card>
@@ -119,11 +120,11 @@ export function JobCoachTab({ job }: JobCoachTabProps) {
       <CardContent className="flex flex-col items-center gap-4 py-10 text-center">
         <Sparkles className="size-8 text-primary" aria-hidden="true" />
         <p className="text-sm text-muted-foreground">
-          Gere conteúdo de coaching específico pro estágio atual desta vaga.
+          {t("intro")}
         </p>
         <Button type="button" onClick={generateCoaching} disabled={loading} className="gap-2">
           <Sparkles className="size-4" aria-hidden="true" />
-          {loading ? "Gerando…" : "Gerar coaching"}
+          {loading ? t("generating") : t("generateButton")}
         </Button>
       </CardContent>
     </Card>

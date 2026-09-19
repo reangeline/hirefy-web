@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
+  const t = useTranslations("Auth.login");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -43,7 +45,7 @@ function LoginForm() {
         // O backend hoje retorna sempre "invalid credentials" pra qualquer falha de login
         // (senha errada, usuário não confirmado, etc — ver .spec/001-auth/spec.md), então não
         // dá pra redirecionar automaticamente pra /signup/confirm com segurança aqui.
-        setError(body.message ?? body.error ?? "Não foi possível entrar.");
+        setError(body.message ?? body.error ?? t("errorFallback"));
         return;
       }
 
@@ -60,15 +62,15 @@ function LoginForm() {
     <div className="flex flex-1 items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Entrar</CardTitle>
-          <CardDescription>Acesse sua conta Hirefy</CardDescription>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <SocialAuthButtons redirectTo={searchParams.get("redirect") ?? "/dashboard"} />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("emailLabel")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -83,9 +85,9 @@ function LoginForm() {
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password">{t("passwordLabel")}</Label>
                 <Link href="/forgot-password" className="text-xs text-muted-foreground hover:underline">
-                  Esqueci minha senha
+                  {t("forgotPassword")}
                 </Link>
               </div>
               <Input
@@ -106,14 +108,14 @@ function LoginForm() {
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Entrando…" : "Entrar"}
+              {loading ? t("submitLoading") : t("submit")}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Não tem conta?{" "}
+            {t("noAccount")}{" "}
             <Link href="/signup" className="font-medium text-foreground hover:underline">
-              Criar conta
+              {t("createAccount")}
             </Link>
           </p>
         </CardContent>

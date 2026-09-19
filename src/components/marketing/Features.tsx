@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import {
   BarChart3,
   CalendarDays,
@@ -9,77 +10,35 @@ import {
 } from "lucide-react";
 import { Reveal } from "@/components/marketing/Reveal";
 
-const CATEGORIES = [
-  {
-    label: "Currículo & ATS",
-    features: [
-      {
-        icon: Zap,
-        title: "Score de ATS instantâneo",
-        description:
-          "Envie seu PDF e receba um score em segundos, com uma lista numerada do que melhorar.",
-      },
-      {
-        icon: Target,
-        title: "Otimização por vaga",
-        description:
-          "Cole a descrição da vaga e a IA ajusta cada palavra-chave e bullet pro cargo exato.",
-      },
-      {
-        icon: Share2,
-        title: "Gerador de perfil LinkedIn",
-        description:
-          "Gera Headline, Sobre, Experiência e Skills otimizados a partir do seu currículo.",
-      },
-    ],
-  },
-  {
-    label: "Pipeline de candidaturas",
-    features: [
-      {
-        icon: KanbanSquare,
-        title: "Kanban completo",
-        description:
-          "Lista de desejos → Aplicado → Entrevista → Oferta/Rejeitado, com linha do tempo por vaga.",
-      },
-      {
-        icon: Lightbulb,
-        title: "Coach de IA por etapa",
-        description:
-          "Sugestões contextuais pra cada vaga, baseadas no estágio e nos dias desde a candidatura.",
-      },
-      {
-        icon: CalendarDays,
-        title: "Entrevistas e contatos",
-        description:
-          "Registre entrevistas, acompanhe follow-ups e gerencie contatos por candidatura.",
-      },
-    ],
-  },
-  {
-    label: "Analytics",
-    features: [
-      {
-        icon: BarChart3,
-        title: "Métricas de candidatura",
-        description:
-          "Taxa de resposta, score médio de ATS, entrevistas e qual versão de currículo funciona melhor.",
-      },
-    ],
-  },
+const CATEGORY_ICONS = [
+  [Zap, Target, Share2],
+  [KanbanSquare, Lightbulb, CalendarDays],
+  [BarChart3],
 ];
 
-export function Features() {
+export async function Features() {
+  const t = await getTranslations("Marketing.features");
+  const rawCategories = t.raw("categories") as {
+    label: string;
+    items: { title: string; description: string }[];
+  }[];
+  const CATEGORIES = rawCategories.map((category, ci) => ({
+    label: category.label,
+    features: category.items.map((item, fi) => ({
+      ...item,
+      icon: CATEGORY_ICONS[ci][fi],
+    })),
+  }));
+
   return (
     <section id="recursos" className="border-b border-border/60">
       <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
         <Reveal className="max-w-2xl">
           <h2 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">
-            Tudo que você precisa pra passar pelo ATS
+            {t("heading")}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Do score instantâneo ao gerenciamento do pipeline, o Hirefy cobre cada etapa da
-            sua busca por emprego.
+            {t("subheading")}
           </p>
         </Reveal>
 

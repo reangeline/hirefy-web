@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState, type FormEvent } from "react";
 import { Loader2, Mail, Trash2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ function isHttpUrl(value: string): boolean {
 }
 
 export function JobContactsTab({ jobId }: { jobId: string }) {
+  const t = useTranslations("Pipeline.jobContactsTab");
   const [contacts, setContacts] = useState<Contact[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -39,7 +41,7 @@ export function JobContactsTab({ jobId }: { jobId: string }) {
       await apiFetchJson(`/api/pipeline/${jobId}/contacts/${contactId}`, { method: "DELETE" });
       setContacts((current) => current?.filter((c) => c.id !== contactId) ?? current);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível remover o contato.");
+      setError(err instanceof Error ? err.message : t("removeContactError"));
     } finally {
       setDeletingId(null);
     }
@@ -53,10 +55,10 @@ export function JobContactsTab({ jobId }: { jobId: string }) {
         </p>
       )}
 
-      {!contacts && !error && <p className="text-sm text-muted-foreground">Carregando…</p>}
+      {!contacts && !error && <p className="text-sm text-muted-foreground">{t("loading")}</p>}
 
       {contacts && contacts.length === 0 && !showForm && (
-        <p className="text-sm text-muted-foreground">Nenhum contato adicionado ainda.</p>
+        <p className="text-sm text-muted-foreground">{t("empty")}</p>
       )}
 
       <div className="space-y-2.5">
@@ -92,7 +94,7 @@ export function JobContactsTab({ jobId }: { jobId: string }) {
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label="Remover contato"
+                aria-label={t("removeContactAriaLabel")}
                 disabled={deletingId === contact.id}
                 onClick={() => handleDelete(contact.id)}
               >
@@ -119,7 +121,7 @@ export function JobContactsTab({ jobId }: { jobId: string }) {
       ) : (
         <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={() => setShowForm(true)}>
           <UserPlus className="size-4" aria-hidden="true" />
-          Adicionar contato
+          {t("addContactButton")}
         </Button>
       )}
     </div>
@@ -135,6 +137,7 @@ function AddContactForm({
   onAdded: (contact: Contact) => void;
   onCancel: () => void;
 }) {
+  const t = useTranslations("Pipeline.jobContactsTab");
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
@@ -159,7 +162,7 @@ function AddContactForm({
       });
       onAdded(contact);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível adicionar o contato.");
+      setError(err instanceof Error ? err.message : t("addContactError"));
       setSubmitting(false);
     }
   }
@@ -170,24 +173,24 @@ function AddContactForm({
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="contactName">Nome</Label>
+              <Label htmlFor="contactName">{t("nameLabel")}</Label>
               <Input id="contactName" required value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="contactRole">Cargo (opcional)</Label>
+              <Label htmlFor="contactRole">{t("roleLabel")}</Label>
               <Input id="contactRole" value={role} onChange={(e) => setRole(e.target.value)} />
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="contactEmail">Email (opcional)</Label>
+              <Label htmlFor="contactEmail">{t("emailLabel")}</Label>
               <Input id="contactEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="contactLinkedin">LinkedIn (opcional)</Label>
+              <Label htmlFor="contactLinkedin">{t("linkedinLabel")}</Label>
               <Input
                 id="contactLinkedin"
-                placeholder="linkedin.com/in/..."
+                placeholder={t("linkedinPlaceholder")}
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
               />
@@ -202,10 +205,10 @@ function AddContactForm({
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="ghost" onClick={onCancel}>
-              Cancelar
+              {t("cancelButton")}
             </Button>
             <Button type="submit" disabled={submitting || !name}>
-              {submitting ? "Adicionando…" : "Adicionar"}
+              {submitting ? t("adding") : t("addButton")}
             </Button>
           </div>
         </form>

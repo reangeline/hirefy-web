@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle2, CircleAlert, DollarSign, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircularScore } from "@/components/resume/CircularScore";
@@ -88,6 +91,7 @@ export function OptimizedResultView({
   companyName,
   jobDescription,
 }: OptimizedResultViewProps) {
+  const t = useTranslations("Resume");
   const salary = optimized.salary_estimate;
   const hasKeywordData = (matchedKeywords?.length ?? 0) > 0 || (missingKeywords?.length ?? 0) > 0;
   const keywordTotal = (matchedKeywords?.length ?? 0) + (missingKeywords?.length ?? 0);
@@ -100,27 +104,27 @@ export function OptimizedResultView({
         <CardContent className="flex flex-col items-center gap-5 py-6">
           <div className="flex flex-col items-center gap-2 text-center">
             <CircularScore value={optimized.match_score} />
-            <p className="text-xs font-medium text-muted-foreground">Match com a vaga</p>
+            <p className="text-xs font-medium text-muted-foreground">{t("resultView.matchLabel")}</p>
           </div>
 
           <div className="w-full space-y-4 border-t border-border pt-4">
             {hasKeywordData && (
               <SidebarStat
-                label="Palavras-chave"
+                label={t("resultView.keywordsLabel")}
                 value={`${matchedKeywords?.length ?? 0}/${keywordTotal}`}
                 bar={<ProportionBar matched={matchedKeywords?.length ?? 0} total={keywordTotal} />}
               />
             )}
             {optimized.suggestions.length > 0 && (
               <SidebarStat
-                label="Sugestões"
-                value={`${optimized.suggestions.length} pra revisar`}
+                label={t("resultView.suggestionsLabel")}
+                value={t("resultView.suggestionsValue", { count: optimized.suggestions.length })}
               />
             )}
             {optimized.missing_requirements.length > 0 && (
               <SidebarStat
-                label="Requisitos"
-                value={`${optimized.missing_requirements.length} faltando`}
+                label={t("resultView.requirementsLabel")}
+                value={t("resultView.requirementsValue", { count: optimized.missing_requirements.length })}
               />
             )}
           </div>
@@ -135,14 +139,17 @@ export function OptimizedResultView({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CircleAlert className="size-4 text-primary" aria-hidden="true" />
-                Palavras-chave da vaga
+                {t("resultView.keywordsSectionTitle")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2.5">
                 {matchedKeywords?.map((kw) => (
                   <ChecklistRow key={`matched-${kw}`} ok>
-                    <strong className="font-medium">{kw}</strong> — encontrada no seu currículo.
+                    {t.rich("resultView.keywordFound", {
+                      keyword: kw,
+                      strong: (chunks) => <strong className="font-medium">{chunks}</strong>,
+                    })}
                   </ChecklistRow>
                 ))}
                 {missingKeywords?.map((kw) => (
@@ -161,8 +168,10 @@ export function OptimizedResultView({
                       )
                     }
                   >
-                    <strong className="font-medium">{kw}</strong> — a vaga pede, seu currículo não
-                    menciona.
+                    {t.rich("resultView.keywordMissing", {
+                      keyword: kw,
+                      strong: (chunks) => <strong className="font-medium">{chunks}</strong>,
+                    })}
                   </ChecklistRow>
                 ))}
               </ul>
@@ -175,7 +184,7 @@ export function OptimizedResultView({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle2 className="size-4 text-primary" aria-hidden="true" />
-                Sugestões de melhoria
+                {t("resultView.suggestionsSectionTitle")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -198,7 +207,7 @@ export function OptimizedResultView({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertCircle className="size-4 text-warning" aria-hidden="true" />
-                Requisitos faltando no currículo
+                {t("resultView.missingRequirementsSectionTitle")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -232,7 +241,7 @@ export function OptimizedResultView({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="size-4 text-success" aria-hidden="true" />
-                Estimativa salarial
+                {t("resultView.salarySectionTitle")}
               </CardTitle>
             </CardHeader>
             <CardContent>

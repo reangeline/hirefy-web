@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { AlertCircle, FileUp, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,7 @@ interface PdfImportUploadProps {
 // via fetch, sem passar pelo apiFetchJson (que existe pra rotas autenticadas com refresh em
 // 401, que não se aplica aqui). Ver .spec/002-resume-optimization/spec.md.
 export function PdfImportUpload({ onParsed, onUploadStart }: PdfImportUploadProps) {
+  const t = useTranslations("Resume");
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -27,7 +29,7 @@ export function PdfImportUpload({ onParsed, onUploadStart }: PdfImportUploadProp
   function handleFileChange(selected: File | null) {
     setError(null);
     if (selected && selected.size > MAX_FILE_SIZE) {
-      setError("Arquivo maior que 10MB. Escolha um PDF menor.");
+      setError(t("pdfImport.fileTooLarge"));
       setFile(null);
       return;
     }
@@ -48,13 +50,13 @@ export function PdfImportUpload({ onParsed, onUploadStart }: PdfImportUploadProp
       const body = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        throw new Error(body.message ?? body.error ?? "Não foi possível analisar o PDF.");
+        throw new Error(body.message ?? body.error ?? t("pdfImport.parseError"));
       }
 
       const result = body as ParsedPdfResult;
       onParsed(parsedPdfToFormData(result.parsed_data));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível analisar o PDF.");
+      setError(err instanceof Error ? err.message : t("pdfImport.parseError"));
     } finally {
       setUploading(false);
     }
@@ -68,9 +70,9 @@ export function PdfImportUpload({ onParsed, onUploadStart }: PdfImportUploadProp
         </div>
 
         <div>
-          <p className="font-medium">Importe seu currículo em PDF</p>
+          <p className="font-medium">{t("pdfImport.title")}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            A IA extrai seus dados e já calcula um score de ATS. Você revisa tudo antes de salvar.
+            {t("pdfImport.description")}
           </p>
         </div>
 
@@ -83,7 +85,7 @@ export function PdfImportUpload({ onParsed, onUploadStart }: PdfImportUploadProp
         />
 
         <Button type="button" variant="outline" onClick={() => inputRef.current?.click()}>
-          {file ? file.name : "Escolher arquivo"}
+          {file ? file.name : t("pdfImport.chooseFile")}
         </Button>
 
         {error && (
@@ -97,12 +99,12 @@ export function PdfImportUpload({ onParsed, onUploadStart }: PdfImportUploadProp
           {uploading ? (
             <>
               <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              Analisando…
+              {t("pdfImport.analyzing")}
             </>
           ) : (
             <>
               <Upload className="size-4" aria-hidden="true" />
-              Analisar currículo
+              {t("pdfImport.analyze")}
             </>
           )}
         </Button>

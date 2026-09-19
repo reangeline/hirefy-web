@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { apiFetchJson } from "@/lib/api/client";
 import { setUserProperty, trackEvent } from "@/lib/analytics";
@@ -13,22 +14,23 @@ interface CheckoutResponse {
   checkout_url: string;
 }
 
-const PLAN_LABELS: Record<SubscriptionResponse["plan"], string> = {
-  free: "Plano Free",
-  basic: "Plano Basic",
-  premium: "Premium",
-};
-
 interface SubscriptionCardProps {
   /** "sm" — versão compacta pro rodapé da sidebar (spec 006), sem ícone/descrição longa. */
   size?: "default" | "sm";
 }
 
 export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
+  const t = useTranslations("Dashboard.subscriptionCard");
   const [sub, setSub] = useState<SubscriptionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const PLAN_LABELS: Record<SubscriptionResponse["plan"], string> = {
+    free: t("planLabels.free"),
+    basic: t("planLabels.basic"),
+    premium: t("planLabels.premium"),
+  };
 
   useEffect(() => {
     apiFetchJson<SubscriptionResponse>("/api/subscription")
@@ -49,7 +51,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
       });
       window.location.href = checkout_url;
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Falha ao iniciar checkout");
+      setActionError(err instanceof Error ? err.message : t("checkoutError"));
       setBusy(false);
     }
   }
@@ -64,7 +66,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
       setSub(refreshed);
       setUserProperty("subscription_tier", refreshed.plan);
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Falha ao cancelar assinatura");
+      setActionError(err instanceof Error ? err.message : t("cancelError"));
     } finally {
       setBusy(false);
     }
@@ -75,7 +77,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
       <Card size={size}>
         <CardContent>
           <p role="alert" aria-live="polite" className="text-sm text-destructive">
-            Falha ao carregar assinatura: {error}
+            {t("loadError", { error })}
           </p>
         </CardContent>
       </Card>
@@ -87,7 +89,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
       <Card size={size}>
         <CardContent>
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            Carregando assinatura…
+            {t("loading")}
           </p>
         </CardContent>
       </Card>
@@ -112,7 +114,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
           </div>
           {!isPremium && (
             <div className="flex items-center justify-between text-[12px] text-muted-foreground">
-              <span>Créditos</span>
+              <span>{t("creditsLabel")}</span>
               <span className="font-mono text-foreground">{credits}</span>
             </div>
           )}
@@ -130,7 +132,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
               size="sm"
               className="w-full"
             >
-              {busy ? "Cancelando…" : "Cancelar assinatura"}
+              {busy ? t("cancelling") : t("cancelSubscription")}
             </Button>
           ) : (
             <Button
@@ -141,7 +143,7 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
               size="sm"
               className="w-full"
             >
-              {busy ? "Redirecionando…" : "Fazer upgrade"}
+              {busy ? t("redirecting") : t("upgrade")}
             </Button>
           )}
         </CardContent>
@@ -157,18 +159,12 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
           {planLabel}
         </CardTitle>
         <Badge variant={isPremium ? "default" : "secondary"}>
-          {credits} {credits === 1 ? "crédito" : "créditos"}
+          {t("credits", { count: credits })}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          {isPremium
-            ? "Otimizações, prática de entrevista e coach de pipeline ilimitados."
-            : credits === 1
-              ? "1 consulta de IA disponível pra otimizar currículo/LinkedIn, prática de entrevista ou coach."
-              : credits > 1
-                ? `${credits} consultas de IA disponíveis pra otimizar currículo/LinkedIn, prática de entrevista ou coach.`
-                : "Sem consultas de IA disponíveis no momento — assine Premium pra continuar."}
+          {isPremium ? t("premiumDescription") : t("creditsAvailable", { count: credits })}
         </p>
 
         {actionError && (
@@ -185,11 +181,11 @@ export function SubscriptionCard({ size = "default" }: SubscriptionCardProps) {
             variant="outline"
             className="w-full sm:w-auto"
           >
-            {busy ? "Cancelando…" : "Cancelar assinatura"}
+            {busy ? t("cancelling") : t("cancelSubscription")}
           </Button>
         ) : (
           <Button type="button" onClick={handleUpgrade} disabled={busy} className="w-full sm:w-auto">
-            {busy ? "Redirecionando…" : "Fazer upgrade"}
+            {busy ? t("redirecting") : t("upgrade")}
           </Button>
         )}
       </CardContent>

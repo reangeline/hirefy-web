@@ -1,1 +1,72 @@
-{}
+{
+  "nav": {
+    "dashboard": {
+      "label": "Panel",
+      "items": {
+        "newApplication": "Nueva candidatura",
+        "archived": "Archivadas"
+      }
+    },
+    "resume": {
+      "label": "Currículums",
+      "items": {
+        "newResume": "Nuevo currículum"
+      }
+    },
+    "linkedin": {
+      "label": "LinkedIn",
+      "items": {
+        "fillGuide": "Guía de llenado",
+        "postIdeas": "Ideas de publicación"
+      }
+    }
+  },
+  "sidebar": {
+    "collapseSection": "Contraer {label}",
+    "expandSection": "Expandir {label}"
+  },
+  "subscriptionCard": {
+    "planLabels": {
+      "free": "Plan Free",
+      "basic": "Plan Basic",
+      "premium": "Premium"
+    },
+    "loadError": "Error al cargar la suscripción: {error}",
+    "loading": "Cargando suscripción…",
+    "credits": "{count, plural, one {# crédito} other {# créditos}}",
+    "creditsLabel": "Créditos",
+    "premiumDescription": "Optimizaciones, práctica de entrevistas y coach de proceso ilimitados.",
+    "creditsAvailable": "{count, plural, =0 {Sin consultas de IA disponibles por ahora — suscríbete a Premium para continuar.} one {1 consulta de IA disponible para optimizar currículum/LinkedIn, práctica de entrevista o coach.} other {# consultas de IA disponibles para optimizar currículum/LinkedIn, práctica de entrevista o coach.}}",
+    "cancelling": "Cancelando…",
+    "cancelSubscription": "Cancelar suscripción",
+    "redirecting": "Redirigiendo…",
+    "upgrade": "Mejorar plan",
+    "checkoutError": "Error al iniciar el pago",
+    "cancelError": "Error al cancelar la suscripción"
+  },
+  "welcomeHeader": {
+    "greeting": "Bienvenido(a), {name}",
+    "greetingFallback": "Bienvenido(a)",
+    "loadError": "Error al cargar el perfil: {error}"
+  },
+  "emailVerification": {
+    "title": "Confirma tu email",
+    "description": "Revisa tu bandeja de entrada para desbloquear todas las funciones.",
+    "cta": "Confirmar"
+  },
+  "checkoutStatus": {
+    "success": "¡Suscripción Premium activada! Puede tardar unos segundos en reflejarse abajo.",
+    "cancelled": "Pago cancelado — no se realizó ningún cargo.",
+    "close": "Cerrar"
+  },
+  "logoutButton": {
+    "signOut": "Cerrar sesión",
+    "signingOut": "Cerrando sesión…"
+  },
+  "topbar": {
+    "openMenu": "Abrir menú"
+  },
+  "topbarTitles": {
+    "dashboard": "Panel"
+  }
+}

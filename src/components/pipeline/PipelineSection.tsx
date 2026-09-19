@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import { Archive, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { apiFetchJson } from "@/lib/api/client";
 import type { PipelineAnalytics, PipelineJob, PipelineJobStage } from "@/types/pipeline";
 
 export function PipelineSection() {
+  const t = useTranslations("Pipeline.pipelineSection");
   const [jobs, setJobs] = useState<PipelineJob[] | null>(null);
   const [analytics, setAnalytics] = useState<PipelineAnalytics | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +48,7 @@ export function PipelineSection() {
     <Card>
       <CardContent className="space-y-4 p-4">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[13.5px] font-semibold">Pipeline de candidaturas</p>
+          <p className="text-[13.5px] font-semibold">{t("heading")}</p>
           <div className="flex items-center gap-2">
             {archivedCount > 0 && (
               <Link
@@ -54,13 +56,13 @@ export function PipelineSection() {
                 className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
                 <Archive className="size-3.5" aria-hidden="true" />
-                {archivedCount} arquivada{archivedCount === 1 ? "" : "s"}
+                {t("archivedCount", { count: archivedCount })}
               </Link>
             )}
             <Link href="/pipeline/new">
               <Button type="button" size="sm" className="gap-1.5">
                 <Plus className="size-4" aria-hidden="true" />
-                Adicionar vaga
+                {t("addJobButton")}
               </Button>
             </Link>
           </div>
@@ -68,26 +70,26 @@ export function PipelineSection() {
 
         {error && (
           <p role="alert" aria-live="polite" className="text-sm text-destructive">
-            Falha ao carregar pipeline: {error}
+            {t("loadError", { error })}
           </p>
         )}
 
         {!error && (!jobs || !analytics) && (
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            Carregando pipeline…
+            {t("loading")}
           </p>
         )}
 
         {jobs && analytics && (
           <Tabs defaultValue="board">
             <TabsList>
-              <TabsTrigger value="board">Board</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="board">{t("boardTab")}</TabsTrigger>
+              <TabsTrigger value="analytics">{t("analyticsTab")}</TabsTrigger>
             </TabsList>
             <TabsContent value="board">
               {jobs.filter((j) => !j.is_archived).length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">
-                  Nenhuma vaga no pipeline ainda.
+                  {t("emptyBoard")}
                 </p>
               ) : (
                 <PipelineBoard jobs={jobs} onStageChange={handleStageChange} />

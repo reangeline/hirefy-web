@@ -1,8 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { BarChart3, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { STAGE_LABELS, type PipelineAnalytics, type PipelineJobStage } from "@/types/pipeline";
+import { useStageLabels } from "@/lib/hooks/usePipelineLabels";
+import type { PipelineAnalytics, PipelineJobStage } from "@/types/pipeline";
 
 interface PipelineAnalyticsViewProps {
   analytics: PipelineAnalytics;
@@ -20,13 +22,16 @@ function StatCard({ label, value }: { label: string; value: string }) {
 }
 
 export function PipelineAnalyticsView({ analytics }: PipelineAnalyticsViewProps) {
+  const t = useTranslations("Pipeline.analyticsView");
+  const stageLabels = useStageLabels();
+
   if (analytics.totalApplications === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-2 py-10 text-center">
           <BarChart3 className="size-8 text-muted-foreground" aria-hidden="true" />
           <p className="text-sm text-muted-foreground">
-            Adicione vagas ao pipeline pra ver as métricas aqui.
+            {t("empty")}
           </p>
         </CardContent>
       </Card>
@@ -36,13 +41,13 @@ export function PipelineAnalyticsView({ analytics }: PipelineAnalyticsViewProps)
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        <StatCard label="Candidaturas" value={String(analytics.totalApplications)} />
-        <StatCard label="Taxa de resposta" value={`${analytics.responseRate}%`} />
-        <StatCard label="Score médio" value={`${analytics.averageAtsScore}%`} />
-        <StatCard label="Entrevistas" value={String(analytics.interviewCount)} />
-        <StatCard label="Ofertas" value={String(analytics.offerCount)} />
-        <StatCard label="Ghosted" value={String(analytics.ghostedCount)} />
-        <StatCard label="Esta semana" value={String(analytics.applicationsThisWeek)} />
+        <StatCard label={t("applicationsLabel")} value={String(analytics.totalApplications)} />
+        <StatCard label={t("responseRateLabel")} value={`${analytics.responseRate}%`} />
+        <StatCard label={t("averageScoreLabel")} value={`${analytics.averageAtsScore}%`} />
+        <StatCard label={t("interviewsLabel")} value={String(analytics.interviewCount)} />
+        <StatCard label={t("offersLabel")} value={String(analytics.offerCount)} />
+        <StatCard label={t("ghostedLabel")} value={String(analytics.ghostedCount)} />
+        <StatCard label={t("thisWeekLabel")} value={String(analytics.applicationsThisWeek)} />
       </div>
 
       <Card>
@@ -55,10 +60,12 @@ export function PipelineAnalyticsView({ analytics }: PipelineAnalyticsViewProps)
       {analytics.bestResumeVersion && (
         <Card>
           <CardContent className="space-y-1 p-4">
-            <p className="text-sm font-medium">Melhor currículo</p>
+            <p className="text-sm font-medium">{t("bestResumeHeading")}</p>
             <p className="text-sm text-muted-foreground">
-              {analytics.bestResumeVersion.applicationCount} candidaturas,{" "}
-              {analytics.bestResumeVersion.responseRate}% de resposta
+              {t("bestResumeStats", {
+                count: analytics.bestResumeVersion.applicationCount,
+                rate: analytics.bestResumeVersion.responseRate,
+              })}
             </p>
           </CardContent>
         </Card>
@@ -67,12 +74,12 @@ export function PipelineAnalyticsView({ analytics }: PipelineAnalyticsViewProps)
       {analytics.stageDistribution.length > 0 && (
         <Card>
           <CardContent className="space-y-2.5 p-4">
-            <p className="text-sm font-medium">Distribuição por estágio</p>
+            <p className="text-sm font-medium">{t("stageDistributionHeading")}</p>
             <div className="space-y-1.5">
               {analytics.stageDistribution.map((s) => (
                 <div key={s.stage} className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">
-                    {STAGE_LABELS[s.stage as PipelineJobStage] ?? s.stage}
+                    {stageLabels[s.stage as PipelineJobStage] ?? s.stage}
                   </span>
                   <span className="font-mono tabular-nums">{s.count}</span>
                 </div>
@@ -85,14 +92,14 @@ export function PipelineAnalyticsView({ analytics }: PipelineAnalyticsViewProps)
       {analytics.weeklyActivity.length > 0 && (
         <Card>
           <CardContent className="space-y-2.5 p-4">
-            <p className="text-sm font-medium">Atividade semanal</p>
+            <p className="text-sm font-medium">{t("weeklyActivityHeading")}</p>
             <div className="space-y-1.5">
               {analytics.weeklyActivity.map((w) => (
                 <div key={w.weekLabel} className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{w.weekLabel}</span>
                   <span>
-                    {w.applicationCount} candidatura{w.applicationCount === 1 ? "" : "s"}
-                    {w.responseCount > 0 && ` · ${w.responseCount} resposta${w.responseCount === 1 ? "" : "s"}`}
+                    {t("weeklyApplications", { count: w.applicationCount })}
+                    {w.responseCount > 0 && ` · ${t("weeklyResponses", { count: w.responseCount })}`}
                   </span>
                 </div>
               ))}

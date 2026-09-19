@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState, useSyncExternalStore } from "react";
 import { ArrowLeft, ChevronRight, FileUp, PencilLine, Sparkles } from "lucide-react";
@@ -36,6 +37,7 @@ export default function NewResumePage() {
 }
 
 function NewResumePageContent() {
+  const t = useTranslations("Resume");
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<Mode>("choose");
   const [parsedData, setParsedData] = useState<ManualResumeRequest | null>(null);
@@ -71,25 +73,25 @@ function NewResumePageContent() {
 
   return (
     <>
-      <Topbar title="Novo currículo" />
+      <Topbar title={t("page.new.topbarTitle")} />
       <div className="space-y-6 p-6">
       <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-4" aria-hidden="true" />
-        Meus currículos
+        {t("backToList")}
       </Link>
 
       {effectiveMode === "choose" && (
         <div className="grid gap-3 sm:grid-cols-2">
           <MethodCard
             icon={FileUp}
-            title="Importar PDF"
-            description="A IA extrai seus dados e calcula um score de ATS automaticamente."
+            title={t("page.new.importTitle")}
+            description={t("page.new.importDescription")}
             onClick={() => setMode("pdf-upload")}
           />
           <MethodCard
             icon={PencilLine}
-            title="Preencher manualmente"
-            description="Digite seus dados diretamente no formulário."
+            title={t("page.new.manualTitle")}
+            description={t("page.new.manualDescription")}
             onClick={() => setMode("manual")}
           />
         </div>
@@ -105,7 +107,7 @@ function NewResumePageContent() {
             <Card>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium">Score de ATS do PDF importado</p>
+                  <p className="font-medium">{t("page.new.atsScoreTitle")}</p>
                   <Badge variant={effectiveParsedData.ats_score >= 70 ? "default" : "secondary"}>
                     {Math.round(effectiveParsedData.ats_score)}%
                   </Badge>
@@ -121,7 +123,7 @@ function NewResumePageContent() {
                   </ul>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Revise os campos abaixo — nada foi salvo ainda.
+                  {t("page.new.reviewHint")}
                 </p>
               </CardContent>
             </Card>

@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AlertCircle, FileText, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ const POLL_INTERVAL_MS = 4000;
 const MAX_POLL_ATTEMPTS = 45; // ~3min
 
 export default function LinkedInFillPage() {
+  const t = useTranslations("LinkedIn");
   const router = useRouter();
   const [resumes, setResumes] = useState<Resume[] | null>(null);
   const [selectedResumeId, setSelectedResumeId] = useState<string>("");
@@ -41,7 +42,7 @@ export default function LinkedInFillPage() {
     const timer = setTimeout(async () => {
       attemptsRef.current += 1;
       if (attemptsRef.current > MAX_POLL_ATTEMPTS) {
-        setError("A geração está demorando mais que o esperado. Tente de novo em instantes.");
+        setError(t("fillPage.timeoutError"));
         return;
       }
       try {
@@ -52,12 +53,12 @@ export default function LinkedInFillPage() {
           router.push(`/linkedin/fill/${updated.optimized_resume_id}`);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Falha ao consultar o status da geração.");
+        setError(err instanceof Error ? err.message : t("fillPage.pollError"));
       }
     }, POLL_INTERVAL_MS);
 
     return () => clearTimeout(timer);
-  }, [job, router]);
+  }, [job, router, t]);
 
   async function handleGenerate() {
     if (!selectedResumeId) return;
@@ -74,14 +75,14 @@ export default function LinkedInFillPage() {
       attemptsRef.current = 0;
       setJob(created);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível gerar o guia.");
+      setError(err instanceof Error ? err.message : t("fillPage.generateError"));
     } finally {
       setSubmitting(false);
     }
   }
 
   const resumeOptions = Object.fromEntries(
-    (resumes ?? []).map((r) => [r.id, r.parsed_data.nickname || "Currículo sem nome"]),
+    (resumes ?? []).map((r) => [r.id, r.parsed_data.nickname || t("fillPage.unnamedResume")]),
   );
 
   return (
@@ -89,10 +90,9 @@ export default function LinkedInFillPage() {
       <Topbar title="LinkedIn" />
       <div className="space-y-6 p-6">
         <div>
-          <h1 className="text-lg font-semibold">Guia de preenchimento</h1>
+          <h1 className="text-lg font-semibold">{t("fillPage.heading")}</h1>
           <p className="text-sm text-muted-foreground">
-            A IA gera o que colocar em cada campo do seu perfil do LinkedIn, com base num
-            currículo já salvo — você revisa e copia pra lá.
+            {t("fillPage.subheading")}
           </p>
         </div>
 
@@ -105,13 +105,13 @@ export default function LinkedInFillPage() {
             <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
               <AlertCircle className="size-10 text-destructive" aria-hidden="true" />
               <div aria-live="polite">
-                <p className="font-medium">A geração falhou</p>
+                <p className="font-medium">{t("fillPage.failedTitle")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {job.error ?? "Tente novamente em alguns instantes."}
+                  {job.error ?? t("fillPage.failedDefaultMessage")}
                 </p>
               </div>
               <Button type="button" variant="outline" onClick={() => setJob(null)}>
-                Tentar de novo
+                {t("fillPage.tryAgain")}
               </Button>
             </CardContent>
           </Card>
@@ -123,10 +123,10 @@ export default function LinkedInFillPage() {
               <Loader2 className="size-10 animate-spin text-primary" aria-hidden="true" />
               <div aria-live="polite">
                 <p className="font-medium">
-                  {job.status === "queued" && "Na fila de processamento…"}
-                  {job.status === "processing" && "A IA está montando seu guia…"}
+                  {job.status === "queued" && t("fillPage.queued")}
+                  {job.status === "processing" && t("fillPage.processing")}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">Isso leva menos de um minuto.</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t("fillPage.processingHint")}</p>
               </div>
             </CardContent>
           </Card>
@@ -137,13 +137,13 @@ export default function LinkedInFillPage() {
             <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
               <FileText className="size-10 text-muted-foreground" aria-hidden="true" />
               <div>
-                <p className="font-medium">Você ainda não tem um currículo salvo</p>
+                <p className="font-medium">{t("fillPage.noResumesTitle")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Crie um currículo primeiro pra gerar o guia a partir dele.
+                  {t("fillPage.noResumesHint")}
                 </p>
               </div>
               <Link href="/resume/new">
-                <Button type="button">Criar currículo</Button>
+                <Button type="button">{t("fillPage.createResume")}</Button>
               </Link>
             </CardContent>
           </Card>
@@ -153,7 +153,7 @@ export default function LinkedInFillPage() {
           <Card>
             <CardContent className="space-y-4 py-6">
               <div className="space-y-1.5">
-                <Label>Currículo base</Label>
+                <Label>{t("fillPage.resumeLabel")}</Label>
                 <Select items={resumeOptions} value={selectedResumeId} onValueChange={(v) => setSelectedResumeId(v ?? "")}>
                   <SelectTrigger className="w-full sm:w-80">
                     <SelectValue />
@@ -161,7 +161,7 @@ export default function LinkedInFillPage() {
                   <SelectContent>
                     {resumes.map((r) => (
                       <SelectItem key={r.id} value={r.id}>
-                        {r.parsed_data.nickname || "Currículo sem nome"}
+                        {r.parsed_data.nickname || t("fillPage.unnamedResume")}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -176,7 +176,7 @@ export default function LinkedInFillPage() {
 
               <Button type="button" disabled={submitting || !selectedResumeId} onClick={handleGenerate} className="gap-2">
                 <Sparkles className="size-4" aria-hidden="true" />
-                {submitting ? "Enviando…" : "Gerar guia"}
+                {submitting ? t("fillPage.submitting") : t("fillPage.generateGuide")}
               </Button>
             </CardContent>
           </Card>
@@ -184,7 +184,7 @@ export default function LinkedInFillPage() {
 
         {!job && !resumes && !error && (
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            Carregando…
+            {t("fillPage.loading")}
           </p>
         )}
       </div>

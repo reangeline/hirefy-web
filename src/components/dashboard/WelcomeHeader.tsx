@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { apiFetchJson } from "@/lib/api/client";
 import { identify } from "@/lib/analytics";
 import type { MeResponse } from "@/types/api";
 import { EmailVerificationBanner } from "@/components/dashboard/EmailVerificationBanner";
 
 export function WelcomeHeader() {
+  const t = useTranslations("Dashboard.welcomeHeader");
   const [me, setMe] = useState<MeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,12 +24,12 @@ export function WelcomeHeader() {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">
-        {me ? `Bem-vindo(a), ${me.name.split(" ")[0]}` : "Bem-vindo(a)"}
+        {me ? t("greeting", { name: me.name.split(" ")[0] }) : t("greetingFallback")}
       </h1>
 
       {error && (
         <p role="alert" aria-live="polite" className="text-sm text-destructive">
-          Falha ao carregar perfil: {error}
+          {t("loadError", { error })}
         </p>
       )}
 

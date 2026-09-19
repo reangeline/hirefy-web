@@ -1,1 +1,154 @@
-{}
+{
+  "loading": "Loading…",
+  "backToList": "My resumes",
+  "form": {
+    "nicknameLabel": "Resume name",
+    "nicknamePlaceholder": "e.g. Resume — Backend",
+    "saveError": "We couldn't save your resume.",
+    "personalDataTitle": "Personal details",
+    "fullNameLabel": "Full name",
+    "currentRoleLabel": "Current role",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "cityLabel": "City",
+    "stateLabel": "State",
+    "countryLabel": "Country",
+    "linkedinLabel": "LinkedIn",
+    "linkedinPlaceholder": "linkedin.com/in/your-profile",
+    "websiteLabel": "Personal website",
+    "githubLabel": "GitHub",
+    "summaryLabel": "Professional summary",
+    "experiencesTitle": "Experience",
+    "educationTitle": "Education",
+    "projectsTitle": "Projects",
+    "languagesTitle": "Languages",
+    "addItem": "Add",
+    "emptyItems": "Nothing added yet.",
+    "removeItemAria": "Remove {title} {index}",
+    "companyLabel": "Company",
+    "roleLabel": "Role",
+    "startDateLabel": "Start date",
+    "startDatePlaceholder": "e.g. Jan 2022",
+    "endDateLabel": "End date",
+    "endDatePlaceholder": "e.g. Dec 2023",
+    "currentJobLabel": "Current job",
+    "descriptionLabel": "Description",
+    "institutionLabel": "Institution",
+    "degreeLabel": "Degree / program",
+    "inProgressLabel": "In progress",
+    "nameLabel": "Name",
+    "linkLabel": "Link",
+    "languageLabel": "Language",
+    "proficiencyLabel": "Proficiency",
+    "selectPlaceholder": "Select",
+    "saving": "Saving…",
+    "createSubmit": "Create resume",
+    "saveSubmit": "Save changes"
+  },
+  "languageLevels": {
+    "basic": "Basic",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "fluent": "Fluent",
+    "native": "Native"
+  },
+  "optimizeForm": {
+    "pollTimeoutError": "This optimization is taking longer than expected. Check back later under “Optimized”.",
+    "pollError": "Couldn't check the optimization status.",
+    "submitError": "We couldn't start the optimization.",
+    "failedTitle": "Optimization failed",
+    "failedFallback": "Please try again in a moment.",
+    "retry": "Try again",
+    "statusQueued": "Queued for processing…",
+    "statusProcessing": "AI is optimizing your resume…",
+    "processingHint": "You can close this screen — the result is saved under “Optimized” once it's done.",
+    "optimizingPrefix": "Optimizing",
+    "jobDescriptionLabel": "Job description",
+    "jobDescriptionPlaceholder": "Paste the full job description here…",
+    "targetCompanyLabel": "Company (optional)",
+    "targetRoleLabel": "Role (optional)",
+    "submitting": "Submitting…",
+    "submit": "Optimize resume"
+  },
+  "resultView": {
+    "matchLabel": "Match with the job",
+    "keywordsLabel": "Keywords",
+    "suggestionsLabel": "Suggestions",
+    "suggestionsValue": "{count} to review",
+    "requirementsLabel": "Requirements",
+    "requirementsValue": "{count} missing",
+    "keywordsSectionTitle": "Job keywords",
+    "keywordFound": "<strong>{keyword}</strong> — found in your resume.",
+    "keywordMissing": "<strong>{keyword}</strong> — the job asks for it, your resume doesn't mention it.",
+    "suggestionsSectionTitle": "Improvement suggestions",
+    "missingRequirementsSectionTitle": "Requirements missing from your resume",
+    "salarySectionTitle": "Salary estimate"
+  },
+  "pdfImport": {
+    "fileTooLarge": "File larger than 10MB. Choose a smaller PDF.",
+    "parseError": "We couldn't parse the PDF.",
+    "title": "Import your resume as a PDF",
+    "description": "AI extracts your data and calculates an ATS score right away. You review everything before saving.",
+    "chooseFile": "Choose file",
+    "analyzing": "Analyzing…",
+    "analyze": "Analyze resume"
+  },
+  "addGap": {
+    "suggestError": "We couldn't generate a suggestion.",
+    "saveError": "We couldn't save this to your resume.",
+    "done": "✓ Added to resume",
+    "saving": "Saving…",
+    "addToResume": "Add to resume",
+    "cancel": "Cancel",
+    "generating": "Generating suggestion…"
+  },
+  "creditLimitCard": {
+    "headline": "Your 3 free optimizations are used up",
+    "subheadline": "Subscribe to Premium to keep optimizing resumes and unlock:",
+    "checkoutError": "Failed to start checkout",
+    "redirecting": "Redirecting…",
+    "subscribeButton": "Subscribe to Premium",
+    "features": {
+      "unlimitedOptimizations": "Unlimited resume/LinkedIn optimizations",
+      "unlimitedInterviewPractice": "Unlimited AI interview practice",
+      "aiCoach": "AI coach at every step of your application",
+      "pipelineAnalytics": "Application pipeline analytics"
+    }
+  },
+  "card": {
+    "untitled": "Untitled resume",
+    "updatedAt": "Updated on {date}",
+    "optimizeAria": "Optimize resume",
+    "editAria": "Edit resume",
+    "deleteAria": "Delete resume"
+  },
+  "page": {
+    "list": {
+      "topbarTitle": "Resumes",
+      "heading": "My resumes",
+      "newResume": "New resume",
+      "deleteError": "Failed to delete resume.",
+      "emptyTitle": "No resumes yet",
+      "emptyDescription": "Create your first resume to start optimizing it for jobs.",
+      "createResume": "Create resume"
+    },
+    "new": {
+      "topbarTitle": "New resume",
+      "importTitle": "Import PDF",
+      "importDescription": "AI extracts your data and calculates an ATS score automatically.",
+      "manualTitle": "Fill in manually",
+      "manualDescription": "Enter your data directly into the form.",
+      "atsScoreTitle": "ATS score of the imported PDF",
+      "reviewHint": "Review the fields below — nothing has been saved yet."
+    },
+    "edit": {
+      "topbarTitle": "Edit resume"
+    },
+    "optimize": {
+      "topbarTitle": "Optimize resume"
+    },
+    "optimized": {
+      "topbarTitle": "Optimized resume"
+    }
+  }
+}

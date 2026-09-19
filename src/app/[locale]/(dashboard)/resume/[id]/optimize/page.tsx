@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { use, useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { OptimizeForm } from "@/components/resume/OptimizeForm";
@@ -9,6 +10,7 @@ import { apiFetchJson } from "@/lib/api/client";
 import type { Resume } from "@/types/resume";
 
 export default function OptimizeResumePage({ params }: PageProps<"/[locale]/resume/[id]/optimize">) {
+  const t = useTranslations("Resume");
   const { id } = use(params);
   const [resume, setResume] = useState<Resume | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -23,11 +25,11 @@ export default function OptimizeResumePage({ params }: PageProps<"/[locale]/resu
 
   return (
     <>
-      <Topbar title="Otimizar currículo" />
+      <Topbar title={t("page.optimize.topbarTitle")} />
       <div className="space-y-6 p-6">
         <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" aria-hidden="true" />
-          Meus currículos
+          {t("backToList")}
         </Link>
 
         {error && (
@@ -37,7 +39,7 @@ export default function OptimizeResumePage({ params }: PageProps<"/[locale]/resu
         )}
         {!resume && !error && (
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            Carregando…
+            {t("loading")}
           </p>
         )}
         {resume && <OptimizeForm resumeId={id} resumeName={resumeName} />}

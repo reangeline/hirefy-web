@@ -1,1 +1,72 @@
-{}
+{
+  "nav": {
+    "dashboard": {
+      "label": "Dashboard",
+      "items": {
+        "newApplication": "Nova candidatura",
+        "archived": "Arquivadas"
+      }
+    },
+    "resume": {
+      "label": "Currículos",
+      "items": {
+        "newResume": "Novo currículo"
+      }
+    },
+    "linkedin": {
+      "label": "LinkedIn",
+      "items": {
+        "fillGuide": "Guia de preenchimento",
+        "postIdeas": "Ideias de publicação"
+      }
+    }
+  },
+  "sidebar": {
+    "collapseSection": "Recolher {label}",
+    "expandSection": "Expandir {label}"
+  },
+  "subscriptionCard": {
+    "planLabels": {
+      "free": "Plano Free",
+      "basic": "Plano Basic",
+      "premium": "Premium"
+    },
+    "loadError": "Falha ao carregar assinatura: {error}",
+    "loading": "Carregando assinatura…",
+    "credits": "{count, plural, one {# crédito} other {# créditos}}",
+    "creditsLabel": "Créditos",
+    "premiumDescription": "Otimizações, prática de entrevista e coach de pipeline ilimitados.",
+    "creditsAvailable": "{count, plural, =0 {Sem consultas de IA disponíveis no momento — assine Premium pra continuar.} one {1 consulta de IA disponível pra otimizar currículo/LinkedIn, prática de entrevista ou coach.} other {# consultas de IA disponíveis pra otimizar currículo/LinkedIn, prática de entrevista ou coach.}}",
+    "cancelling": "Cancelando…",
+    "cancelSubscription": "Cancelar assinatura",
+    "redirecting": "Redirecionando…",
+    "upgrade": "Fazer upgrade",
+    "checkoutError": "Falha ao iniciar checkout",
+    "cancelError": "Falha ao cancelar assinatura"
+  },
+  "welcomeHeader": {
+    "greeting": "Bem-vindo(a), {name}",
+    "greetingFallback": "Bem-vindo(a)",
+    "loadError": "Falha ao carregar perfil: {error}"
+  },
+  "emailVerification": {
+    "title": "Confirme seu email",
+    "description": "Verifique sua caixa de entrada pra desbloquear todos os recursos.",
+    "cta": "Confirmar"
+  },
+  "checkoutStatus": {
+    "success": "Assinatura Premium ativada! Pode levar alguns segundos para refletir abaixo.",
+    "cancelled": "Checkout cancelado — nenhuma cobrança foi feita.",
+    "close": "Fechar"
+  },
+  "logoutButton": {
+    "signOut": "Sair",
+    "signingOut": "Saindo…"
+  },
+  "topbar": {
+    "openMenu": "Abrir menu"
+  },
+  "topbarTitles": {
+    "dashboard": "Dashboard"
+  }
+}

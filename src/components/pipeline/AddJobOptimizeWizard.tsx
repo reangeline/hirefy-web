@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AlertCircle, ArrowLeft, FileText, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ const MAX_POLL_ATTEMPTS = 45; // ~3min
 // missing_keywords = missing_requirements). Não reaproveita o OptimizeForm porque o
 // comportamento pós-conclusão é diferente (aqui cria a vaga, lá navega pro resultado).
 export function AddJobOptimizeWizard() {
+  const t = useTranslations("Pipeline.addJobWizard");
   const router = useRouter();
   const [step, setStep] = useState<Step>("details");
 
@@ -53,7 +55,7 @@ export function AddJobOptimizeWizard() {
     const timer = setTimeout(async () => {
       attemptsRef.current += 1;
       if (attemptsRef.current > MAX_POLL_ATTEMPTS) {
-        setError("A otimização está demorando mais que o esperado. Tente de novo em instantes.");
+        setError(t("pollTimeout"));
         return;
       }
       try {
@@ -63,7 +65,7 @@ export function AddJobOptimizeWizard() {
           await createPipelineJob(updated.optimized_resume_id);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Falha ao consultar o status da otimização.");
+        setError(err instanceof Error ? err.message : t("pollError"));
       }
     }, POLL_INTERVAL_MS);
 
@@ -93,7 +95,7 @@ export function AddJobOptimizeWizard() {
       trackEvent("pipeline_job_added", { method: "optimize" });
       router.push(`/pipeline/${created.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Currículo otimizado, mas não foi possível salvar a vaga.");
+      setError(err instanceof Error ? err.message : t("saveAfterOptimizeError"));
       setCreatingJob(false);
     }
   }
@@ -116,7 +118,7 @@ export function AddJobOptimizeWizard() {
       attemptsRef.current = 0;
       setJob(created);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível iniciar a otimização.");
+      setError(err instanceof Error ? err.message : t("startError"));
       setStep("resume");
     }
   }
@@ -126,25 +128,25 @@ export function AddJobOptimizeWizard() {
       <div className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="companyName">Empresa</Label>
+            <Label htmlFor="companyName">{t("companyLabel")}</Label>
             <Input id="companyName" required value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="jobTitle">Cargo</Label>
+            <Label htmlFor="jobTitle">{t("jobTitleLabel")}</Label>
             <Input id="jobTitle" required value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="location">Localização (opcional)</Label>
+          <Label htmlFor="location">{t("locationLabel")}</Label>
           <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="jobDescription">Descrição da vaga</Label>
+          <Label htmlFor="jobDescription">{t("jobDescriptionLabel")}</Label>
           <Textarea
             id="jobDescription"
             required
             rows={8}
-            placeholder="Cole aqui a descrição completa da vaga…"
+            placeholder={t("jobDescriptionPlaceholder")}
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
           />
@@ -155,7 +157,7 @@ export function AddJobOptimizeWizard() {
             disabled={!companyName || !jobTitle || !jobDescription}
             onClick={() => setStep("resume")}
           >
-            Continuar
+            {t("continueButton")}
           </Button>
         </div>
       </div>
@@ -171,10 +173,10 @@ export function AddJobOptimizeWizard() {
           className="flex cursor-pointer items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-3.5" aria-hidden="true" />
-          Voltar
+          {t("backButton")}
         </button>
 
-        <p className="text-sm text-muted-foreground">Qual currículo usar de base?</p>
+        <p className="text-sm text-muted-foreground">{t("chooseResumePrompt")}</p>
 
         {error && (
           <p role="alert" aria-live="polite" className="text-sm text-destructive">
@@ -182,17 +184,17 @@ export function AddJobOptimizeWizard() {
           </p>
         )}
 
-        {!resumes && !error && <p className="text-sm text-muted-foreground">Carregando currículos…</p>}
+        {!resumes && !error && <p className="text-sm text-muted-foreground">{t("loadingResumes")}</p>}
 
         {resumes && resumes.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            Você ainda não tem nenhum currículo. Crie um em “Meus currículos” antes de otimizar.
+            {t("noResumes")}
           </p>
         )}
 
         <div className="space-y-2">
           {resumes?.map((resume) => {
-            const title = resume.parsed_data.nickname || resume.parsed_data.personal?.full_name || "Currículo sem nome";
+            const title = resume.parsed_data.nickname || resume.parsed_data.personal?.full_name || t("untitledResume");
             const selected = selectedResumeId === resume.id;
             return (
               <button
@@ -215,7 +217,7 @@ export function AddJobOptimizeWizard() {
         <div className="flex justify-end">
           <Button type="button" disabled={!selectedResumeId} onClick={startOptimization} className="gap-2">
             <Sparkles className="size-4" aria-hidden="true" />
-            Otimizar e adicionar
+            {t("optimizeAndAddButton")}
           </Button>
         </div>
       </div>
@@ -232,9 +234,9 @@ export function AddJobOptimizeWizard() {
         <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
           <AlertCircle className="size-10 text-destructive" aria-hidden="true" />
           <div aria-live="polite">
-            <p className="font-medium">A otimização falhou</p>
+            <p className="font-medium">{t("optimizationFailedTitle")}</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {job.error ?? "Tente novamente em alguns instantes."}
+              {job.error ?? t("optimizationFailedFallback")}
             </p>
           </div>
           <Button
@@ -245,7 +247,7 @@ export function AddJobOptimizeWizard() {
               setStep("resume");
             }}
           >
-            Tentar de novo
+            {t("tryAgainButton")}
           </Button>
         </CardContent>
       </Card>
@@ -265,7 +267,7 @@ export function AddJobOptimizeWizard() {
             variant="outline"
             onClick={() => job.optimized_resume_id && createPipelineJob(job.optimized_resume_id)}
           >
-            Tentar salvar de novo
+            {t("trySaveAgainButton")}
           </Button>
         </CardContent>
       </Card>
@@ -281,7 +283,7 @@ export function AddJobOptimizeWizard() {
             {error}
           </p>
           <Button type="button" variant="outline" onClick={() => setStep("resume")}>
-            Voltar
+            {t("backButton")}
           </Button>
         </CardContent>
       </Card>
@@ -295,12 +297,12 @@ export function AddJobOptimizeWizard() {
         <div aria-live="polite">
           <p className="font-medium">
             {creatingJob
-              ? "Salvando vaga no pipeline…"
+              ? t("savingJob")
               : job?.status === "processing"
-                ? "A IA está otimizando seu currículo…"
-                : "Na fila de processamento…"}
+                ? t("optimizingResume")
+                : t("queued")}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">Isso pode levar até um minuto.</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("mayTakeAMinute")}</p>
         </div>
       </CardContent>
     </Card>

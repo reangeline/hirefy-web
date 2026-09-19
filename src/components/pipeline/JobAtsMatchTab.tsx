@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import type { OptimizedResume } from "@/types/resume";
 import type { PipelineJob } from "@/types/pipeline";
 
 export function JobAtsMatchTab({ job }: { job: PipelineJob }) {
+  const t = useTranslations("Pipeline.atsMatchTab");
   const [optimized, setOptimized] = useState<OptimizedResume | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,13 +28,10 @@ export function JobAtsMatchTab({ job }: { job: PipelineJob }) {
       <Card>
         <CardContent className="flex flex-col items-center gap-4 py-10 text-center">
           <Sparkles className="size-8 text-muted-foreground" aria-hidden="true" />
-          <p className="text-sm text-muted-foreground">
-            Essa vaga foi adicionada sem otimizar o currículo. Otimize agora pra ver o score de
-            match e as sugestões.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("notOptimizedMessage")}</p>
           <Link href="/pipeline/new">
             <Button type="button" variant="outline">
-              Otimizar currículo
+              {t("optimizeButton")}
             </Button>
           </Link>
         </CardContent>
@@ -43,13 +42,13 @@ export function JobAtsMatchTab({ job }: { job: PipelineJob }) {
   if (error) {
     return (
       <p role="alert" aria-live="polite" className="text-sm text-destructive">
-        Falha ao carregar o resultado da otimização: {error}
+        {t("loadError", { error })}
       </p>
     );
   }
 
   if (!optimized) {
-    return <p className="text-sm text-muted-foreground">Carregando…</p>;
+    return <p className="text-sm text-muted-foreground">{t("loading")}</p>;
   }
 
   return (

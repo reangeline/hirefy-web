@@ -1,7 +1,8 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Link } from "@/i18n/navigation";
 
 interface LegalLayoutProps {
   title: string;
@@ -12,21 +13,23 @@ interface LegalLayoutProps {
 // Estilização do conteúdo do markdown via classes utilitárias direto no wrapper — não há
 // plugin de tipografia do Tailwind instalado no web-app, e não vale a pena adicionar um só
 // pra 4 páginas de texto legal.
-export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) {
+export async function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) {
+  const t = await getTranslations("Marketing.legal");
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
         <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Voltar pro início
+            {t("backToHome")}
           </Link>
         </div>
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Última atualização: {lastUpdated}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{t("lastUpdatedLabel", { date: lastUpdated })}</p>
 
         <div
           className="mt-8 space-y-4 text-sm leading-relaxed text-foreground
@@ -49,16 +52,16 @@ export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-6 px-4 py-8 text-sm text-muted-foreground sm:px-6">
           <Link href="/privacy" className="hover:text-foreground">
-            Privacidade
+            {t("footerPrivacy")}
           </Link>
           <Link href="/terms" className="hover:text-foreground">
-            Termos
+            {t("footerTerms")}
           </Link>
           <Link href="/refund" className="hover:text-foreground">
-            Reembolso
+            {t("footerRefund")}
           </Link>
           <Link href="/cookies" className="hover:text-foreground">
-            Cookies
+            {t("footerCookies")}
           </Link>
         </div>
       </footer>

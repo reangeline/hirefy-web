@@ -1,1 +1,88 @@
-{}
+{
+  "fillGuide": {
+    "periodCurrent": "atual",
+    "profileStrengthLabel": "Força do perfil sugerido",
+    "generateNewGuide": "Gerar novo guia",
+    "headline": "Headline",
+    "about": "Sobre",
+    "experience": "Experiência",
+    "skills": "Skills",
+    "copyAllSkills": "Copiar todas",
+    "languages": "Idiomas",
+    "suggestions": "Sugestões",
+    "copySelected": "Copiar selecionadas",
+    "suggestionsHint": "Marque as que você concorda pra copiar só essas.",
+    "footerNote": "Conteúdo gerado a partir do currículo escolhido — dê uma revisada antes de colar no seu perfil do LinkedIn."
+  },
+  "scanUpload": {
+    "fileTooLarge": "Arquivo maior que 10MB. Escolha um PDF menor.",
+    "uploadError": "Não foi possível analisar o perfil.",
+    "heading": "Audite seu perfil do LinkedIn",
+    "instructions": "No seu perfil do LinkedIn, use <strong>Mais → Salvar em PDF</strong> pra exportar, depois envie o arquivo aqui. A IA analisa e mostra o que está bom e o que precisa melhorar.",
+    "chooseFile": "Escolher arquivo",
+    "analyzing": "Analisando…",
+    "analyzeProfile": "Analisar perfil"
+  },
+  "scanReport": {
+    "scoreLabel": "Score do perfil",
+    "itemsPassed": "{passed}/{total} itens bem feitos",
+    "newScan": "Novo scan",
+    "suggestedSkills": "Skills sugeridas",
+    "suggestedSkillsHint": "Sugestões da IA com base no seu perfil — não significa que já estão lá.",
+    "tips": "Dicas"
+  },
+  "postTopics": {
+    "generatePost": "Gerar post",
+    "writingPost": "Escrevendo o post…",
+    "tryAgain": "Tentar de novo",
+    "generateAnotherVersion": "Gerar outra versão",
+    "draftError": "Não foi possível gerar o post."
+  },
+  "scanPage": {
+    "loadError": "Falha ao carregar o scan.",
+    "heading": "LinkedIn Scan Report",
+    "subheading": "Audite seu perfil do LinkedIn contra boas práticas de recrutadores.",
+    "loading": "Carregando…"
+  },
+  "fillPage": {
+    "timeoutError": "A geração está demorando mais que o esperado. Tente de novo em instantes.",
+    "pollError": "Falha ao consultar o status da geração.",
+    "generateError": "Não foi possível gerar o guia.",
+    "heading": "Guia de preenchimento",
+    "subheading": "A IA gera o que colocar em cada campo do seu perfil do LinkedIn, com base num currículo já salvo — você revisa e copia pra lá.",
+    "failedTitle": "A geração falhou",
+    "failedDefaultMessage": "Tente novamente em alguns instantes.",
+    "tryAgain": "Tentar de novo",
+    "queued": "Na fila de processamento…",
+    "processing": "A IA está montando seu guia…",
+    "processingHint": "Isso leva menos de um minuto.",
+    "noResumesTitle": "Você ainda não tem um currículo salvo",
+    "noResumesHint": "Crie um currículo primeiro pra gerar o guia a partir dele.",
+    "createResume": "Criar currículo",
+    "resumeLabel": "Currículo base",
+    "unnamedResume": "Currículo sem nome",
+    "submitting": "Enviando…",
+    "generateGuide": "Gerar guia",
+    "loading": "Carregando…"
+  },
+  "fillResultPage": {
+    "notLinkedInResult": "Esse resultado não é um guia de LinkedIn.",
+    "backLink": "Guia de preenchimento",
+    "loading": "Carregando…"
+  },
+  "postsPage": {
+    "generateError": "Não foi possível gerar os temas.",
+    "unnamedResume": "Currículo sem nome",
+    "heading": "Ideias de publicação",
+    "subheading": "A IA sugere temas e ângulos relevantes pro seu perfil, com base no seu currículo — não são notícias do dia, são assuntos que fazem sentido você escrever sobre. Escolha um que despertar interesse e gere um post pronto pra copiar.",
+    "loading": "Carregando…",
+    "noResumesTitle": "Você ainda não tem um currículo salvo",
+    "noResumesHint": "Crie um currículo primeiro pra gerar temas a partir dele.",
+    "createResume": "Criar currículo",
+    "resumeLabel": "Currículo base",
+    "generating": "Gerando…",
+    "generateNewTopics": "Gerar novos temas",
+    "generateTopics": "Gerar temas",
+    "generatingHint": "A IA está montando os temas…"
+  }
+}

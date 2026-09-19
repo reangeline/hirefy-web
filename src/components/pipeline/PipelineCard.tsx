@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { Ghost, MapPin } from "lucide-react";
@@ -13,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PIPELINE_STAGES, STAGE_LABELS, type PipelineJob, type PipelineJobStage } from "@/types/pipeline";
+import { useStageLabels } from "@/lib/hooks/usePipelineLabels";
+import { PIPELINE_STAGES, type PipelineJob, type PipelineJobStage } from "@/types/pipeline";
 
 interface PipelineCardProps {
   job: PipelineJob;
@@ -21,6 +23,8 @@ interface PipelineCardProps {
 }
 
 export function PipelineCard({ job, onStageChange }: PipelineCardProps) {
+  const t = useTranslations("Pipeline.pipelineCard");
+  const stageLabels = useStageLabels();
   // Arrastar o card entre colunas é uma segunda forma de chamar o mesmo onStageChange do
   // Select abaixo (ver PipelineBoard.tsx) — mantém o Select como alternativa acessível
   // (teclado, leitor de tela, ou só preferência).
@@ -46,7 +50,7 @@ export function PipelineCard({ job, onStageChange }: PipelineCardProps) {
           {job.is_ghosted && (
             <Badge variant="outline" className="shrink-0 gap-1 text-muted-foreground">
               <Ghost className="size-3" aria-hidden="true" />
-              Ghosted
+              {t("ghostedBadge")}
             </Badge>
           )}
         </div>
@@ -68,7 +72,7 @@ export function PipelineCard({ job, onStageChange }: PipelineCardProps) {
         )}
 
         <Select
-          items={STAGE_LABELS}
+          items={stageLabels}
           value={job.stage}
           onValueChange={(stage) => onStageChange(job.id, stage as PipelineJobStage)}
         >
@@ -78,7 +82,7 @@ export function PipelineCard({ job, onStageChange }: PipelineCardProps) {
           <SelectContent>
             {PIPELINE_STAGES.map((stage) => (
               <SelectItem key={stage} value={stage}>
-                {STAGE_LABELS[stage]}
+                {stageLabels[stage]}
               </SelectItem>
             ))}
           </SelectContent>

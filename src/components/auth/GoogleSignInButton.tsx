@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -15,14 +16,15 @@ interface GoogleSignInButtonProps {
 // garantir o fluxo de ID token real — não dá pra disparar isso a partir de um <Button>
 // totalmente customizado. Ver .spec/001-auth/spec.md pro contrato esperado pelo backend.
 export function GoogleSignInButton({ onCredential, disabled }: GoogleSignInButtonProps) {
+  const t = useTranslations("Auth.social");
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
 
   if (!CLIENT_ID) {
     return (
-      <Button type="button" variant="outline" disabled className="w-full" title="Configuração pendente (NEXT_PUBLIC_GOOGLE_CLIENT_ID)">
+      <Button type="button" variant="outline" disabled className="w-full" title={t("googleConfigPending")}>
         <GoogleIcon />
-        Continuar com Google
+        {t("googleContinue")}
       </Button>
     );
   }
@@ -58,7 +60,7 @@ export function GoogleSignInButton({ onCredential, disabled }: GoogleSignInButto
       {!ready && (
         <Button type="button" variant="outline" disabled className="absolute inset-0 w-full">
           <GoogleIcon />
-          Continuar com Google
+          {t("googleContinue")}
         </Button>
       )}
     </div>

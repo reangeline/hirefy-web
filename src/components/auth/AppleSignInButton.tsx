@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -14,6 +15,7 @@ interface AppleSignInButtonProps {
 // Sign in with Apple JS exige domínio HTTPS verificado no Apple Developer (Services ID +
 // Return URL) — não funciona em localhost. Ver .spec/001-auth/spec.md.
 export function AppleSignInButton({ onCredential, disabled }: AppleSignInButtonProps) {
+  const t = useTranslations("Auth.social");
   const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -42,10 +44,10 @@ export function AppleSignInButton({ onCredential, disabled }: AppleSignInButtonP
         variant="outline"
         disabled
         className="w-full"
-        title="Configuração pendente (NEXT_PUBLIC_APPLE_CLIENT_ID)"
+        title={t("appleConfigPending")}
       >
         <AppleIcon />
-        Continuar com Apple
+        {t("appleContinue")}
       </Button>
     );
   }
@@ -73,7 +75,7 @@ export function AppleSignInButton({ onCredential, disabled }: AppleSignInButtonP
         className="w-full"
       >
         <AppleIcon />
-        {loading ? "Conectando…" : "Continuar com Apple"}
+        {loading ? t("appleConnecting") : t("appleContinue")}
       </Button>
     </>
   );

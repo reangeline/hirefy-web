@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,12 +15,15 @@ import {
 } from "@/components/ui/select";
 import { apiFetchJson } from "@/lib/api/client";
 import { trackEvent } from "@/lib/analytics";
-import { PIPELINE_STAGES, STAGE_LABELS, type PipelineJob, type PipelineJobStage } from "@/types/pipeline";
+import { useStageLabels } from "@/lib/hooks/usePipelineLabels";
+import { PIPELINE_STAGES, type PipelineJob, type PipelineJobStage } from "@/types/pipeline";
 
 // Adiciona a vaga direto, sem passar pela otimização de currículo — não gasta crédito.
 // Replica o "pular otimização" do wizard mobile (add_job_bottom_sheet.dart), mas com dados
 // reais desde o início (sem ats_score/keywords, já que não passou por otimização nenhuma).
 export function AddJobQuickForm() {
+  const t = useTranslations("Pipeline.addJobQuickForm");
+  const stageLabels = useStageLabels();
   const router = useRouter();
   const [companyName, setCompanyName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
@@ -47,7 +51,7 @@ export function AddJobQuickForm() {
       trackEvent("pipeline_job_added", { method: "quick" });
       router.push(`/pipeline/${job.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível adicionar a vaga.");
+      setError(err instanceof Error ? err.message : t("addError"));
       setSubmitting(false);
     }
   }
@@ -56,7 +60,7 @@ export function AddJobQuickForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="companyName">Empresa</Label>
+          <Label htmlFor="companyName">{t("companyLabel")}</Label>
           <Input
             id="companyName"
             required
@@ -65,26 +69,26 @@ export function AddJobQuickForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="jobTitle">Cargo</Label>
+          <Label htmlFor="jobTitle">{t("jobTitleLabel")}</Label>
           <Input id="jobTitle" required value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="location">Localização (opcional)</Label>
+          <Label htmlFor="location">{t("locationLabel")}</Label>
           <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
         </div>
         <div className="space-y-1.5">
-          <Label>Estágio inicial</Label>
-          <Select items={STAGE_LABELS} value={stage} onValueChange={(v) => setStage(v as PipelineJobStage)}>
+          <Label>{t("initialStageLabel")}</Label>
+          <Select items={stageLabels} value={stage} onValueChange={(v) => setStage(v as PipelineJobStage)}>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {PIPELINE_STAGES.map((s) => (
                 <SelectItem key={s} value={s}>
-                  {STAGE_LABELS[s]}
+                  {stageLabels[s]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -100,7 +104,7 @@ export function AddJobQuickForm() {
 
       <div className="flex justify-end">
         <Button type="submit" disabled={submitting}>
-          {submitting ? "Adicionando…" : "Adicionar vaga"}
+          {submitting ? t("adding") : t("addButton")}
         </Button>
       </div>
     </form>

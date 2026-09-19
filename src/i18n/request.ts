@@ -4,23 +4,30 @@ import { routing } from "@/i18n/routing";
 
 // Mensagens divididas por domínio (um arquivo por namespace por idioma) em vez de um só JSON
 // gigante por idioma — permite trabalhar em áreas diferentes do site em paralelo sem dois
-// processos escreverem no mesmo arquivo (spec 021). Mesclado aqui sob chaves top-level que
-// batem com o namespace passado pra useTranslations/getTranslations em cada componente.
-const NAMESPACES = ["common", "marketing", "auth", "dashboard", "resume", "pipeline", "linkedin"] as const;
+// processos escreverem no mesmo arquivo (spec 021). Mapeamento explícito (não
+// auto-capitalize) porque "linkedin" → "LinkedIn" tem duas maiúsculas — um `capitalize()`
+// ingênuo gera "Linkedin" e quebra toda chamada `useTranslations("LinkedIn")` em runtime.
+const NAMESPACE_KEYS = {
+  common: "Common",
+  marketing: "Marketing",
+  auth: "Auth",
+  dashboard: "Dashboard",
+  resume: "Resume",
+  pipeline: "Pipeline",
+  linkedin: "LinkedIn",
+} as const;
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
   const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
 
+  const entries = Object.entries(NAMESPACE_KEYS) as [keyof typeof NAMESPACE_KEYS, string][];
   const modules = await Promise.all(
-    NAMESPACES.map((namespace) => import(`../messages/${locale}/${namespace}.json`)),
+    entries.map(([file]) => import(`../messages/${locale}/${file}.json`)),
   );
 
   const messages = Object.fromEntries(
-    NAMESPACES.map((namespace, i) => [
-      namespace.charAt(0).toUpperCase() + namespace.slice(1),
-      modules[i].default,
-    ]),
+    entries.map(([, key], i) => [key, modules[i].default]),
   );
 
   return { locale, messages };
