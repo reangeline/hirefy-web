@@ -2,7 +2,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { DashboardThemeProvider } from "@/components/dashboard-theme-provider";
 
-export default function DashboardGroupLayout({ children }: LayoutProps<"/">) {
+export default function DashboardGroupLayout({ children }: LayoutProps<"/[locale]">) {
   return (
     // Tema independente do da Home: a área logada abre escura por padrão (mais confortável
     // pra uso prolongado), com sua própria chave de localStorage — o toggle da Home continua

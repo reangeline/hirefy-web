@@ -25,7 +25,7 @@ interface OptimizedResumeRaw {
   };
 }
 
-export default function LinkedInFillResultPage({ params }: PageProps<"/linkedin/fill/[id]">) {
+export default function LinkedInFillResultPage({ params }: PageProps<"/[locale]/linkedin/fill/[id]">) {
   const { id } = use(params);
   const [profile, setProfile] = useState<LinkedInOptimizedProfile | null>(null);
   const [error, setError] = useState<string | null>(null);

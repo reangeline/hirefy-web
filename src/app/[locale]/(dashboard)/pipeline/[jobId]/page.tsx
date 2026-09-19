@@ -16,7 +16,7 @@ import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import { STAGE_LABELS, type PipelineJob } from "@/types/pipeline";
 
-export default function PipelineJobDetailPage({ params }: PageProps<"/pipeline/[jobId]">) {
+export default function PipelineJobDetailPage({ params }: PageProps<"/[locale]/pipeline/[jobId]">) {
   const { jobId } = use(params);
   const router = useRouter();
   const [job, setJob] = useState<PipelineJob | null>(null);

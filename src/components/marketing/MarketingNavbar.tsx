@@ -1,6 +1,7 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -29,6 +30,7 @@ export function MarketingNavbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LocaleSwitcher />
           <ThemeToggle />
           <Link href="/login" className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:inline-flex")}>
             Entrar

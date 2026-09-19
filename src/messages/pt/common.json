@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Hirefy",
+    "description": "Otimize seu currículo com IA para passar em ATS."
+  },
+  "actions": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "confirm": "Confirmar",
+    "back": "Voltar",
+    "tryAgain": "Tentar de novo",
+    "loading": "Carregando…"
+  },
+  "localeSwitcher": {
+    "label": "Idioma",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español"
+  }
+}

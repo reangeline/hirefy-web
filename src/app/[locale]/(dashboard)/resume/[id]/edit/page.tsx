@@ -1,29 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { use } from "react";
 import { ArrowLeft } from "lucide-react";
-import { OptimizeForm } from "@/components/resume/OptimizeForm";
+import { ResumeForm } from "@/components/resume/ResumeForm";
 import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
-import type { Resume } from "@/types/resume";
+import { resumeToFormData, type ManualResumeRequest, type Resume } from "@/types/resume";
 
-export default function OptimizeResumePage({ params }: PageProps<"/resume/[id]/optimize">) {
+export default function EditResumePage({ params }: PageProps<"/[locale]/resume/[id]/edit">) {
   const { id } = use(params);
-  const [resume, setResume] = useState<Resume | null>(null);
+  const [initialData, setInitialData] = useState<ManualResumeRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     apiFetchJson<Resume>(`/api/resumes/${id}`)
-      .then(setResume)
+      .then((resume) => setInitialData(resumeToFormData(resume)))
       .catch((err: Error) => setError(err.message));
   }, [id]);
 
-  const resumeName = resume?.parsed_data.nickname || resume?.parsed_data.personal?.full_name || "";
-
   return (
     <>
-      <Topbar title="Otimizar currículo" />
+      <Topbar title="Editar currículo" />
       <div className="space-y-6 p-6">
         <Link href="/resume" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" aria-hidden="true" />
@@ -35,12 +34,12 @@ export default function OptimizeResumePage({ params }: PageProps<"/resume/[id]/o
             {error}
           </p>
         )}
-        {!resume && !error && (
+        {!initialData && !error && (
           <p aria-live="polite" className="text-sm text-muted-foreground">
             Carregando…
           </p>
         )}
-        {resume && <OptimizeForm resumeId={id} resumeName={resumeName} />}
+        {initialData && <ResumeForm mode="edit" resumeId={id} initialData={initialData} />}
       </div>
     </>
   );

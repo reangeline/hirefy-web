@@ -3,6 +3,7 @@
 import { Menu } from "lucide-react";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { DashboardThemeToggle } from "@/components/dashboard-theme-toggle";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/layout/sidebar-context";
 
@@ -29,6 +30,7 @@ export function Topbar({ title }: TopbarProps) {
         <span className="text-[13.5px] font-semibold">{title}</span>
       </div>
       <div className="flex items-center gap-1.5">
+        <LocaleSwitcher />
         <DashboardThemeToggle />
         <LogoutButton />
       </div>

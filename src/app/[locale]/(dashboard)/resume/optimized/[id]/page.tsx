@@ -8,7 +8,7 @@ import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import type { OptimizedResume } from "@/types/resume";
 
-export default function OptimizedResumePage({ params }: PageProps<"/resume/optimized/[id]">) {
+export default function OptimizedResumePage({ params }: PageProps<"/[locale]/resume/optimized/[id]">) {
   const { id } = use(params);
   const [optimized, setOptimized] = useState<OptimizedResume | null>(null);
   const [error, setError] = useState<string | null>(null);
