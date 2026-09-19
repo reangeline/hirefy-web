@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetchJson } from "@/lib/api/client";
 import { trackEvent } from "@/lib/analytics";
+import { CreditLimitReachedCard } from "@/components/resume/CreditLimitReachedCard";
 import type { OptimizationJob } from "@/types/resume";
 
 interface OptimizeFormProps {
@@ -83,6 +84,9 @@ export function OptimizeForm({ resumeId, resumeName }: OptimizeFormProps) {
   }
 
   if (job && job.status === "failed") {
+    if (job.error === "subscription is not active") {
+      return <CreditLimitReachedCard feature="resume_optimize" />;
+    }
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-4 py-12 text-center">

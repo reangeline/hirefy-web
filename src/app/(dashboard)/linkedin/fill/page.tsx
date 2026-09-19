@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Topbar } from "@/components/layout/Topbar";
 import { apiFetchJson } from "@/lib/api/client";
 import { trackEvent } from "@/lib/analytics";
+import { CreditLimitReachedCard } from "@/components/resume/CreditLimitReachedCard";
 import type { OptimizationJob, Resume } from "@/types/resume";
 
 const POLL_INTERVAL_MS = 4000;
@@ -95,7 +96,11 @@ export default function LinkedInFillPage() {
           </p>
         </div>
 
-        {job && job.status === "failed" && (
+        {job && job.status === "failed" && job.error === "subscription is not active" && (
+          <CreditLimitReachedCard feature="linkedin_optimize" />
+        )}
+
+        {job && job.status === "failed" && job.error !== "subscription is not active" && (
           <Card>
             <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
               <AlertCircle className="size-10 text-destructive" aria-hidden="true" />

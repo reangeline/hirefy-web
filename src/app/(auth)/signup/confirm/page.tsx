@@ -20,6 +20,7 @@ export default function SignupConfirmPage() {
 function ConfirmForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -46,8 +47,10 @@ function ConfirmForm() {
         return;
       }
 
-      trackEvent("signup_completed");
-      router.push("/login");
+      trackEvent("signup_completed", redirect ? { source: "free_score" } : undefined);
+      const loginUrl = new URL("/login", window.location.origin);
+      if (redirect) loginUrl.searchParams.set("redirect", redirect);
+      router.push(loginUrl.pathname + loginUrl.search);
     } finally {
       setLoading(false);
     }

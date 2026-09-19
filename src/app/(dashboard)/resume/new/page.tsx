@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useState, useSyncExternalStore } from "react";
 import { ArrowLeft, ChevronRight, FileUp, PencilLine, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,9 +11,32 @@ import { ResumeForm } from "@/components/resume/ResumeForm";
 import { Topbar } from "@/components/layout/Topbar";
 import { emptyManualResumeRequest, type ManualResumeRequest } from "@/types/resume";
 
+// Mesma chave usada em src/app/pontuacao/page.tsx pra carregar o scan feito sem sessão.
+const PENDING_SCAN_KEY = "hfy_pending_scan";
+
+function subscribePendingScan() {
+  // O valor nunca muda depois do mount (lido uma vez) — não precisa de listener de verdade.
+  return () => {};
+}
+function getPendingScanSnapshot(): string | null {
+  return sessionStorage.getItem(PENDING_SCAN_KEY);
+}
+function getPendingScanServerSnapshot(): string | null {
+  return null;
+}
+
 type Mode = "choose" | "manual" | "pdf-upload" | "pdf-review";
 
 export default function NewResumePage() {
+  return (
+    <Suspense>
+      <NewResumePageContent />
+    </Suspense>
+  );
+}
+
+function NewResumePageContent() {
+  const searchParams = useSearchParams();
   const [mode, setMode] = useState<Mode>("choose");
   const [parsedData, setParsedData] = useState<ManualResumeRequest | null>(null);
 
@@ -20,6 +44,30 @@ export default function NewResumePage() {
     setParsedData(data);
     setMode("pdf-review");
   }
+
+  // Ponte do fluxo público de score (spec 020) — se o usuário fez o scan em /pontuacao antes
+  // de criar conta, pula upload/choose e cai direto na revisão já preenchida.
+  // useSyncExternalStore em vez de useEffect+setState (mesmo padrão de theme-toggle.tsx/
+  // use-reduced-motion.ts) — evita o mismatch de hidratação sem precisar de setState síncrono
+  // dentro de efeito, que a regra react-hooks/set-state-in-effect do eslint-config-next
+  // rejeita. Não limpamos a chave do sessionStorage — ela é sobrescrita/expira com a aba, e
+  // limpar aqui faria o valor sincronizado "sumir" no meio da revisão.
+  const pendingScanRaw = useSyncExternalStore(
+    subscribePendingScan,
+    getPendingScanSnapshot,
+    getPendingScanServerSnapshot,
+  );
+  let pendingScanData: ManualResumeRequest | null = null;
+  if (searchParams.get("from") === "score" && pendingScanRaw) {
+    try {
+      pendingScanData = JSON.parse(pendingScanRaw) as ManualResumeRequest;
+    } catch {
+      // scan pendente corrompido — usuário só segue o fluxo normal de upload.
+    }
+  }
+
+  const effectiveMode = pendingScanData ? "pdf-review" : mode;
+  const effectiveParsedData = pendingScanData ?? parsedData;
 
   return (
     <>
@@ -30,7 +78,7 @@ export default function NewResumePage() {
         Meus currículos
       </Link>
 
-      {mode === "choose" && (
+      {effectiveMode === "choose" && (
         <div className="grid gap-3 sm:grid-cols-2">
           <MethodCard
             icon={FileUp}
@@ -47,24 +95,24 @@ export default function NewResumePage() {
         </div>
       )}
 
-      {mode === "pdf-upload" && <PdfImportUpload onParsed={handleParsed} />}
+      {effectiveMode === "pdf-upload" && <PdfImportUpload onParsed={handleParsed} />}
 
-      {mode === "manual" && <ResumeForm mode="create" initialData={emptyManualResumeRequest()} />}
+      {effectiveMode === "manual" && <ResumeForm mode="create" initialData={emptyManualResumeRequest()} />}
 
-      {mode === "pdf-review" && parsedData && (
+      {effectiveMode === "pdf-review" && effectiveParsedData && (
         <>
-          {parsedData.ats_score != null && (
+          {effectiveParsedData.ats_score != null && (
             <Card>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="font-medium">Score de ATS do PDF importado</p>
-                  <Badge variant={parsedData.ats_score >= 70 ? "default" : "secondary"}>
-                    {Math.round(parsedData.ats_score)}%
+                  <Badge variant={effectiveParsedData.ats_score >= 70 ? "default" : "secondary"}>
+                    {Math.round(effectiveParsedData.ats_score)}%
                   </Badge>
                 </div>
-                {parsedData.ats_improvements && parsedData.ats_improvements.length > 0 && (
+                {effectiveParsedData.ats_improvements && effectiveParsedData.ats_improvements.length > 0 && (
                   <ul className="space-y-1.5">
-                    {parsedData.ats_improvements.map((improvement, i) => (
+                    {effectiveParsedData.ats_improvements.map((improvement, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                         <Sparkles className="mt-0.5 size-3.5 shrink-0 text-primary" aria-hidden="true" />
                         {improvement}
@@ -78,7 +126,7 @@ export default function NewResumePage() {
               </CardContent>
             </Card>
           )}
-          <ResumeForm mode="create" initialData={parsedData} />
+          <ResumeForm mode="create" initialData={effectiveParsedData} />
         </>
       )}
       </div>

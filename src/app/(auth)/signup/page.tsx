@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,17 @@ import { Label } from "@/components/ui/label";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 
 export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +45,10 @@ export default function SignupPage() {
         return;
       }
 
-      router.push(`/signup/confirm?email=${encodeURIComponent(email)}`);
+      const confirmUrl = new URL("/signup/confirm", window.location.origin);
+      confirmUrl.searchParams.set("email", email);
+      if (redirect) confirmUrl.searchParams.set("redirect", redirect);
+      router.push(confirmUrl.pathname + confirmUrl.search);
     } finally {
       setLoading(false);
     }
@@ -49,7 +62,7 @@ export default function SignupPage() {
           <CardDescription>Otimize seu currículo com IA</CardDescription>
         </CardHeader>
         <CardContent>
-          <SocialAuthButtons />
+          <SocialAuthButtons redirectTo={redirect ?? "/dashboard"} />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">

@@ -10,12 +10,15 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB — mesmo limite do backend (Par
 
 interface PdfImportUploadProps {
   onParsed: (data: ManualResumeRequest) => void;
+  /** Chamado quando o upload de fato começa (antes da resposta) — só pra analytics do
+   * funil (spec 020), opcional pra não forçar todo chamador a se importar com isso. */
+  onUploadStart?: () => void;
 }
 
 // POST /resumes/parse-pdf é rota pública no backend (sem sessão) — chamamos o proxy direto
 // via fetch, sem passar pelo apiFetchJson (que existe pra rotas autenticadas com refresh em
 // 401, que não se aplica aqui). Ver .spec/002-resume-optimization/spec.md.
-export function PdfImportUpload({ onParsed }: PdfImportUploadProps) {
+export function PdfImportUpload({ onParsed, onUploadStart }: PdfImportUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -35,6 +38,7 @@ export function PdfImportUpload({ onParsed }: PdfImportUploadProps) {
     if (!file) return;
     setUploading(true);
     setError(null);
+    onUploadStart?.();
 
     try {
       const formData = new FormData();

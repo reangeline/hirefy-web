@@ -20,10 +20,10 @@ const PLANS = [
     description: "Pra começar a organizar sua busca de emprego",
     icon: Sparkles,
     features: [
+      "Score de ATS e sugestões de melhoria ilimitados",
       "Pipeline de candidaturas (Kanban) ilimitado",
       "Contatos e histórico por vaga",
-      "Otimizações de currículo com IA ilimitadas",
-      "Score de ATS e sugestões de melhoria",
+      "3 otimizações de currículo/LinkedIn com IA grátis",
     ],
     cta: "Começar grátis",
     popular: false,
@@ -35,6 +35,7 @@ const PLANS = [
     description: "Pra quem está aplicando ativamente",
     icon: Zap,
     features: [
+      "Otimizações de currículo/LinkedIn com IA ilimitadas",
       "Prática de entrevista com IA ilimitada",
       "Coach de IA ilimitado em cada etapa da vaga",
       "Analytics do pipeline de candidaturas",
