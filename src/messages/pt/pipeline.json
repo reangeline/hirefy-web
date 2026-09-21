@@ -71,7 +71,8 @@
     "strengthsHeading": "Pontos fortes",
     "gapsHeading": "Pra melhorar",
     "modelAnswerHeading": "Resposta-modelo",
-    "followUpHeading": "Provável follow-up"
+    "followUpHeading": "Provável follow-up",
+    "yourAnswerHeading": "Sua resposta"
   },
   "jobCoachTab": {
     "wishlistGate": "O coach de IA fica disponível depois que a vaga sai da Wishlist (ex.: quando você aplica).",

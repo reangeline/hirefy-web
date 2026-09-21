@@ -71,7 +71,8 @@
     "strengthsHeading": "Strengths",
     "gapsHeading": "To improve",
     "modelAnswerHeading": "Model answer",
-    "followUpHeading": "Likely follow-up"
+    "followUpHeading": "Likely follow-up",
+    "yourAnswerHeading": "Your answer"
   },
   "jobCoachTab": {
     "wishlistGate": "The AI coach becomes available once the job moves out of Wishlist (e.g. when you apply).",

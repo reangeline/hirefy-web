@@ -234,7 +234,20 @@ export function JobInterviewTab({ job }: JobInterviewTabProps) {
           {history
             .filter((h) => h.answered && h.id !== current?.id)
             .map((h) => (
-              <Card key={h.id} size="sm">
+              <Card
+                key={h.id}
+                size="sm"
+                role="button"
+                tabIndex={0}
+                onClick={() => setCurrent(h)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setCurrent(h);
+                  }
+                }}
+                className="cursor-pointer transition-colors hover:bg-muted/40"
+              >
                 <CardContent className="space-y-1 p-3">
                   <div className="flex items-center justify-between gap-2">
                     <Badge variant="secondary" className="text-[10.5px]">
@@ -281,6 +294,13 @@ function InterviewEvaluation({ question }: { question: InterviewQuestion }) {
 
   return (
     <div className="space-y-4 rounded-lg border border-border bg-muted/30 p-4">
+      {question.answer && (
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground">{t("yourAnswerHeading")}</p>
+          <p className="mt-1 whitespace-pre-wrap text-sm">{question.answer}</p>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold">{t("evaluationHeading")}</p>
         {question.content_score != null && (
