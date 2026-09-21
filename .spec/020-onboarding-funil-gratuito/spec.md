@@ -50,14 +50,29 @@ ficar visível/experimentável sem fricção (grátis, com limite de uso), enqua
 - [ ] Conta de teste Free consegue rodar exatamente 3 otimizações de currículo/LinkedIn; a
       4ª é bloqueada com a nova tela de limite, não com erro genérico. **Pendente** — a única
       conta de teste disponível nesta sessão é Premium (não afetada pelo limite); ver log.md.
-- [ ] `/pontuacao` funciona sem sessão ativa (testar em aba anônima/sem cookie): upload de
-      PDF real → score + melhorias aparecem na tela. **Parcial** — página confirmada
-      renderizando e acessível sem proteção do proxy; upload com PDF real não testado (sem
-      arquivo de teste disponível nesta sessão).
+- [x] `/pontuacao` funciona sem sessão ativa (testar em aba anônima/sem cookie): upload de
+      PDF real → score + melhorias aparecem na tela. Confirmado ao vivo em 2026-09-20 com um
+      PDF sintético (texto gerado programaticamente, não um export real de currículo, já que
+      nenhum arquivo real estava disponível na sessão) — mas passou pelo pipeline de verdade
+      (upload → `POST /resumes/parse-pdf` real → IA real): score calculado (56%), sugestões
+      específicas e corretas pro conteúdo enviado ("Missing email address", "No location
+      information", etc. — o PDF de teste realmente não tinha esses campos). Ver log.md.
 - [ ] Criar conta a partir de `/pontuacao` leva direto pra `resume/new` com os dados do PDF
-      já preenchidos, sem pedir upload de novo. **Pendente** — depende do item acima.
+      já preenchidos, sem pedir upload de novo. **Parcial** — confirmado em 2026-09-20 até a
+      borda do que dá pra testar sem credenciais: clicar "Criar conta grátis" salva o scan
+      completo em `sessionStorage` (`hfy_pending_scan`) e redireciona pra
+      `/signup?redirect=%2Fresume%2Fnew%3Ffrom%3Dscore` corretamente. A perna final (submeter
+      o cadastro → cair em `resume/new` com os dados já preenchidos) não foi testada — exige
+      digitar email/senha, ação que o Claude não executa por regra de segurança (nunca entra
+      credenciais em formulários, nem pra criar conta). Precisa de um humano pra fechar.
 - [x] Fluxo de signup normal (sem passar por `/pontuacao`) continua funcionando sem mudança
       de comportamento. Confirmado ao vivo (screenshot + console sem erros).
 - [ ] Eventos de analytics disparam nos pontos certos do funil (conferir no console/GA/
-      Mixpanel). **Pendente** — só a instrumentação do código foi revisada.
+      Mixpanel). **Pendente** — causa raiz identificada em 2026-09-20: `NEXT_PUBLIC_GA_
+      MEASUREMENT_ID` e `NEXT_PUBLIC_MIXPANEL_TOKEN` só estão configuradas no ambiente
+      **Production** do Vercel (`vercel env ls`), não em Preview/Development — então
+      `initAnalyticsIfConsented()` roda mas `window.gtag`/Mixpanel nunca inicializam no
+      preview de `develop`, mesmo com consentimento de cookie aceito. `trackEvent(...)` não
+      quebra (chamadas viram no-op), mas não há como verificar o disparo real fora de
+      produção. Só testável depois de promover pra `main`.
 - [x] `go build/vet/test` (backend) e `tsc`/`eslint`/`build` (frontend) limpos.

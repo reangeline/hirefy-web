@@ -86,3 +86,32 @@
 
   Fica registrado como pendência explícita — ver `SPECS.md` — em vez de marcar a spec como
   fechada sem essa verificação.
+
+## Addendum — 2026-09-20: verificação ao vivo retomada
+
+Retomado a pedido do usuário numa sessão seguinte, ainda sem PDF real disponível — gerado um
+PDF sintético válido (texto puro, sem libs de PDF instaladas no ambiente, escrito na mão
+respeitando a sintaxe mínima de PDF 1.4) com um currículo fictício mas plausível, pra exercitar
+o pipeline de verdade em vez de mockar.
+
+- `/pontuacao` sem sessão: upload do PDF sintético → `POST /resumes/parse-pdf` real → IA real
+  → score 56% + 5 sugestões específicas e coerentes com o conteúdo enviado (ex.: "Missing
+  email address", já que o PDF de teste não tinha email). Card de CTA ("Crie sua conta grátis
+  pra salvar e continuar") com a copy certa (3 otimizações grátis + lista de features
+  Premium).
+- Clicar "Criar conta grátis" → confirmado via `sessionStorage.getItem("hfy_pending_scan")`
+  que os dados parseados (nome, cargo, experiências) foram salvos corretamente, e a URL virou
+  `/signup?redirect=%2Fresume%2Fnew%3Ffrom%3Dscore` como esperado. `/signup` renderizou sem
+  erro com esse parâmetro.
+- **Não foi possível ir além disso**: submeter o formulário de cadastro exige digitar
+  email/senha, e por regra de segurança o Claude nunca entra credenciais em formulário algum
+  (nem pra criar conta de teste) — precisa de um humano pra completar essa última perna
+  (`resume/new?from=score` já preenchido) e pra testar `CreditLimitReachedCard` depois de
+  esgotar os 3 créditos.
+- **Achado sobre analytics**: `vercel env ls` mostra `NEXT_PUBLIC_GA_MEASUREMENT_ID` e
+  `NEXT_PUBLIC_MIXPANEL_TOKEN` configuradas só no ambiente Production — não em
+  Preview/Development. Por isso os eventos do funil (`free_score_viewed`,
+  `free_score_signup_clicked`, etc.) nunca vão inicializar `gtag`/Mixpanel testando no preview
+  de `develop`, mesmo com o código correto e consentimento de cookie aceito. Isso não é um bug
+  de código — só explica por que esse item ficou pendente antes e continua só testável depois
+  de promover pra `main`/produção.
