@@ -93,3 +93,34 @@ Verificação ao vivo com a conta de teste (Premium) na URL de preview de dev:
 
 Nenhuma pendência aberta nesta spec — todos os critérios de aceite foram fechados com
 verificação ao vivo.
+
+## Addendum — 2026-09-21: prática de entrevista e ATS Match
+
+Usuário pediu pra aplicar o mesmo padrão em Prática de entrevista e ATS Match. Investigação
+(backend + frontend, via subagent) confirmou que **nenhum dos dois tinha o bug original**
+(regenerar via IA à toa): gerar pergunta nova é intencionalmente não cacheado (grátis, a
+variedade é o ponto da feature) e ATS Match só lê um `OptimizedResume` já salvo — nenhuma
+mudança de backend foi feita.
+
+Mas o usuário então apontou um problema real e diferente, só de frontend: em
+`JobInterviewTab.tsx`, a resposta que o usuário digita **desaparecia da tela** assim que a IA
+avaliava (`InterviewEvaluation` nunca renderizava `question.answer`), e cada card do
+`Histórico` só mostrava tipo + nota + pergunta — sem `onClick` nenhum, então não dava pra
+reabrir uma resposta/avaliação antiga. Os dados sempre estiveram 100% persistidos no backend
+(`GET /pipeline/{jobId}/interview-practice` já retorna `answer`, `content_score`, `star_*`,
+`strengths`, `gaps`, `model_answer`, `follow_up` pra cada item) — só a UI não deixava acessar
+de novo, o que efetivamente parecia "perder" o conteúdo gerado, mesmo tecnicamente salvo.
+
+Corrigido só no frontend (`src/components/pipeline/JobInterviewTab.tsx`), sem nenhuma chamada
+de IA nova:
+- `InterviewEvaluation` agora mostra `question.answer` antes da avaliação (nova seção "Sua
+  resposta" / chave `yourAnswerHeading` nos 3 locales).
+- Cada card do `Histórico` virou clicável (`role="button"`, `tabIndex`, `onClick`+`onKeyDown`)
+  — clicar chama `setCurrent(h)`, reaproveitando a mesma renderização já existente pra
+  perguntas respondidas (zero requisição nova, só reexibe o que já veio no GET de histórico).
+
+Testado ao vivo (mesma conta de teste, mesma vaga "MAVI"): cliquei num card de histórico já
+existente (pergunta comportamental sobre frontend) → abriu com a resposta do usuário
+("Sua resposta: xxxx") + avaliação completa (pontos a melhorar, resposta-modelo, follow-up) —
+confirma que os dois problemas eram só de exibição, os dados já estavam lá. `tsc`/`eslint`/
+`npm run build` limpos; CI verde; commit `f1b85d6`; Vercel realiasado.

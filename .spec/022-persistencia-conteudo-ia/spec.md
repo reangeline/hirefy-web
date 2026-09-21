@@ -68,3 +68,9 @@ a maioria já estava cacheada corretamente; só duas lacunas reais:
       "Guias já gerados"; clicar nele abre o guia salvo. Confirmado ao vivo (conta de teste já
       tinha 3 guias de sessões anteriores, listados e navegáveis corretamente).
 - [x] `go build/vet/test` (backend) e `tsc`/`eslint`/`npm run build` (frontend) limpos.
+- [x] **Addendum**: Prática de entrevista e ATS Match não tinham o bug de regeneração
+      original (confirmado por investigação de código, sem mudança necessária), mas a
+      resposta do usuário e o histórico de entrevista completo — já persistidos no backend —
+      não eram reexibidos na UI. Corrigido: `InterviewEvaluation` mostra `question.answer`;
+      cards do histórico ficaram clicáveis e reabrem a resposta+avaliação completas.
+      Confirmado ao vivo.
