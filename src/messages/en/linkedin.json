@@ -63,7 +63,9 @@
     "unnamedResume": "Untitled resume",
     "submitting": "Submitting…",
     "generateGuide": "Generate guide",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "pastGuidesHeading": "Previously generated guides",
+    "unnamedGuide": "Untitled guide"
   },
   "fillResultPage": {
     "notLinkedInResult": "This result isn't a LinkedIn guide.",

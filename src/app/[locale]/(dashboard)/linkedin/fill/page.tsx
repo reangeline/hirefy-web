@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AlertCircle, FileText, Loader2, Sparkles } from "lucide-react";
@@ -17,14 +17,24 @@ import type { OptimizationJob, Resume } from "@/types/resume";
 const POLL_INTERVAL_MS = 4000;
 const MAX_POLL_ATTEMPTS = 45; // ~3min
 
+// Shape crua de GET /resumes/optimized — só os campos usados pra listar guias já gerados
+// (ver mesmo shape em linkedin/fill/[id]/page.tsx, que lê um único item).
+interface OptimizedResumeRaw {
+  id: string;
+  created_at: string;
+  parsed_data?: { type?: string; headline?: string };
+}
+
 export default function LinkedInFillPage() {
   const t = useTranslations("LinkedIn");
+  const locale = useLocale();
   const router = useRouter();
   const [resumes, setResumes] = useState<Resume[] | null>(null);
   const [selectedResumeId, setSelectedResumeId] = useState<string>("");
   const [job, setJob] = useState<OptimizationJob | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pastGuides, setPastGuides] = useState<OptimizedResumeRaw[]>([]);
   const attemptsRef = useRef(0);
 
   useEffect(() => {
@@ -34,6 +44,20 @@ export default function LinkedInFillPage() {
         if (list.length > 0) setSelectedResumeId(list[0].id);
       })
       .catch((err: Error) => setError(err.message));
+  }, []);
+
+  useEffect(() => {
+    apiFetchJson<OptimizedResumeRaw[]>("/api/resumes/optimized")
+      .then((list) => {
+        const guides = list
+          .filter((item) => item.parsed_data?.type === "linkedin")
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        setPastGuides(guides);
+      })
+      .catch(() => {
+        // Lista de guias antigos é só um atalho — se falhar, a tela de gerar um novo
+        // continua funcionando normalmente.
+      });
   }, []);
 
   useEffect(() => {
@@ -130,6 +154,28 @@ export default function LinkedInFillPage() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {!job && pastGuides.length > 0 && (
+          <div className="space-y-2">
+            <h2 className="text-sm font-medium">{t("fillPage.pastGuidesHeading")}</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {pastGuides.map((guide) => (
+                <Link key={guide.id} href={`/linkedin/fill/${guide.id}`}>
+                  <Card className="transition-colors hover:border-primary">
+                    <CardContent className="space-y-1 py-4">
+                      <p className="truncate font-medium">
+                        {guide.parsed_data?.headline || t("fillPage.unnamedGuide")}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(guide.created_at).toLocaleDateString(locale)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
         )}
 
         {!job && resumes && resumes.length === 0 && (

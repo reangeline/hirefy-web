@@ -21,11 +21,21 @@ interface LinkedInPostTopicsProps {
   resumeId: string;
 }
 
-// Lista de temas sugeridos (spec 018) — cada card gera um rascunho de post sob demanda,
-// mantido só no estado local (não persiste no backend).
+// Lista de temas sugeridos (spec 018) — cada card gera um rascunho de post sob demanda. O
+// rascunho mais recente de cada tema fica salvo no backend (ver spec de cache de IA), então
+// inicializamos o estado local a partir de `topic.draft` quando já existir, sem chamar a IA
+// de novo só por reabrir a tela.
 export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps) {
   const t = useTranslations("LinkedIn");
-  const [drafts, setDrafts] = useState<Record<number, DraftState>>({});
+  const [drafts, setDrafts] = useState<Record<number, DraftState>>(() => {
+    const initial: Record<number, DraftState> = {};
+    topics.forEach((topic, i) => {
+      if (topic.draft) {
+        initial[i] = { status: "done", text: topic.draft };
+      }
+    });
+    return initial;
+  });
 
   async function handleDraft(i: number, topic: LinkedInPostTopic) {
     setDrafts((prev) => ({ ...prev, [i]: { status: "loading", text: "" } }));
@@ -34,7 +44,7 @@ export function LinkedInPostTopics({ topics, resumeId }: LinkedInPostTopicsProps
       const result = await apiFetchJson<{ post_text: string }>("/api/linkedin-post-topics/draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume_id: resumeId, title: topic.title, angle: topic.angle }),
+        body: JSON.stringify({ resume_id: resumeId, title: topic.title, angle: topic.angle, index: i }),
       });
       trackEvent("linkedin_post_draft_generated");
       setDrafts((prev) => ({ ...prev, [i]: { status: "done", text: result.post_text } }));

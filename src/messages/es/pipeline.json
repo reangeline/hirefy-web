@@ -85,7 +85,8 @@
     "regenerateButton": "Generar de nuevo",
     "intro": "Genera contenido de coaching específico para la etapa actual de esta vacante.",
     "generating": "Generando…",
-    "generateButton": "Generar coaching"
+    "generateButton": "Generar coaching",
+    "checkingSaved": "Verificando si ya hay contenido guardado…"
   },
   "jobActionsCard": {
     "changeStageError": "No se pudo cambiar la etapa.",

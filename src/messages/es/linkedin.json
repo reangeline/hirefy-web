@@ -63,7 +63,9 @@
     "unnamedResume": "Currículum sin nombre",
     "submitting": "Enviando…",
     "generateGuide": "Generar guía",
-    "loading": "Cargando…"
+    "loading": "Cargando…",
+    "pastGuidesHeading": "Guías ya generadas",
+    "unnamedGuide": "Guía sin título"
   },
   "fillResultPage": {
     "notLinkedInResult": "Ese resultado no es una guía de LinkedIn.",

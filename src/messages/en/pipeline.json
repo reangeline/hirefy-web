@@ -85,7 +85,8 @@
     "regenerateButton": "Regenerate",
     "intro": "Generate coaching content tailored to this job's current stage.",
     "generating": "Generating…",
-    "generateButton": "Generate coaching"
+    "generateButton": "Generate coaching",
+    "checkingSaved": "Checking for saved content…"
   },
   "jobActionsCard": {
     "changeStageError": "Couldn't change the stage.",

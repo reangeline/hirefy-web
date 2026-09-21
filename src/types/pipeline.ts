@@ -121,6 +121,8 @@ export interface CoachRequest {
   missing_keywords?: string[];
   days_since_applied?: number;
   tone?: CoachTone;
+  /** true só no clique explícito de "Regenerar" — ignora a sugestão já salva e cobra crédito de novo. */
+  force?: boolean;
 }
 
 // Resposta de POST /pipeline/{jobId}/coach — ver CoachJobResponse em

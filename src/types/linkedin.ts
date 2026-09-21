@@ -54,6 +54,8 @@ export interface LinkedInOptimizedProfile {
 export interface LinkedInPostTopic {
   title: string;
   angle: string;
+  /** Último rascunho gerado pra esse tema — persistido no backend, evita regenerar à toa. */
+  draft?: string;
 }
 
 export interface LinkedInPostIdeas {

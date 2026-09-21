@@ -6,10 +6,14 @@ interface DraftPostRequest {
   resume_id: string;
   title: string;
   angle: string;
+  /** Índice do tema na lista de LinkedInPostIdeas já salva do usuário — usado só pra
+   * persistir o rascunho gerado nesse tema, não afeta a geração em si. */
+  index: number;
 }
 
-// Proxy pra POST /linkedin-post-topics/draft — rascunha um post pro tema escolhido, não
-// persiste nada (spec 018).
+// Proxy pra POST /linkedin-post-topics/draft — rascunha um post pro tema escolhido. O
+// backend persiste o resultado no tema correspondente (por índice) pra não regenerar à toa
+// da próxima vez (ver spec de cache de IA).
 export async function POST(req: Request) {
   const csrfError = requireSameOrigin(req);
   if (csrfError) return csrfError;

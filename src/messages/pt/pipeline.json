@@ -85,7 +85,8 @@
     "regenerateButton": "Gerar de novo",
     "intro": "Gere conteúdo de coaching específico pro estágio atual desta vaga.",
     "generating": "Gerando…",
-    "generateButton": "Gerar coaching"
+    "generateButton": "Gerar coaching",
+    "checkingSaved": "Verificando se já existe conteúdo salvo…"
   },
   "jobActionsCard": {
     "changeStageError": "Não foi possível mudar o estágio.",
